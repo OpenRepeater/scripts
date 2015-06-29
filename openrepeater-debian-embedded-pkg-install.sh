@@ -229,7 +229,7 @@ DELIM
 echo " Installing OpenRepeater repo "
 echo " svxlink & openrepeater pkgs "
 cat > "/etc/apt/sources.list.d/openrepeater.list" <<DELIM
-deb http://104.236.193.157/openrepeater/release/debian/ jessie main
+deb http://repo.openrepeater.com/openrepeater/release/debian/ jessie main
 DELIM
 
 ######################
