@@ -645,18 +645,52 @@ service svxlink restart
 # Configure Sudo 
 #################
 cat > /usr/bin/svxlink_restart << DELIM
-#!/bin/sh
-sudo service svxlink try-restart
+#!/bin/bash
+SERVICE=svxlink
+
+ps -u $SERVICE | grep -v grep | grep $SERVICE > /dev/null
+result=$?
+echo "exit code: ${result}"
+if [ "${result}" -eq "0" ] ; then
+    echo "`date`: $SERVICE service running"
+    echo "`date`: Restarting svxlink service with updated configuration"
+    sudo service svxlink try-restart
+else
+    echo "`date`: $SERVICE is not running"
+    echo "`date`: Starting svxlink up with first time new configuration"
+    sudo service svxlink start
+fi
 DELIM
 
 cat > /usr/bin/svxlink_stop << DELIM
-#!/bin/sh
-sudo service svxlink stop
+#!/bin/bash
+SERVICE=svxlink
+
+ps -u $SERVICE | grep -v grep | grep $SERVICE > /dev/null
+result=$?
+echo "exit code: ${result}"
+if [ "${result}" -eq "0" ] ; then
+    echo "`date`: $SERVICE service running, Stopping svxlink service"
+    sudo svxlink stop
+else
+    echo "`date`: $SERVICE is not running"
+fi
 DELIM
 
 cat > /usr/bin/svxlink_start << DELIM
-#!/bin/sh
-sudo service svxlink start
+#!/bin/bash
+SERVICE=svxlink
+
+ps -u $SERVICE | grep -v grep | grep $SERVICE > /dev/null
+result=$?
+echo "exit code: ${result}"
+if [ "${result}" -eq "0" ] ; then
+    echo "`date`: $SERVICE service running, all is fine"
+else
+    echo "`date`: $SERVICE is not running"
+    echo "`date`: Atempting to start svxlink"
+    sudo service svxlink start
+fi
 DELIM
 
 sudo chown root:www-data /usr/bin/svxlink_restart /usr/bin/svxlink_start /usr/bin/svxlink_stop
