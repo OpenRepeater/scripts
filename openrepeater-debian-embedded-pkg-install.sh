@@ -627,6 +627,7 @@ DELIM
 #making links...
 ln -s /usr/share/openrepeater/sounds/courtesy_tones /var/www/openrepeater/courtesy_tones
 ln -s /etc/openrepeater/svxlink/local-events.d/ /usr/share/svxlink/events.d/local
+ln -s /var/log/svxlink /var/www/openrepeater/log
 
 chown www-data:www-data /var/www/openrepeater/courtesy_tones
 
