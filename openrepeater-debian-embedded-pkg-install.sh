@@ -650,7 +650,7 @@ service svxlink restart
 #################
 # Configure Sudo 
 #################
-cat > /usr/bin/svxlink_restart << DELIM
+cat > /usr/local/bin/svxlink_restart << DELIM
 #!/bin/bash
 SERVICE=svxlink
 
@@ -668,7 +668,7 @@ else
 fi
 DELIM
 
-cat > /usr/bin/svxlink_stop << DELIM
+cat > /usr/local/bin/svxlink_stop << DELIM
 #!/bin/bash
 SERVICE=svxlink
 
@@ -683,7 +683,7 @@ else
 fi
 DELIM
 
-cat > /usr/bin/svxlink_start << DELIM
+cat > /usr/local/bin/svxlink_start << DELIM
 #!/bin/bash
 SERVICE=svxlink
 
@@ -699,12 +699,17 @@ else
 fi
 DELIM
 
-sudo chown root:www-data /usr/bin/svxlink_restart /usr/bin/svxlink_start /usr/bin/svxlink_stop
-sudo chmod 550 /usr/bin/svxlink_restart /usr/bin/svxlink_start /usr/bin/svxlink_stop
+cat > /usr/local/bin/svxlink_start << DELIM
+#!/bin/bash
+sudo -u www-data /sbin/reboot
+DELIM
+
+sudo chown root:www-data /usr/local/bin/svxlink_restart /usr/local/bin/svxlink_start /usr/local/bin/svxlink_stop /usr/local/bin/system_reboot
+sudo chmod 550 /usr/local/bin/svxlink_restart /usr/local/bin/svxlink_start /usr/local/bin/svxlink_stop /usr/local/bin/system_reboot
 
 cat >> /etc/sudoers << DELIM
 #allow www-data to access amixer and service
-www-data   ALL=(ALL) NOPASSWD: /usr/bin/svxlink_restart, NOPASSWD: /usr/bin/svxlink_start, NOPASSWD: /usr/ybin/svxlink_stop
+www-data   ALL=(ALL) NOPASSWD: /usr/local/bin/svxlink_restart, NOPASSWD: /usr/local/bin/svxlink_start, NOPASSWD: /usr/local/bin/svxlink_stop, NOPASSWD: /usr/local/bin/system_reboot 
 DELIM
 
 #########################################################
@@ -755,7 +760,7 @@ wget http://repo.ajenti.org/debian/key -O- | apt-key add -
 #################
 apt-get update
 
-apt-get install -y ajenti task openvpn smartmontools supervisor python-memcache python-beautifulsoup snmpd cron
+apt-get install -y ajenti task openvpn supervisor python-memcache python-beautifulsoup cron
 
 fi
 
