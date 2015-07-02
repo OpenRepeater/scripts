@@ -597,6 +597,11 @@ ENV="ASYNC_AUDIO_NOTRIGGER=1"
 #GPIO_PTT_PIN=
 #GPIO_SQL_PIN=
 
+#uesd for openrepeater to get gpio pins
+if [ -r /etc/openrepeater/svxlink/svxlink_gpio.conf ]; then
+        . /etc/openrepeater/svxlink/svxlink_gpio.conf
+fi
+
 DELIM
 
 mv /etc/default/remotetrx /etc/default/remotetrx.orig
