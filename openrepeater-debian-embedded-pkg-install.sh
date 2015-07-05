@@ -91,6 +91,12 @@ odroid_boards="n"
 ###########################################
 beaglebone_boards="n"
 
+###########################################
+# Use for configuring beaglebone arm boards
+# Disable Default Web Service
+###########################################
+raspi2_boards="n"
+
 ################################################################
 # Install Ajenti Optional Admin Portal (Optional) (Not Required)
 #                (Currently broken on beaglebone installs)
@@ -106,11 +112,6 @@ install_vsftpd="n"
 # set vsftp user name
 #####################
 vsftpd_user=""
-
-########################
-# set vsftp user password
-########################
-vsftpd_pwd=""
 
 ########################
 # set vsftp config path
@@ -243,7 +244,7 @@ apt-get autoclean
 #odroid extra repo
 ###################
 if [[ $odroid_boards == "y" ]]; then
-	cat >> "/etc/apt/sources.list" << DELIM
+	cat >> "/etc/apt/sources.list.d/odroid.list" << DELIM
 	#deb http://deb.odroid.in/c1/ trusty main
 	deb http://deb.odroid.in/ trusty main
 DELIM
@@ -254,9 +255,19 @@ fi
 #beagle bone  extra repo
 #########################
 if [[ $beaglebone_boards == "y" ]]; then
-cat >> "/etc/apt/sources.list" << DELIM
+cat >> "/etc/apt/sources.list.d/beaglebone.list" << DELIM
 	deb [arch=armhf] http://repos.rcn-ee.net/debian/ jessie main
 	#deb-src [arch=armhf] http://repos.rcn-ee.net/debian/ jessie main
+DELIM
+apt-get update
+fi
+
+#########################
+#beagle bone  extra repo
+#########################
+if [[ $raspi2_boards == "y" ]]; then
+cat >> "/etc/apt/sources.list.d/raspi2.list" << DELIM
+deb https://repositories.collabora.co.uk/debian/ jessie rpi2
 DELIM
 apt-get update
 fi
@@ -430,17 +441,17 @@ server{
         location ~^.+.(db)$ {
               deny all;
         }
-}
+} 
 server{
         listen 443;
         listen [::]:443 default_server ipv6only=on;
 
-		include snippets/snakeoil.conf;
-		ssl  on;
+        include snippets/snakeoil.conf;
+        ssl  on;
 
-		root /var/www/openrepeater;
+        root /var/www/openrepeater;
 
-		index index.php;
+        index index.php;
 
         server_name $gui_name;
 
@@ -455,7 +466,7 @@ server{
             include snippets/fastcgi-php.conf;
             include fastcgi_params;
             fastcgi_pass unix:/var/run/php5-fpm.sock;
-            fastcgi_param   SCRIPT_FILENAME /var/www/openrepeater/$fastcgi_script_name;
+            fastcgi_param   SCRIPT_FILENAME /var/www/openrepeater/\$fastcgi_script_name;
         }
 
         # Disable viewing .htaccess & .htpassword & .db
@@ -735,7 +746,7 @@ if [[ $install_vsftpd == "y" ]]; then
 	# ############################
 	# ADD FTP USER & SET PASSWORD
 	# ############################
-	adduser $vsftpd_user -p $vsftpd_pwd
+	adduser $vsftpd_user
 fi
 
 #############################
