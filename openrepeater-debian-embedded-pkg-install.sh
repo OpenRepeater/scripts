@@ -578,7 +578,7 @@ find "$WWW_PATH" -type f -exec chmod 664 {} +
 chown -R www-data:www-data $WWW_PATH
 
 cp /etc/default/svxlink /etc/default/svxlink.orig
-cat > /etc/default/svxlink << DELIM
+cat > "/etc/default/svxlink" << DELIM
 #############################################################################
 #
 # Configuration file for the SvxLink startup script /etc/init.d/svxlink
@@ -616,7 +616,7 @@ fi
 DELIM
 
 mv /etc/default/remotetrx /etc/default/remotetrx.orig
-cat > /etc/default/remotetrx << DELIM
+cat > "/etc/default/remotetrx" << DELIM
 #############################################################################
 #
 # Configuration file for the RemoteTrx startup script /etc/init.d/remotetrx
@@ -661,56 +661,56 @@ service svxlink restart
 #################
 # Configure Sudo 
 #################
-cat > /usr/local/bin/svxlink_restart << DELIM
+cat > "/usr/local/bin/svxlink_restart" << DELIM
 #!/bin/bash
 SERVICE=svxlink
 
-ps -u $SERVICE | grep -v grep | grep $SERVICE > /dev/null
-result=$?
-echo "exit code: ${result}"
-if [ "${result}" -eq "0" ] ; then
-    echo "`date`: $SERVICE service running"
-    echo "`date`: Restarting svxlink service with updated configuration"
+ps -u $SERVICE | grep -v grep | grep \$SERVICE > /dev/null
+result=\$\?
+echo "exit code: \${result}"
+if [ "\${result}" -eq "0" ] ; then
+    echo "$(date): \$SERVICE service running"
+    echo "$(date): Restarting svxlink service with updated configuration"
     sudo service svxlink try-restart
 else
-    echo "`date`: $SERVICE is not running"
-    echo "`date`: Starting svxlink up with first time new configuration"
+    echo "$(date): \$SERVICE is not running"
+    echo "$(date): Starting svxlink up with first time new configuration"
     sudo service svxlink start
 fi
 DELIM
 
-cat > /usr/local/bin/svxlink_stop << DELIM
+cat > "/usr/local/bin/svxlink_stop" << DELIM
 #!/bin/bash
 SERVICE=svxlink
 
-ps -u $SERVICE | grep -v grep | grep $SERVICE > /dev/null
+ps -u $SERVICE | grep -v grep | grep \$SERVICE > /dev/null
 result=$?
-echo "exit code: ${result}"
+echo "exit code: \${result}"
 if [ "${result}" -eq "0" ] ; then
-    echo "`date`: $SERVICE service running, Stopping svxlink service"
+    echo "$(date): \$SERVICE service running, Stopping svxlink service"
     sudo svxlink stop
 else
-    echo "`date`: $SERVICE is not running"
+    echo "$(date): \$SERVICE is not running"
 fi
 DELIM
 
-cat > /usr/local/bin/svxlink_start << DELIM
+cat > "/usr/local/bin/svxlink_start" << DELIM
 #!/bin/bash
 SERVICE=svxlink
 
-ps -u $SERVICE | grep -v grep | grep $SERVICE > /dev/null
+ps -u $SERVICE | grep -v grep | grep \$SERVICE > /dev/null
 result=$?
-echo "exit code: ${result}"
+echo "exit code: \${result}"
 if [ "${result}" -eq "0" ] ; then
-    echo "`date`: $SERVICE service running, all is fine"
+    echo "$(date): $SERVICE service running, all is fine"
 else
-    echo "`date`: $SERVICE is not running"
-    echo "`date`: Atempting to start svxlink"
+    echo "$(date): $SERVICE is not running"
+    echo "$(date): Atempting to start svxlink"
     sudo service svxlink start
 fi
 DELIM
 
-cat > /usr/local/bin/svxlink_start << DELIM
+cat > "/usr/local/bin/repeater_reboot" << DELIM
 #!/bin/bash
 sudo -u www-data /sbin/reboot
 DELIM
@@ -720,7 +720,7 @@ sudo chmod 550 /usr/local/bin/svxlink_restart /usr/local/bin/svxlink_start /usr/
 
 cat >> /etc/sudoers << DELIM
 #allow www-data to access amixer and service
-www-data   ALL=(ALL) NOPASSWD: /usr/local/bin/svxlink_restart, NOPASSWD: /usr/local/bin/svxlink_start, NOPASSWD: /usr/local/bin/svxlink_stop, NOPASSWD: /usr/local/bin/system_reboot 
+www-data   ALL=(ALL) NOPASSWD: /usr/local/bin/svxlink_restart, NOPASSWD: /usr/local/bin/svxlink_start, NOPASSWD: /usr/local/bin/svxlink_stop, NOPASSWD: /usr/local/bin/repeater_reboot 
 DELIM
 
 #########################################################
