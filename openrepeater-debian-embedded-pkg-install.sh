@@ -669,12 +669,12 @@ ps -u $SERVICE | grep -v grep | grep \$SERVICE > /dev/null
 result=\$\?
 echo "exit code: \${result}"
 if [ "\${result}" -eq "0" ] ; then
-    echo "$(date): \$SERVICE service running"
-    echo "$(date): Restarting svxlink service with updated configuration"
+    echo "\$(date): \$SERVICE service running"
+    echo "\$(date): Restarting svxlink service with updated configuration"
     sudo service svxlink try-restart
 else
-    echo "$(date): \$SERVICE is not running"
-    echo "$(date): Starting svxlink up with first time new configuration"
+    echo "\$(date): \$SERVICE is not running"
+    echo "\$(date): Starting svxlink up with first time new configuration"
     sudo service svxlink start
 fi
 DELIM
@@ -685,12 +685,12 @@ SERVICE=svxlink
 
 ps -u $SERVICE | grep -v grep | grep \$SERVICE > /dev/null
 result=$?
-echo "exit code: \${result}"
-if [ "${result}" -eq "0" ] ; then
-    echo "$(date): \$SERVICE service running, Stopping svxlink service"
+echo "\exit code: \${result}"
+if [ "\${result}" -eq "0" ] ; then
+    echo "\$(date): \$SERVICE service running, Stopping svxlink service"
     sudo svxlink stop
 else
-    echo "$(date): \$SERVICE is not running"
+    echo "\$(date): \$SERVICE is not running"
 fi
 DELIM
 
@@ -701,11 +701,11 @@ SERVICE=svxlink
 ps -u $SERVICE | grep -v grep | grep \$SERVICE > /dev/null
 result=$?
 echo "exit code: \${result}"
-if [ "${result}" -eq "0" ] ; then
-    echo "$(date): $SERVICE service running, all is fine"
+if [ "\${result}" -eq "0" ] ; then
+    echo "\$(date): \$SERVICE service running, all is fine"
 else
-    echo "$(date): $SERVICE is not running"
-    echo "$(date): Atempting to start svxlink"
+    echo "\$(date): \$SERVICE is not running"
+    echo "\$(date): \Atempting to start svxlink"
     sudo service svxlink start
 fi
 DELIM
