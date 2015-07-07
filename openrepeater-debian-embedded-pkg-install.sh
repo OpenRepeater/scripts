@@ -263,11 +263,11 @@ apt-get update
 fi
 
 #########################
-#beagle bone  extra repo
+#raspi2 repo
 #########################
 if [[ $raspi2_boards == "y" ]]; then
 cat >> "/etc/apt/sources.list.d/raspi2.list" << DELIM
-deb https://repositories.collabora.co.uk/debian/ jessie rpi2
+deb [trusted=yes] https://repositories.collabora.co.uk/debian/ jessie rpi2
 DELIM
 apt-get update
 fi
