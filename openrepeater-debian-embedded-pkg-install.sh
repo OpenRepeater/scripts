@@ -456,7 +456,7 @@ server{
         server_name $gui_name;
 
         location / {
-            try_files $uri $uri/ =404;
+            try_files \$uri \$uri/ =404;
         }
 
         access_log /var/log/nginx/access.log;
@@ -651,7 +651,7 @@ cp -rp /usr/share/examples/openrepeater/install/svxlink/* /etc/openrepeater/svxl
 cp -rp /usr/share/examples/openrepeater/install/sql/openrepeater.db /var/lib/openrepeater/db
 cp -rp /usr/share/examples/openrepeater/install/sql/database.php /etc/openrepeater
 
-chown -R www-data:www-data /var/lib/openrpeater /etc/openrepeater
+chown -R www-data:www-data /var/lib/openrepeater /etc/openrepeater
 
 #########################
 #restart svxlink service
@@ -665,8 +665,8 @@ cat > "/usr/local/bin/svxlink_restart" << DELIM
 #!/bin/bash
 SERVICE=svxlink
 
-ps -u $SERVICE | grep -v grep | grep \$SERVICE > /dev/null
-result=\$\?
+ps -u \$SERVICE | grep -v grep | grep \$SERVICE > /dev/null
+result=\$?
 echo "exit code: \${result}"
 if [ "\${result}" -eq "0" ] ; then
     echo "\$(date): \$SERVICE service running"
@@ -683,9 +683,9 @@ cat > "/usr/local/bin/svxlink_stop" << DELIM
 #!/bin/bash
 SERVICE=svxlink
 
-ps -u $SERVICE | grep -v grep | grep \$SERVICE > /dev/null
-result=$?
-echo "\exit code: \${result}"
+ps -u \$SERVICE | grep -v grep | grep \$SERVICE > /dev/null
+result=\$?
+echo "exit code: \${result}"
 if [ "\${result}" -eq "0" ] ; then
     echo "\$(date): \$SERVICE service running, Stopping svxlink service"
     sudo svxlink stop
@@ -698,14 +698,14 @@ cat > "/usr/local/bin/svxlink_start" << DELIM
 #!/bin/bash
 SERVICE=svxlink
 
-ps -u $SERVICE | grep -v grep | grep \$SERVICE > /dev/null
-result=$?
+ps -u \$SERVICE | grep -v grep | grep \$SERVICE > /dev/null
+result=\$?
 echo "exit code: \${result}"
 if [ "\${result}" -eq "0" ] ; then
     echo "\$(date): \$SERVICE service running, all is fine"
 else
     echo "\$(date): \$SERVICE is not running"
-    echo "\$(date): \Atempting to start svxlink"
+    echo "\$(date): Atempting to start svxlink"
     sudo service svxlink start
 fi
 DELIM
@@ -715,12 +715,12 @@ cat > "/usr/local/bin/repeater_reboot" << DELIM
 sudo -u www-data /sbin/reboot
 DELIM
 
-sudo chown root:www-data /usr/local/bin/svxlink_restart /usr/local/bin/svxlink_start /usr/local/bin/svxlink_stop /usr/local/bin/system_reboot
-sudo chmod 550 /usr/local/bin/svxlink_restart /usr/local/bin/svxlink_start /usr/local/bin/svxlink_stop /usr/local/bin/system_reboot
+sudo chown root:www-data /usr/local/bin/svxlink_restart /usr/local/bin/svxlink_start /usr/local/bin/svxlink_stop /usr/local/bin/repeater_reboot
+sudo chmod 550 /usr/local/bin/svxlink_restart /usr/local/bin/svxlink_start /usr/local/bin/svxlink_stop /usr/local/bin/repeater_reboot
 
 cat >> /etc/sudoers << DELIM
 #allow www-data to access amixer and service
-www-data   ALL=(ALL) NOPASSWD: /usr/local/bin/svxlink_restart, NOPASSWD: /usr/local/bin/svxlink_start, NOPASSWD: /usr/local/bin/svxlink_stop, NOPASSWD: /usr/local/bin/repeater_reboot 
+www-data   ALL=(ALL) NOPASSWD: /usr/local/bin/svxlink_restart, NOPASSWD: /usr/local/bin/svxlink_start, NOPASSWD: /usr/local/bin/svxlink_stop, NOPASSWD: /usr/local/bin/repeater_reboot
 DELIM
 
 #########################################################
