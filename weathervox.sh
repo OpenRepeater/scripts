@@ -32,7 +32,7 @@ sed -i 's/\sWSW\s/ West South West/g' weather.txt
 sed -i 's/\sWNW\s/ West North West/g' weather.txt
 sed -i 's/\sNNW\s/ North North West/g' weather.txt
 sed -i 's/-/ negative/g' weather.txt
-sed -i 's/F/degrees/g' weather.txt
+# sed -i 's/F/degrees/g' weather.txt # doesn't like Friday>degreesriday
 sed -i 's/MPH/miles per hour/g' weather.txt
 #sed -i 's/://g' weather.txt #screws up the time output :(
 sed -i 's/$/:/g' weather.txt
