@@ -32,7 +32,7 @@
 # Please change this to match the repeater call sign
 ####################################################
 # CALL SIGN
-cs="Set This"
+cs="Set-This"
 
 ######################################################################
 # Setup up host / domain name or use system default host/domain name.
@@ -333,10 +333,11 @@ echo
 ######################
 #Install Dependancies
 #####################
-echo " Installing install deps "
+echo " Installing install deps and svxlink + remotetrx"
 apt-get install -y --force-yes memcached sqlite3 libopus0 alsa-utils vorbis-tools sox libsox-fmt-mp3 librtlsdr0 \
-						minicom ntp libasound2 libspeex1 libgcrypt20 libpopt0 libgsm1 tcl8.6 alsa-base bzip2 \
-						sudo svxlink-server remotetrx
+		minicom ntp libasound2 libspeex1 libgcrypt20 libpopt0 libgsm1 tcl8.6 alsa-base bzip2 sudo network-manager \
+		gpsd gpsd-clients flite pocketsphinx wvdial usbmount \
+		svxlink-server remotetrx 
 apt-get autoclean
 
 cd /usr/share/svxlink/sounds
@@ -356,8 +357,7 @@ DELIM
 # Set fs to run in a tempfs ramdrive
 ####################################
 cat >> /etc/fstab << DELIM
-tmpfs	/tmp	tmpfs	defaults	0	0
-tmpfs   /var/tmp	tmpfs	defaults	0	0
+tmpfs /var/tmp  tmpfs nodev,nosuid,mode=1777  0 0
 DELIM
 
 # ####################################
@@ -821,7 +821,7 @@ echo " You will need to edit the php.ini file and add extensions=memcache.so "
 echo " location : /etc/php5/fpm/php.ini and then restart web service "
 
 echo " ########################################################################################## "
-echo " #    The Open Repeater Project / SVXLink / Echo link server Install is now complete      # "
+echo " #    The Open Repeater Project / SVXLink / Echolink server Install is now complete      # "
 echo " #                          and your system is ready for use..                            # "
 echo " #                                                                                        # "
 echo " #                   Please send any feed back to kb3vgw@gmail.com                        # "
