@@ -180,7 +180,7 @@ get_OpenRepeater_files () {
 		cd /var/www
 		rm Archive.zip
 		wget http://192.168.1.74/Archive.zip
-		unzip Archive.zip
+		unzip Archive.zip ## This file doesn't exist in the location specified above.
 		rm Archive.zip
 		chmod 777 -R /var/www/
 		chown -R www-data:www-data /var/www/
