@@ -31,7 +31,6 @@
 # Repeater call sign
 # Please change this to match the repeater call sign
 ####################################################
-# CALL SIGN
 cs="Set-This"
 
 ######################################################################
@@ -43,14 +42,16 @@ set_hndn="y" #y/n
 # If you use the set host name please change these to fields.
 # Please change this to match you host and domain ........
 #############################################################
-# HOST Name
 hn="repeater"
 
-# DOMAIN Name
+##################################################
+# Change this to your domain name if you have one.
+##################################################
 dn="mydomain.com"
 
 ########################################################################################
 # Configure wan (wide area network) (internet interface) Networking
+########################################################################################
 # IF you machine is at its final install location and needs/requires a static ip
 # Change this setting from n to y to enable network setup of eth0.
 # Other Wise by default it uses dhcp an the ip will be dynamic wich could lead to issues.
@@ -72,7 +73,7 @@ gw="0.0.0.0" #ip of your router
 
 # Interface Name Servers
 ns1="0.0.0.0" # you can use the open dns name servers or find the ones your 
-ns2="0.0.0.0" # service provider offers up
+ns2="0.0.0.0" # service provider offers up (8.8.8.8/4.2.2.2/4.2.2.3/4.2.2.4)
 
 ######################################
 #set up odroid repo for odroid boards
@@ -86,10 +87,11 @@ odroid_boards="n" #y/n
 beaglebone_boards="n" #y/n
 
 ###########################################
-# Use for configuring beaglebone arm boards
-# Disable Default Web Service
+# Use for configuring Raspi-2 arm boards
+# 
 ###########################################
 raspi2_boards="n" #y/n
+
 raspbian_os_img="n" #y/n
 
 ################################################################
@@ -138,7 +140,7 @@ php_ini="/etc/php5/fpm/php.ini"
 ######################################################################
 # check to see that the configuration portion of the script was edited
 ######################################################################
-+if [[ $cs == "Set-This" ]]; then
+if [[ $cs == "Set-This" ]]; then
   echo
   echo "Looks like you need to configure the scirpt before running"
   echo "Please configure the script and try again"
@@ -211,7 +213,6 @@ echo " Intel / Amd boards currently UnSupported"
 echo
 exit
 esac
-echo
 
 #################################################################################################
 # Setting apt_get to use the httpredirecter to get
@@ -282,6 +283,9 @@ DELIM
 apt-get update
 fi
 
+#########################
+# Raspbian repo
+#########################
 if [[ $raspbian_os_ing == "y" ]]; then
 cat >> "/etc/apt/sources.list.d/raspbian.list" << DELIM
 deb http://mirrordirector.raspbian.org/raspbian/ jessie main contrib non-free rpi
