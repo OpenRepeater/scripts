@@ -95,7 +95,7 @@ beaglebone_boards="n"	#y/n
 # Use for configuring raspberrypi arm boards
 ###########################################
 raspi2_boards="n"	#y/n
-
+raspbian_os="n"
 ################################################################
 # Install Ajenti Optional Admin Portal (Optional) (Not Required)
 #                (Currently broken on beaglebone installs)
@@ -220,18 +220,23 @@ echo
 # not dnS to serve content so is safe to use with Google dnS.
 # See also <which httpredir.debian.org>.  This service is identical to http.debian.net.
 #################################################################################################
-echo "installing jessie release repo"
-cat > "/etc/apt/sources.list" << DELIM
-deb http://httpredir.debian.org/debian/ jessie main contrib non-free
-deb-src http://httpredir.debian.org/debian/ jessie main contrib non-free
+echo "Making backup of sources.list prior to editing..."
+cp /etc/apt/sources.list /etc/apt/sources.list.preOpenRepeater
 
-deb http://httpredir.debian.org/debian/ jessie-updates main contrib non-free
-deb-src http://httpredir.debian.org/debian/ jessie-updates main contrib non-free
-
-deb http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
-deb-src http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
-
-DELIM
+if [[$raspbian_os == "n"]]; then
+	echo "installing jessie release repo"
+	cat > "/etc/apt/sources.list" << DELIM
+	deb http://httpredir.debian.org/debian/ jessie main contrib non-free
+	deb-src http://httpredir.debian.org/debian/ jessie main contrib non-free
+	
+	deb http://httpredir.debian.org/debian/ jessie-updates main contrib non-free
+	deb-src http://httpredir.debian.org/debian/ jessie-updates main contrib non-free
+	
+	deb http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
+	deb-src http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
+	
+	DELIM
+fi
 
 ##########################
 # Adding OpenRepeater Repo
