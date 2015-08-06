@@ -22,21 +22,22 @@
 #
 #    If not, see <http://www.gnu.org/licenses/gpl-3.0.en.html>
 #
-######################################
-# Auto Install Configuration options
-######################################
+###################################################################
+# Auto Install Configuration options 
+# (set it, forget it, run it)
+###################################################################
 
 # ----- Start Edit Here ----- #
+######################################################################
+# Setup up host / domain name or use system default host/domain name.
+######################################################################
+set_hn_dn="y" #y/n
+
 ####################################################
 # Repeater call sign
 # Please change this to match the repeater call sign
 ####################################################
 cs="Set-This"
-
-######################################################################
-# Setup up host / domain name or use system default host/domain name.
-######################################################################
-set_hndn="y" #y/n
 
 #############################################################
 # If you use the set host name please change these to fields.
@@ -292,6 +293,8 @@ if [[ $raspbian_os_img == "y" ]]; then
 cat >> "/etc/apt/sources.list.d/raspbian.list" << DELIM
 deb http://mirrordirector.raspbian.org/raspbian/ jessie main contrib non-free rpi
 DELIM
+#add in the raspbian key for the repo
+wget http://mirrordirector.raspbian.org/raspbian.public.key | apt-key add -
 apt-get update
 fi
 
@@ -815,7 +818,7 @@ fi
 #############################
 #Setting Host/Domain name
 #############################
-if [[ $set_hndn == "y" ]]; then
+if [[ $set_hn_dn == "y" ]]; then
 cat << EOF > /etc/hostname
 $cs-$hn
 EOF
