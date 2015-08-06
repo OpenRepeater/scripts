@@ -94,7 +94,7 @@ raspi2_boards="n" #y/n
 
 raspbian_os_img="n" #y/n
 
-raspi2_overclock="y" #y/n
+raspi2_overclock="n" #y/n
 
 ################################################################
 # Install Ajenti Optional Admin Portal (Optional) (Not Required)
@@ -422,11 +422,13 @@ fi
 # Performance and stablization.
 ##########################################
 if [[ $raspi2_overclock == "y" ]]; then
+cat >> /boot/firmware/config.txt << DELIM
 #over clocking for stability
 arm_freq=1000
 sdram_freq=500
 core_freq=500
 over_voltage=2
+DELIM
 fi
 
 ##########################################
@@ -856,7 +858,7 @@ echo " You will need to edit the php.ini file and add extensions=memcache.so "
 echo " location : /etc/php5/fpm/php.ini and then restart web service "
 
 echo " ########################################################################################## "
-echo " #    The Open Repeater Project / SVXLink / Echolink server Install is now complete      # "
+echo " #    The Open Repeater Project / SVXLink / Echolink server Install is now complete       # "
 echo " #                          and your system is ready for use..                            # "
 echo " #                                                                                        # "
 echo " #                   Please send any feed back to kb3vgw@gmail.com                        # "
