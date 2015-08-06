@@ -288,7 +288,7 @@ fi
 #########################
 # Raspbian repo
 #########################
-if [[ $raspbian_os_ing == "y" ]]; then
+if [[ $raspbian_os_img == "y" ]]; then
 cat >> "/etc/apt/sources.list.d/raspbian.list" << DELIM
 deb http://mirrordirector.raspbian.org/raspbian/ jessie main contrib non-free rpi
 DELIM
