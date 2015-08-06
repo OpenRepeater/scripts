@@ -83,30 +83,29 @@ upload_size="25M"
 ######################################
 #set up odroid repo for odroid boards
 ######################################
-odroid_boards="n"
+odroid_boards="n"	#y/n
 
 ###########################################
 # Use for configuring beaglebone arm boards
 # Disable Default Web Service
 ###########################################
-beaglebone_boards="n"
+beaglebone_boards="n"	#y/n
 
 ###########################################
-# Use for configuring beaglebone arm boards
-# Disable Default Web Service
+# Use for configuring raspberrypi arm boards
 ###########################################
-raspi2_boards="n"
+raspi2_boards="n"	#y/n
 
 ################################################################
 # Install Ajenti Optional Admin Portal (Optional) (Not Required)
 #                (Currently broken on beaglebone installs)
 ################################################################
-install_ajenti="n"
+install_ajenti="n"	#y/n
 
 ####################################################
 # Install vsftpd for devel (Optional) (Not Required)
 ####################################################
-install_vsftpd="n"
+install_vsftpd="n"	#y/n
 
 #####################
 # set vsftp user name
