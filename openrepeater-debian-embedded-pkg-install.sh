@@ -5,7 +5,7 @@
 #
 #   Open Repeater Project
 #
-#    Copyright (C) <2015>  <Richard Neese>
+#    Copyright (C) <2015>  <Richard Neese> kb3vgw@gmail.com
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -93,8 +93,14 @@ beaglebone_boards="n" #y/n
 ###########################################
 raspi2_boards="n" #y/n
 
-raspbian_os_img="n" #y/n
+###########################################
+# if your using the raspbian jessie img 
+# Please set this to y
+raspbian_os_img="n" #y/n 
 
+################################################
+# Enable overclocking of the pi2 for performance
+################################################
 raspi2_overclock="n" #y/n
 
 ################################################################
