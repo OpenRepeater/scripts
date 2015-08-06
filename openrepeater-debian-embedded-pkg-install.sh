@@ -94,6 +94,8 @@ raspi2_boards="n" #y/n
 
 raspbian_os_img="n" #y/n
 
+raspi2_overclock="y" #y/n
+
 ################################################################
 # Install Ajenti Optional Admin Portal (Optional) (Not Required)
 #                (Currently broken on beaglebone installs)
@@ -413,6 +415,18 @@ DELIM
 
 apt-get -y autoremove apache2*
 
+fi
+
+##########################################
+# Overclock the Raspi-2 to 1ghz for better
+# Performance and stablization.
+##########################################
+if [[ $raspi2_overclock == "y" ]]; then
+#over clocking for stability
+arm_freq=1000
+sdram_freq=500
+core_freq=500
+over_voltage=2
 fi
 
 ##########################################
