@@ -217,6 +217,12 @@ echo
 exit
 esac
 
+################################
+#backup default repo source.list
+################################
+echo "Making backup of sources.list prior to editing..."
+cp /etc/apt/sources.list /etc/apt/sources.list.preOpenRepeater
+
 #################################################################################################
 # Setting apt_get to use the httpredirecter to get
 # To have <APT> automatically select a mirror close to you, use the Geo-ip redirector in your
@@ -293,6 +299,7 @@ if [[ $raspbian_os_img == "y" ]]; then
 cat >> "/etc/apt/sources.list.d/raspbian.list" << DELIM
 deb http://mirrordirector.raspbian.org/raspbian/ jessie main contrib non-free rpi
 DELIM
+
 #add in the raspbian key for the repo
 wget http://mirrordirector.raspbian.org/raspbian.public.key | apt-key add -
 apt-get update
