@@ -83,30 +83,29 @@ upload_size="25M"
 ######################################
 #set up odroid repo for odroid boards
 ######################################
-odroid_boards="n"
+odroid_boards="n"	#y/n
 
 ###########################################
 # Use for configuring beaglebone arm boards
 # Disable Default Web Service
 ###########################################
-beaglebone_boards="n"
+beaglebone_boards="n"	#y/n
 
 ###########################################
-# Use for configuring beaglebone arm boards
-# Disable Default Web Service
+# Use for configuring raspberrypi arm boards
 ###########################################
-raspi2_boards="n"
+raspi2_boards="n"	#y/n
 
 ################################################################
 # Install Ajenti Optional Admin Portal (Optional) (Not Required)
 #                (Currently broken on beaglebone installs)
 ################################################################
-install_ajenti="n"
+install_ajenti="n"	#y/n
 
 ####################################################
 # Install vsftpd for devel (Optional) (Not Required)
 ####################################################
-install_vsftpd="n"
+install_vsftpd="n"	#y/n
 
 #####################
 # set vsftp user name
@@ -134,6 +133,16 @@ gui_name="openrepeater"
 #Php ini config file
 #####################
 php_ini="/etc/php5/fpm/php.ini"
+
+######################################################################
+# check to see that the configuration portion of the script was edited
+######################################################################
+if [[ $cs == "Set-This" ]]; then
+  echo
+  echo "Looks like you need to configure the scirpt before running"
+  echo "Please configure the script and try again"
+  exit 0
+fi
 
 ##################################################################
 # check to confirm running as root. # First, we need to be root...
