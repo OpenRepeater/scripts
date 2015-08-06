@@ -96,6 +96,7 @@ beaglebone_boards="n" #y/n
 # Disable Default Web Service
 ###########################################
 raspi2_boards="n" #y/n
+raspbian_os_img="n" #y/n
 
 ################################################################
 # Install Ajenti Optional Admin Portal (Optional) (Not Required)
@@ -278,6 +279,13 @@ fi
 if [[ $raspi2_boards == "y" ]]; then
 cat >> "/etc/apt/sources.list.d/raspi2.list" << DELIM
 deb [trusted=yes] https://repositories.collabora.co.uk/debian/ jessie rpi2
+DELIM
+apt-get update
+fi
+
+if [[ $raspbian_os_ing == "y" ]]; then
+cat >> "/etc/apt/sources.list.d/raspbian.list" << DELIM
+deb http://mirrordirector.raspbian.org/raspbian/ jessie main contrib non-free rpi
 DELIM
 apt-get update
 fi
