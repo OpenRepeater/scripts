@@ -220,7 +220,7 @@ esac
 ################################
 #backup default repo source.list
 ################################
-echo "Making backup of sources.list prior to editing..."
+echo " Making backup of sources.list prior to editing... "
 cp /etc/apt/sources.list /etc/apt/sources.list.preOpenRepeater
 
 #################################################################################################
@@ -244,6 +244,13 @@ deb-src http://httpredir.debian.org/debian/ jessie-backports main contrib non-fr
 
 DELIM
 
+######################
+#Update base os
+######################
+for i in update upgrade ;do apt-get -y "${i}" ; done
+
+apt-get autoclean
+
 ##########################
 # Adding OpenRepeater Repo
 ##########################
@@ -253,12 +260,10 @@ cat > "/etc/apt/sources.list.d/openrepeater.list" <<DELIM
 deb http://repo.openrepeater.com/openrepeater/release/debian/ jessie main
 DELIM
 
-######################
-#Update base os
-######################
-for i in update upgrade ;do apt-get -y "${i}" ; done
-
-apt-get autoclean
+#####################################
+#Update base os with new repo in list
+#####################################
+apt-get update
 
 ###################
 #odroid extra repo
@@ -268,7 +273,12 @@ if [[ $odroid_boards == "y" ]]; then
 	#deb http://deb.odroid.in/c1/ trusty main
 	deb http://deb.odroid.in/ trusty main
 DELIM
+
+#####################################
+#Update base os with new repo in list
+#####################################
 apt-get update
+
 fi
 
 #########################
@@ -279,7 +289,12 @@ cat >> "/etc/apt/sources.list.d/beaglebone.list" << DELIM
 	deb [arch=armhf] http://repos.rcn-ee.net/debian/ jessie main
 	#deb-src [arch=armhf] http://repos.rcn-ee.net/debian/ jessie main
 DELIM
+
+#####################################
+#Update base os with new repo in list
+#####################################
 apt-get update
+
 fi
 
 #########################
@@ -289,6 +304,10 @@ if [[ $raspi2_boards == "y" ]]; then
 cat >> "/etc/apt/sources.list.d/raspi2.list" << DELIM
 deb [trusted=yes] https://repositories.collabora.co.uk/debian/ jessie rpi2
 DELIM
+
+#####################################
+#Update base os with new repo in list
+#####################################
 apt-get update
 fi
 
@@ -299,10 +318,16 @@ if [[ $raspbian_os_img == "y" ]]; then
 cat >> "/etc/apt/sources.list.d/raspbian.list" << DELIM
 deb http://mirrordirector.raspbian.org/raspbian/ jessie main contrib non-free rpi
 DELIM
-
+#####################################
 #add in the raspbian key for the repo
+#####################################
 wget http://mirrordirector.raspbian.org/raspbian.public.key | apt-key add -
+
+#####################################
+#Update base os with new repo in list
+#####################################
 apt-get update
+
 fi
 
 ###################
@@ -419,7 +444,9 @@ if [[ $beaglebone_boards == "y" ]]; then
 
 cat >> /boot/uEnv.txt << DELIM
 
+#####################
 #Disable HDMI sound
+#####################
 optargs=capemgr.disable_partno=BB-BONELT-HDMI
 DELIM
 
