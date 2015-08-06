@@ -1,6 +1,6 @@
 #!/bin/bash
 ############################
-#Date June 20, 2015 20:34 CST
+#Date Aug 6, 2015 08:47 CST
 ############################
 #
 #   Open Repeater Project
@@ -62,23 +62,17 @@ set_wan_static="n" #y/n
 # Make shure they match your current working network.......
 ###############################################################
 #Iinterface ip
-ip="0.0.0.0"
+ip="0.0.0.0" #10.x.x.x/172.x.x.x/192.168.x.x
 
 # Interface Netmask 255.xxx.xxx.xxx 255.255.255.xxx
-nm="0.0.0.0"
+nm="0.0.0.0" #255.x.x.x/255.255.x.x/255.255.255.x
 
 # Interface Gateway
-gw="0.0.0.0"
+gw="0.0.0.0" #ip of your router 
 
 # Interface Name Servers
-ns1="0.0.0.0"
-ns2="0.0.0.0"
-
-########################################################
-# Set mp3/wav file upload/post size limit for php/nginx
-# ( Must Have the M on the end )
-########################################################
-upload_size="25M"
+ns1="0.0.0.0" # you can use the open dns name servers or find the ones your 
+ns2="0.0.0.0" # service provider offers up
 
 ######################################
 #set up odroid repo for odroid boards
@@ -120,6 +114,11 @@ vsftpd_user=""
 FTP_CONFIG_PATH="/etc/vsftpd.conf"
 
 # ----- Stop Edit Here ------- #
+########################################################
+# Set mp3/wav file upload/post size limit for php/nginx
+# ( Must Have the M on the end )
+########################################################
+upload_size="25M"
 
 #######################
 # Nginx default www dir
