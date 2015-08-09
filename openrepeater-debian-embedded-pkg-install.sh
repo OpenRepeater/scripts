@@ -105,7 +105,7 @@ raspi2_overclock="n" #y/n
 
 ################################################################
 # Install Ajenti Optional Admin Portal (Optional) (Not Required)
-#                (Currently broken on beaglebone installs)
+#           (Currently broken on beaglebone installs)
 ################################################################
 install_ajenti="n" #y/n
 
@@ -255,7 +255,8 @@ DELIM
 ######################
 for i in update upgrade ;do apt-get -y "${i}" ; done
 
-apt-get autoclean
+apt-get clean
+rm /var/cache/apt/archive/*
 
 ##########################
 # Adding OpenRepeater Repo
@@ -315,6 +316,7 @@ DELIM
 #Update base os with new repo in list
 #####################################
 apt-get update
+
 fi
 
 #########################
@@ -400,9 +402,10 @@ echo
 echo " Installing install deps and svxlink + remotetrx"
 apt-get install -y --force-yes memcached sqlite3 libopus0 alsa-utils vorbis-tools sox libsox-fmt-mp3 librtlsdr0 \
 		minicom ntp libasound2 libspeex1 libgcrypt20 libpopt0 libgsm1 tcl8.6 alsa-base bzip2 sudo network-manager \
-		gpsd gpsd-clients flite pocketsphinx wvdial usbmount \
+		gpsd gpsd-clients flite pocketsphinx wvdial usbmount htop screen time uuid rsyslog \
 		svxlink-server remotetrx 
-apt-get autoclean
+apt-get clean
+rm /var/cache/apt/archive/*
 
 cd /usr/share/svxlink/sounds
 wget https://github.com/sm0svx/svxlink-sounds-en_US-heather/releases/download/14.08/svxlink-sounds-en_US-heather-16k-13.12.tar.bz2
@@ -517,7 +520,8 @@ DELIM
 ##########################################
 apt-get -y install ssl-cert nginx php5-cli php5-common php-apc php5-gd php-db php5-fpm php5-memcache php5-sqlite
 
-apt-get autoclean
+apt-get clean
+rm /var/cache/apt/archive/*
 
 ##################################################
 # Changing file upload size from 2M to upload_size
@@ -890,6 +894,9 @@ wget http://repo.ajenti.org/debian/key -O- | apt-key add -
 apt-get update
 
 apt-get install -y ajenti task openvpn supervisor python-memcache python-beautifulsoup cron
+
+apt-get clean
+rm /var/cache/apt/archive/*
 
 fi
 
