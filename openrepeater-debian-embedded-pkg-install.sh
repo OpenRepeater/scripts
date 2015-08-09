@@ -474,9 +474,47 @@ over_voltage=2
 DELIM
 fi
 
+#########################################################
+# Configure nptd to use gps for getting and setting time
+#########################################################
+cat > /etc/ntp.conf << DELIM
+# /etc/ntp.conf, configuration for ntpd; see ntp.conf(5) for help
+driftfile       /var/lib/ntp/ntp.drift 
+# Enable this if you want statistics to be logged.
+# statsdir /var/log/ntpstats/
+statistics      loopstats       peerstats       clockstats
+filegen loopstats       file    loopstats       type    day     enable
+filegen peerstats       file    peerstats       type    day     enable
+filegen clockstats      file    clockstats      type    day     enable
+# Access control configuration; see /usr/share/doc/ntp-doc/html/accopt.html for
+# details.  The web page <http://support.ntp.org/bin/view/Support/AccessRestrictions>
+# might also be helpful.
+#
+# Note that "restrict" applies to both servers and clients, so a configuration
+# that might be intended to block requests from certain clients could also end
+# up blocking replies from your own upstream servers.
+# By default, exchange time with everybody, but don't allow configuration.
+restrict        -4      default kod     notrap  nomodify        nopeer  noquery
+restrict        -6      default kod     notrap  nomodify        nopeer  noquery
+restrict        127.0.0.1 # Local users may interrogate the ntp server more closely.
+restrict        ::1
+# Read the rough GPS time from device 127.127.28.0
+# Read the accurate PPS time from device 127.127.28.1
+server 127.127.28.0 minpoll 4 maxpoll 4
+fudge 127.127.28.0 time1 0.535 refid GPS
+server 127.127.28.1 minpoll 4 maxpoll 4 prefer
+fudge 127.127.28.1 refid PPS
+# Use servers from the ntp pool for the first synchronization,
+# or as a backup if the GPS is disconnected
+server	0.pool.ntp.org
+server  1.pool.ntp.org
+server  2.pool.ntp.org
+server  3.pool.ntp.org
+DELIM
+
 ##########################################
 #---Start of nginx / php5 install --------
-###########################################
+##########################################
 apt-get -y install ssl-cert nginx php5-cli php5-common php-apc php5-gd php-db php5-fpm php5-memcache php5-sqlite
 
 apt-get autoclean
