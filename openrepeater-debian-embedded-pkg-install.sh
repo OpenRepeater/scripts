@@ -402,7 +402,7 @@ echo
 echo " Installing install deps and svxlink + remotetrx"
 apt-get install -y --force-yes memcached sqlite3 libopus0 alsa-utils vorbis-tools sox libsox-fmt-mp3 librtlsdr0 \
 		minicom ntp libasound2 libspeex1 libgcrypt20 libpopt0 libgsm1 tcl8.6 alsa-base bzip2 sudo network-manager \
-		gpsd gpsd-clients flite pocketsphinx wvdial usbmount htop screen time uuid rsyslog \
+		gpsd gpsd-clients flite pocketsphinx wvdial usbmount htop screen time uuid rsyslog vim \
 		svxlink-server remotetrx 
 apt-get clean
 rm /var/cache/apt/archive/*
@@ -480,6 +480,8 @@ fi
 #########################################################
 # Configure nptd to use gps for getting and setting time
 #########################################################
+cp /etc/ntp.conf /etc/ntp.conf.orig
+
 cat > /etc/ntp.conf << DELIM
 # /etc/ntp.conf, configuration for ntpd; see ntp.conf(5) for help
 driftfile       /var/lib/ntp/ntp.drift 
