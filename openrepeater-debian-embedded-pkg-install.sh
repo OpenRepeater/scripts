@@ -402,7 +402,7 @@ echo
 echo " Installing install deps and svxlink + remotetrx"
 apt-get install -y --force-yes memcached sqlite3 libopus0 alsa-utils vorbis-tools sox libsox-fmt-mp3 librtlsdr0 \
 		minicom ntp libasound2 libspeex1 libgcrypt20 libpopt0 libgsm1 tcl8.6 alsa-base bzip2 sudo network-manager \
-		gpsd gpsd-clients flite pocketsphinx wvdial usbmount htop screen time uuid rsyslog vim \
+		gpsd gpsd-clients flite wvdial usbmount htop screen time uuid rsyslog vim install-info usbutils tpcd \
 		svxlink-server remotetrx 
 apt-get clean
 rm /var/cache/apt/archive/*
