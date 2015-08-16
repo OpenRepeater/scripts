@@ -1,6 +1,6 @@
 #!/bin/bash
 ############################
-#Date Aug 9, 2015 07:20 CST
+#Date Aug 15, 2015 10;00 CST
 ############################
 #
 #   Open Repeater Project
@@ -28,53 +28,16 @@
 ###################################################################
 
 # ----- Start Edit Here ----- #
-######################################################################
-# Setup up host / domain name or use system default host/domain name.
-######################################################################
-set_hn_dn="y" #y/n
-
 ####################################################
 # Repeater call sign
 # Please change this to match the repeater call sign
 ####################################################
 cs="Set-This"
 
-#############################################################
-# If you use the set host name please change these to fields.
-# Please change this to match you host and domain ........
-#############################################################
-hn="repeater"
-
 ##################################################
 # Change this to your domain name if you have one.
 ##################################################
 dn="mydomain.com"
-
-########################################################################################
-# Configure wan (wide area network) (internet interface) Networking
-########################################################################################
-# IF you machine is at its final install location and needs/requires a static ip
-# Change this setting from n to y to enable network setup of eth0.
-# Other Wise by default it uses dhcp an the ip will be dynamic wich could lead to issues.
-#########################################################################################
-set_wan_static="n" #y/n
-
-###############################################################
-# If you change set_wan_static=y Please chane these to configure eth0:
-# Make shure they match your current working network.......
-###############################################################
-#Iinterface ip
-ip="0.0.0.0" #10.x.x.x/172.x.x.x/192.168.x.x
-
-# Interface Netmask 255.xxx.xxx.xxx 255.255.255.xxx
-nm="0.0.0.0" #255.x.x.x/255.255.x.x/255.255.255.x
-
-# Interface Gateway
-gw="0.0.0.0" #ip of your router 
-
-# Interface Name Servers
-ns1="0.0.0.0" # you can use the open dns name servers or find the ones your 
-ns2="0.0.0.0" # service provider offers up (8.8.8.8/4.2.2.2/4.2.2.3/4.2.2.4)
 
 ######################################
 #set up odroid repo for odroid boards
@@ -112,7 +75,7 @@ install_ajenti="n" #y/n
 ####################################################
 # Install vsftpd for devel (Optional) (Not Required)
 ####################################################
-install_vsftpd="n" #y/n
+install_vsftpd="y" #y/n
 
 #####################
 # set vsftp user name
@@ -277,7 +240,6 @@ apt-get update
 ###################
 if [[ $odroid_boards == "y" ]]; then
 	cat >> "/etc/apt/sources.list.d/odroid.list" << DELIM
-	#deb http://deb.odroid.in/c1/ trusty main
 	deb http://deb.odroid.in/ trusty main
 DELIM
 
@@ -285,7 +247,6 @@ DELIM
 #Update base os with new repo in list
 #####################################
 apt-get update
-
 fi
 
 #########################
@@ -302,8 +263,6 @@ DELIM
 #####################################
 apt-get update
 
-fi
-
 #########################
 #raspi2 repo
 #########################
@@ -311,12 +270,12 @@ if [[ $raspi2_boards == "y" ]]; then
 cat >> "/etc/apt/sources.list.d/raspi2.list" << DELIM
 deb [trusted=yes] https://repositories.collabora.co.uk/debian/ jessie rpi2
 DELIM
+fi
 
 #####################################
 #Update base os with new repo in list
 #####################################
 apt-get update
-
 fi
 
 #########################
@@ -335,7 +294,6 @@ wget http://mirrordirector.raspbian.org/raspbian.public.key | apt-key add -
 #Update base os with new repo in list
 #####################################
 apt-get update
-
 fi
 
 ###################
@@ -370,7 +328,7 @@ cat << DELIM
 
   Pre-Install Information:
 
-    This script uses Sqlite by default .
+    This script uses Sqlite by default. No plans to use Other DB. 
 
 DELIM
 echo
@@ -402,11 +360,13 @@ echo
 echo " Installing install deps and svxlink + remotetrx"
 apt-get install -y --force-yes memcached sqlite3 libopus0 alsa-utils vorbis-tools sox libsox-fmt-mp3 librtlsdr0 \
 		minicom ntp libasound2 libspeex1 libgcrypt20 libpopt0 libgsm1 tcl8.6 alsa-base bzip2 sudo network-manager \
-		gpsd gpsd-clients flite wvdial usbmount htop screen time uuid rsyslog vim install-info usbutils tpcd \
+		gpsd gpsd-clients flite wvdial usbmount htop screen time uuid rsyslog vim install-info usbutils tcpd \
+		python-pysqlite2 \
 		svxlink-server remotetrx 
 apt-get clean
 rm /var/cache/apt/archive/*
 
+#Working on sounds pkgs for future release of svxlink
 cd /usr/share/svxlink/sounds
 wget https://github.com/sm0svx/svxlink-sounds-en_US-heather/releases/download/14.08/svxlink-sounds-en_US-heather-16k-13.12.tar.bz2
 tar xjvf svxlink-sounds-en_US-heather-16k-13.12.tar.bz2
@@ -460,7 +420,6 @@ optargs=capemgr.disable_partno=BB-BONELT-HDMI
 DELIM
 
 apt-get -y autoremove apache2*
-
 fi
 
 ##########################################
@@ -477,9 +436,10 @@ over_voltage=2
 DELIM
 fi
 
-#########################################################
-# Configure nptd to use gps for getting and setting time
-#########################################################
+########################################
+# Configure nptd to use gps/npt servers
+# for getting and setting time
+########################################
 cp /etc/ntp.conf /etc/ntp.conf.orig
 
 cat > /etc/ntp.conf << DELIM
@@ -894,55 +854,30 @@ wget http://repo.ajenti.org/debian/key -O- | apt-key add -
 # install ajenti
 #################
 apt-get update
-
 apt-get install -y ajenti task openvpn supervisor python-memcache python-beautifulsoup cron
-
 apt-get clean
 rm /var/cache/apt/archive/*
-
 fi
 
 #############################
 #Setting Host/Domain name
 #############################
-if [[ $set_hn_dn == "y" ]]; then
-cat << EOF > /etc/hostname
-$cs-$hn
-EOF
-fi
-
-#########################################
-# Setup Primary Network Interface (WLAN)
-#########################################
-if [[ $set_wan_static == "y" ]]; then
-cat << EOF > /etc/network/interfaces
-# The loopback network interface
-auto lo
-iface lo inet loopback
-
-# The primary network interface
-allow-hotplug eth0
-iface eth0 inet static
-	address $ip
-	netmask $nm
-	gateway $gw
-	dns-nameservers $ns1 $ns2
-EOF
+cat >> /etc/hostname << DELIM
+$cs-repeater
+DELIM
 
 #################
 #Setup /etc/hosts
 #################
-cat << EOF > /etc/hosts
+cat > /etc/hosts << DELIM
 127.0.0.1       localhost
+127.0.0.1       $sc-repeater
 ::1             localhost ip6-localhost ip6-loopback
 fe00::0         ip6-localnet
 ff00::0         ip6-mcastprefix
 ff02::1         ip6-allnodes
 ff02::2         ip6-allrouters
-$ip     $hn.$dn
-$ip     $hn.$dn $dn
-EOF
-fi
+DELIM
 
 echo " You will need to edit the php.ini file and add extensions=memcache.so " 
 echo " location : /etc/php5/fpm/php.ini and then restart web service "
