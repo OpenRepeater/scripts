@@ -60,7 +60,7 @@ raspi2_boards="n" #y/n
 ###########################################
 # if your using the raspbian jessie img 
 # Please set this to y
-raspbian_os_img="y" #y/n 
+raspbian_os_img="n" #y/n 
 
 ################################################
 # Enable overclocking of the pi2 for performance
