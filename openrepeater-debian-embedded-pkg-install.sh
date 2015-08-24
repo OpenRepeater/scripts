@@ -1,4 +1,5 @@
 #!/bin/bash
+(
 ############################
 #Date Aug 15, 2015 10;00 CST
 ############################
@@ -59,7 +60,7 @@ raspi2_boards="n" #y/n
 ###########################################
 # if your using the raspbian jessie img 
 # Please set this to y
-raspbian_os_img="n" #y/n 
+raspbian_os_img="y" #y/n 
 
 ################################################
 # Enable overclocking of the pi2 for performance
@@ -160,7 +161,7 @@ fi
 ########
 # ARMEL
 ########
-case $(uname -m) in armv[4-6]l)
+case $(uname -m) in armv[4-5]l)
 echo
 echo " ArmEL is currenty UnSupported "
 echo
@@ -170,7 +171,7 @@ esac
 ########
 # ARMHF
 ########
-case $(uname -m) in armv[7-9]l)
+case $(uname -m) in armv[6-9]l)
 echo
 echo " ArmHF arm v7 v8 v9 boards supported "
 echo
@@ -888,3 +889,4 @@ echo " #                          and your system is ready for use..            
 echo " #                                                                                        # "
 echo " #                   Please send any feed back to kb3vgw@gmail.com                        # "
 echo " ########################################################################################## "
+) | tee logfile.txt
