@@ -1,6 +1,7 @@
 #!/bin/bash
+(
 ############################
-#Date Aug 15, 2015 10;00 CST
+# Date Aug 25, 2015 08;00 CST
 ############################
 #
 #   Open Repeater Project
@@ -34,11 +35,6 @@
 ####################################################
 cs="Set-This"
 
-##################################################
-# Change this to your domain name if you have one.
-##################################################
-dn="mydomain.com"
-
 ######################################
 #set up odroid repo for odroid boards
 ######################################
@@ -52,19 +48,29 @@ beaglebone_boards="n" #y/n
 
 ###########################################
 # Use for configuring Raspi-2 arm boards
-# 
 ###########################################
-raspi2_boards="n" #y/n
+raspi2_os_img="n" #y/n
 
 ###########################################
 # if your using the raspbian jessie img 
 # Please set this to y
+# Must Be Raspbian updated to Jessie avaible 
+# on our repo server
+###########################################
 raspbian_os_img="n" #y/n 
 
 ################################################
 # Enable overclocking of the pi2 for performance
 ################################################
+# Do Not use if using Raspbian 
+###############################################
 raspi2_overclock="n" #y/n
+
+###############################################
+# Configure ntpd to use gpsd to get time.
+# Requires a gps hat/usb dongle
+###############################################
+use_gps_ntp="y" # y/n
 
 ################################################################
 # Install Ajenti Optional Admin Portal (Optional) (Not Required)
@@ -160,7 +166,7 @@ fi
 ########
 # ARMEL
 ########
-case $(uname -m) in armv[4-6]l)
+case $(uname -m) in armv[4-5]l)
 echo
 echo " ArmEL is currenty UnSupported "
 echo
@@ -170,7 +176,7 @@ esac
 ########
 # ARMHF
 ########
-case $(uname -m) in armv[7-9]l)
+case $(uname -m) in armv[6-9]l)
 echo
 echo " ArmHF arm v7 v8 v9 boards supported "
 echo
@@ -181,7 +187,7 @@ esac
 #############
 case $(uname -m) in x86_64|i[4-6]86)
 echo
-echo " Intel / Amd boards currently UnSupported"
+echo " Intel / Amd boards currently Support is comming soon "
 echo
 exit
 esac
@@ -266,7 +272,7 @@ apt-get update
 #########################
 #raspi2 repo
 #########################
-if [[ $raspi2_boards == "y" ]]; then
+if [[ $raspi2_os_img == "y" ]]; then
 cat >> "/etc/apt/sources.list.d/raspi2.list" << DELIM
 deb [trusted=yes] https://repositories.collabora.co.uk/debian/ jessie rpi2
 DELIM
@@ -316,22 +322,14 @@ cat << DELIM
      If It Fails For Any Reason Please Report To kb3vgw@gmail.com
 
    Please Include Any Screen Output You Can To Show Where It Fails
-
-DELIM
-
-###########################
-# Pre-Install Information
-###########################
-echo
-cat << DELIM
+   
   Note:
 
   Pre-Install Information:
 
-    This script uses Sqlite by default. No plans to use Other DB. 
+  This script uses Sqlite by default. No plans to use Other DB. 
 
 DELIM
-echo
 
 ###############################################################################################
 #Testing for internet connection. Pulled from and modified
@@ -359,11 +357,14 @@ echo
 #####################
 echo " Installing install deps and svxlink + remotetrx"
 apt-get install -y --force-yes memcached sqlite3 libopus0 alsa-utils vorbis-tools sox libsox-fmt-mp3 librtlsdr0 \
-		minicom ntp libasound2 libspeex1 libgcrypt20 libpopt0 libgsm1 tcl8.6 alsa-base bzip2 sudo network-manager \
-		gpsd gpsd-clients flite wvdial usbmount htop screen time uuid rsyslog vim install-info usbutils tcpd \
-		python-pysqlite2 \
+		minicom ntp libasound2 libspeex1 libgcrypt20 libpopt0 libgsm1 tcl8.6 alsa-base bzip2 sudo gpsd gpsd-clients \
+		flite wvdial usbmount htop screen time uuid rsyslog vim install-info usbutils whiptail dialog \
 		svxlink-server remotetrx 
 apt-get clean
+
+if [[ $raspbian_os_img == "n" ]]; then
+apt-get install -y network-manager tcpd python-pysqlite2 
+fi
 rm /var/cache/apt/archive/*
 
 #Working on sounds pkgs for future release of svxlink
@@ -436,9 +437,10 @@ over_voltage=2
 DELIM
 fi
 
+if [[ $use_gps_ntp == "y" ]]; then
 ########################################
-# Configure nptd to use gps/npt servers
-# for getting and setting time
+# Configure nptd to use gpsd/ntpd servers
+# for getting and setting time correctly
 ########################################
 cp /etc/ntp.conf /etc/ntp.conf.orig
 
@@ -476,6 +478,7 @@ server  1.pool.ntp.org
 server  2.pool.ntp.org
 server  3.pool.ntp.org
 DELIM
+fi
 
 ##########################################
 #---Start of nginx / php5 install --------
@@ -724,7 +727,9 @@ ENV="ASYNC_AUDIO_NOTRIGGER=1"
 
 DELIM
 
-#making links...
+#############################################
+#making links to make svxlink work correctly
+#############################################
 ln -s /usr/share/openrepeater/sounds/courtesy_tones /var/www/openrepeater/courtesy_tones
 ln -s /etc/openrepeater/svxlink/local-events.d/ /usr/share/svxlink/events.d/local
 ln -s /var/log/svxlink /var/www/openrepeater/log
@@ -742,9 +747,9 @@ chown -R www-data:www-data /var/lib/openrepeater /etc/openrepeater
 #########################
 service svxlink restart
 
-#################
-# Configure Sudo 
-#################
+#####################################################################
+# Configure Sudo / scripts for the gui to start/stop/restart svxlink
+#####################################################################
 cat > "/usr/local/bin/svxlink_restart" << DELIM
 #!/bin/bash
 SERVICE=svxlink
@@ -836,29 +841,32 @@ fi
 #############################
 #Install Ajenti Admin Portal
 #############################
-if [[ $install_ajenti == "y" ]]; then
-##########################
-#ADD Ajenti repo & ajenti
-##########################
-echo "Installing Ajenti Admin Portal"
-cat > "/etc/apt/sources.list.d/ajenti.list" <<DELIM
-deb http://repo.ajenti.org/debian main main debian
+if [[ $raspbian_os_img == "y" ]]; then
+	return
+else
+	if [[ $install_ajenti == "y" ]]; then
+	##########################
+	#ADD Ajenti repo & ajenti
+	##########################
+	echo "Installing Ajenti Admin Portal"
+	cat > "/etc/apt/sources.list.d/ajenti.list" <<DELIM
+	deb http://repo.ajenti.org/debian main main debian
 DELIM
 
 ######################
 # add ajenti repo key
 ######################
-wget http://repo.ajenti.org/debian/key -O- | apt-key add -
+	wget http://repo.ajenti.org/debian/key -O- | apt-key add -
 
 #################
 # install ajenti
 #################
-apt-get update
-apt-get install -y ajenti task openvpn supervisor python-memcache python-beautifulsoup cron
-apt-get clean
-rm /var/cache/apt/archive/*
+	apt-get update
+	apt-get install -y ajenti task openvpn supervisor python-memcache python-beautifulsoup cron
+	apt-get clean
+	rm /var/cache/apt/archive/*
+	fi
 fi
-
 #############################
 #Setting Host/Domain name
 #############################
@@ -871,13 +879,26 @@ DELIM
 #################
 cat > /etc/hosts << DELIM
 127.0.0.1       localhost
-127.0.0.1       $sc-repeater
 ::1             localhost ip6-localhost ip6-loopback
 fe00::0         ip6-localnet
 ff00::0         ip6-mcastprefix
 ff02::1         ip6-allnodes
 ff02::2         ip6-allrouters
+
+127.0.0.1       $cs-repeater
 DELIM
+
+#Install new system shell menu
+#cat > /usr/local/bin/svxlink-shell-menu.sh << DELIM
+
+#DELIM
+
+#enable shell menu
+#cat > /etc/profile << DELIM
+#if [ -f /usr/local/bin/svxlink-shell-menu.sh ]; then
+#        . /usr/local/bin/svxlink-shell-menu.sh
+#fi
+#DELIM
 
 echo " You will need to edit the php.ini file and add extensions=memcache.so " 
 echo " location : /etc/php5/fpm/php.ini and then restart web service "
@@ -888,3 +909,4 @@ echo " #                          and your system is ready for use..            
 echo " #                                                                                        # "
 echo " #                   Please send any feed back to kb3vgw@gmail.com                        # "
 echo " ########################################################################################## "
+) | tee install.log
