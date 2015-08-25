@@ -357,8 +357,8 @@ echo
 #####################
 echo " Installing install deps and svxlink + remotetrx"
 apt-get install -y --force-yes memcached sqlite3 libopus0 alsa-utils vorbis-tools sox libsox-fmt-mp3 librtlsdr0 \
-		minicom ntp libasound2 libspeex1 libgcrypt20 libpopt0 libgsm1 tcl8.6 alsa-base bzip2 sudo gpsd gpsd-clients \
-		flite wvdial usbmount htop screen time uuid rsyslog vim install-info usbutils whiptail dialog \
+		ntp libasound2 libspeex1 libgcrypt20 libpopt0 libgsm1 tcl8.6 alsa-base bzip2 sudo gpsd gpsd-clients \
+		flite wvdial htop screen time uuid rsyslog vim install-info usbutils whiptail dialog \
 		svxlink-server remotetrx 
 apt-get clean
 
@@ -484,9 +484,7 @@ fi
 #---Start of nginx / php5 install --------
 ##########################################
 apt-get -y install ssl-cert nginx php5-cli php5-common php-apc php5-gd php-db php5-fpm php5-memcache php5-sqlite
-
 apt-get clean
-rm /var/cache/apt/archive/*
 
 ##################################################
 # Changing file upload size from 2M to upload_size
@@ -686,14 +684,6 @@ CFGFILE=/etc/openrepeater/svxlink/svxlink.conf
 
 # Environment variables to set up. Separate variables with a space.
 ENV="ASYNC_AUDIO_NOTRIGGER=1"
-
-# GPIO_PTT_PIN=<num>
-#     <num> defines the GPIO pin used for PTT.
-# GPIO_SQL_PIN=<num>
-#     <num> defines the GPIO pin used for Squelch.
-
-#GPIO_PTT_PIN=
-#GPIO_SQL_PIN=
 
 #uesd for openrepeater to get gpio pins
 if [ -r /etc/openrepeater/svxlink/svxlink_gpio.conf ]; then
