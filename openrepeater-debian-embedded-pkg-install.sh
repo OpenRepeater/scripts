@@ -33,6 +33,103 @@
 # Repeater call sign
 # Please change this to match the repeater call sign
 ####################################################
+# cs="Set-This"
+
+##################################################
+# Change this to your domain name if you have one.
+##################################################
+# dn="mydomain.com"
+
+######################################
+#set up odroid repo for odroid boards
+######################################
+# odroid_boards="n" #y/n
+
+###########################################
+# Use for configuring beaglebone arm boards
+# Disable Default Web Service
+###########################################
+# beaglebone_boards="n" #y/n
+
+###########################################
+# Use for configuring Raspi-2 arm boards
+# 
+###########################################
+# raspi2_boards="n" #y/n
+
+###########################################
+# if your using the raspbian jessie img 
+# Please set this to y
+# raspbian_os_img="n" #y/n 
+
+################################################
+# Enable overclocking of the pi2 for performance
+################################################
+# raspi2_overclock="n" #y/n
+
+################################################################
+# Install Ajenti Optional Admin Portal (Optional) (Not Required)
+#           (Currently broken on beaglebone installs)
+################################################################
+# install_ajenti="n" #y/n
+
+####################################################
+# Install vsftpd for devel (Optional) (Not Required)
+####################################################
+# install_vsftpd="y" #y/n
+
+#####################
+# set vsftp user name
+#####################
+# vsftpd_user=""
+
+########################
+# set vsftp config path
+########################
+# FTP_CONFIG_PATH="/etc/vsftpd.conf"
+
+# ----- Stop Edit Here ------- #
+# ----- royord update ------ #
+#################################################
+# Config file creation and checking.
+#################################################
+file=config.txt         # Config File Name
+
+# If the config file doesn exist then create it
+loadConfigContent=false
+if [ ! -e $file ]
+        then
+        echo "Config file $file doesn't exist, file will be created for your editing prior to your next run of this script."
+        touch "$file"
+        loadConfigContent=true
+fi
+
+# If the config file is not readable then its not going to do us any good
+if [ ! -r $file ]
+        then
+        echo "$file exists however it is not readable"
+        exit 1
+fi
+## If the file exists but doesnt contain variables needed by script, then we really need to
+## create those variables in the file, maybe move the file to a backup location then create
+## the file with the variables needed so that we can assure that the configuration is correct
+source $file
+if ([ ! $cs ] || [ $cs='Set-This' ]) || ([ $odroid_boards='n' ] && [ $beaglebone_boards='n' ] && [ $raspi2_boards='n' ])
+        then
+        echo "Please make sure you have looked at the options in the configure file."
+fi
+##################################################
+# If there was no config file then we need to load the config
+# file with contents
+##################################################
+if ($loadConfigContent  && [ -e $file ]  &&  [ -w $file ])
+        then
+                echo "Loading base $file"
+                cat <<EOF > $file
+####################################################
+# Repeater call sign
+# Please change this to match the repeater call sign
+####################################################
 cs="Set-This"
 
 ##################################################
@@ -41,31 +138,14 @@ cs="Set-This"
 dn="mydomain.com"
 
 ######################################
-#set up odroid repo for odroid boards
+# The following section allows you to configure your board and some options
 ######################################
-odroid_boards="n" #y/n
-
-###########################################
-# Use for configuring beaglebone arm boards
-# Disable Default Web Service
-###########################################
-beaglebone_boards="n" #y/n
-
-###########################################
-# Use for configuring Raspi-2 arm boards
-# 
-###########################################
-raspi2_boards="n" #y/n
-
-###########################################
-# if your using the raspbian jessie img 
-# Please set this to y
-raspbian_os_img="n" #y/n 
-
-################################################
-# Enable overclocking of the pi2 for performance
-################################################
-raspi2_overclock="n" #y/n
+odroid_boards="n"
+beaglebone_boards="n"
+raspi2_boards="n"
+raspi2_overclock="n"
+# The following must be raspbian OS updated to jessie
+raspbian_os_img="n"
 
 ################################################################
 # Install Ajenti Optional Admin Portal (Optional) (Not Required)
@@ -87,8 +167,10 @@ vsftpd_user=""
 # set vsftp config path
 ########################
 FTP_CONFIG_PATH="/etc/vsftpd.conf"
-
-# ----- Stop Edit Here ------- #
+EOF
+else echo "Base $file exists"
+fi
+# ----- end royord update ------ #
 ########################################################
 # Set mp3/wav file upload/post size limit for php/nginx
 # ( Must Have the M on the end )
