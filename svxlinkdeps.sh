@@ -1,0 +1,1 @@
+sudo apt-get install vim screen iselect screenie byobu ctags vim-doc vim-scripts cmake libsigc++ alsa-tools opus-tools speex alsa-utils alsa-base libasound2-dev qt4-qmake qt4-dev-tools libpopt-dev libgcrypt20-dev rtl-sdr tcl-dev libgsm-tools libgsm1 libgsm1-dev libnewt0.52 python-newt tmux vim-addon-manager
