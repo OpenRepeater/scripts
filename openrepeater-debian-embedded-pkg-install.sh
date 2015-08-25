@@ -1,4 +1,5 @@
 #!/bin/bash
+(
 ############################
 #Date Aug 15, 2015 10;00 CST
 ############################
@@ -27,7 +28,45 @@
 # (set it, forget it, run it)
 ###################################################################
 
-# ----- Start Edit Here ----- #
+#################################################
+# Config file creation and checking.
+#################################################
+file=config.txt         # Config File Name
+
+# If the config file doesn exist then create it
+loadConfigContent=false
+if [ ! -e $file ]
+        then
+        echo "Config file $file doesn't exist, file will be created for your editing prior to your next run of this script."
+        touch "$file"
+        loadConfigContent=true
+fi
+# --------------------------
+# If the config file is not readable then its not going to do us any good
+# --------------------------
+if [ ! -r $file ]
+        then
+        echo "$file exists however it is not readable"
+        exit 1
+fi
+# --------------------------
+## If the file exists but doesnt contain variables needed by script, then we really need to
+## create those variables in the file, maybe move the file to a backup location then create
+## the file with the variables needed so that we can assure that the configuration is correct
+# --------------------------
+source $file
+if ([ ! $cs ] || [ $cs='Set-This' ]) || ([ $odroid_boards='n' ] && [ $beaglebone_boards='n' ] && [ $raspi2_boards='n' ])
+        then
+        echo "Please make sure you have looked at the options in the configure file."
+fi
+##################################################
+# If there was no config file then we need to load the config
+# file with contents
+##################################################
+if ($loadConfigContent  && [ -e $file ]  &&  [ -w $file ])
+        then
+                echo "Loading base $file"
+                cat <<EOF > $file
 ####################################################
 # Repeater call sign
 # Please change this to match the repeater call sign
@@ -40,31 +79,14 @@ cs="Set-This"
 dn="mydomain.com"
 
 ######################################
-#set up odroid repo for odroid boards
+# The following section allows you to configure your board and some options
 ######################################
-odroid_boards="n" #y/n
-
-###########################################
-# Use for configuring beaglebone arm boards
-# Disable Default Web Service
-###########################################
-beaglebone_boards="n" #y/n
-
-###########################################
-# Use for configuring Raspi-2 arm boards
-# 
-###########################################
-raspi2_boards="n" #y/n
-
-###########################################
-# if your using the raspbian jessie img 
-# Please set this to y
-raspbian_os_img="n" #y/n 
-
-################################################
-# Enable overclocking of the pi2 for performance
-################################################
-raspi2_overclock="n" #y/n
+odroid_boards="n"
+beaglebone_boards="n"
+raspi2_boards="n"
+raspi2_overclock="n"
+# The following must be raspbian OS updated to jessie
+raspbian_os_img="n"
 
 ################################################################
 # Install Ajenti Optional Admin Portal (Optional) (Not Required)
@@ -86,8 +108,9 @@ vsftpd_user=""
 # set vsftp config path
 ########################
 FTP_CONFIG_PATH="/etc/vsftpd.conf"
-
-# ----- Stop Edit Here ------- #
+EOF
+else echo "Base $file exists"
+fi
 ########################################################
 # Set mp3/wav file upload/post size limit for php/nginx
 # ( Must Have the M on the end )
@@ -160,7 +183,7 @@ fi
 ########
 # ARMEL
 ########
-case $(uname -m) in armv[4-6]l)
+case $(uname -m) in armv[4-5]l)
 echo
 echo " ArmEL is currenty UnSupported "
 echo
@@ -170,7 +193,7 @@ esac
 ########
 # ARMHF
 ########
-case $(uname -m) in armv[7-9]l)
+case $(uname -m) in armv[6-9]l)
 echo
 echo " ArmHF arm v7 v8 v9 boards supported "
 echo
@@ -888,3 +911,4 @@ echo " #                          and your system is ready for use..            
 echo " #                                                                                        # "
 echo " #                   Please send any feed back to kb3vgw@gmail.com                        # "
 echo " ########################################################################################## "
+) | tee logfile.txt
