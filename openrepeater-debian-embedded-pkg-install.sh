@@ -909,4 +909,4 @@ echo " #                          and your system is ready for use..            
 echo " #                                                                                        # "
 echo " #                   Please send any feed back to kb3vgw@gmail.com                        # "
 echo " ########################################################################################## "
-) | tee install.log
+) | tee /root/install.log
