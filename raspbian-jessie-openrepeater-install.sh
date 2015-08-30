@@ -1,6 +1,6 @@
 #!/bin/bash
-(
-###################################################################
+####################################################################
+#
 #   Open Repeater Project
 #
 #    Copyright (C) <2015>  <Richard Neese> kb3vgw@gmail.com
@@ -21,7 +21,7 @@
 #    If not, see <http://www.gnu.org/licenses/gpl-3.0.en.html>
 #
 ###################################################################
-# Auto Install Configuration options 
+# Auto Install Configuration options
 # (set it, forget it, run it)
 ###################################################################
 
@@ -30,65 +30,7 @@
 # Repeater call sign
 # Please change this to match the repeater call sign
 ####################################################
-cs="Set-This"
-
-######################################
-#set up odroid repo for odroid boards
-######################################
-odroid_boards="n" #y/n
-
-###########################################
-# Use for configuring beaglebone arm boards
-# Disable Default Web Service
-###########################################
-beaglebone_boards="n" #y/n
-
-###########################################
-# Use for configuring Raspi-2 arm boards
-###########################################
-raspi2_os_img="n" #y/n
-
-###########################################
-# if your using the raspbian jessie img 
-# Please set this to y
-# Must Be Raspbian updated to Jessie avaible 
-# on our repo server
-###########################################
-raspbian_os_img="n" #y/n 
-
-################################################
-# Enable overclocking of the pi2 for performance
-################################################
-# Do Not use if using Raspbian 
-###############################################
-raspi2_overclock="n" #y/n
-
-###############################################
-# Configure ntpd to use gpsd to get time.
-# Requires a gps hat/usb dongle
-###############################################
-use_gps_ntp="y" # y/n
-
-################################################################
-# Install Ajenti Optional Admin Portal (Optional) (Not Required)
-#           (Currently broken on beaglebone installs)
-################################################################
-install_ajenti="n" #y/n
-
-####################################################
-# Install vsftpd for devel (Optional) (Not Required)
-####################################################
-install_vsftpd="y" #y/n
-
-#####################
-# set vsftp user name
-#####################
-vsftpd_user=""
-
-########################
-# set vsftp config path
-########################
-FTP_CONFIG_PATH="/etc/vsftpd.conf"
+cs="my"
 
 # ----- Stop Edit Here ------- #
 ########################################################
@@ -111,7 +53,6 @@ gui_name="openrepeater"
 #Php ini config file
 #####################
 php_ini="/etc/php5/fpm/php.ini"
-
 ######################################################################
 # check to see that the configuration portion of the script was edited
 ######################################################################
@@ -184,120 +125,15 @@ esac
 #############
 case $(uname -m) in x86_64|i[4-6]86)
 echo
-echo " Intel / Amd boards currently Support is comming soon "
+echo " Intel / Amd boards currently UnSupported"
 echo
 exit
 esac
 
-################################
-#backup default repo source.list
-################################
-echo " Making backup of sources.list prior to editing... "
-cp /etc/apt/sources.list /etc/apt/sources.list.preOpenRepeater
-
-#################################################################################################
-# Setting apt_get to use the httpredirecter to get
-# To have <APT> automatically select a mirror close to you, use the Geo-ip redirector in your
-# sources.list "deb http://httpredir.debian.org/debian/ jessie main".
-# See http://httpredir.debian.org/ for more information.  The redirector uses HTTP 302 redirects
-# not dnS to serve content so is safe to use with Google dnS.
-# See also <which httpredir.debian.org>.  This service is identical to http.debian.net.
-#################################################################################################
-echo "installing jessie release repo"
-cat > "/etc/apt/sources.list" << DELIM
-deb http://httpredir.debian.org/debian/ jessie main contrib non-free
-deb-src http://httpredir.debian.org/debian/ jessie main contrib non-free
-
-deb http://httpredir.debian.org/debian/ jessie-updates main contrib non-free
-deb-src http://httpredir.debian.org/debian/ jessie-updates main contrib non-free
-
-deb http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
-deb-src http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
-
-DELIM
-
-######################
-#Update base os
-######################
-for i in update upgrade ;do apt-get -y "${i}" ; done
-
-apt-get clean
-rm /var/cache/apt/archive/*
-
-##########################
-# Adding OpenRepeater Repo
-##########################
-echo " Installing OpenRepeater repo "
-echo " svxlink & openrepeater pkgs "
-cat > "/etc/apt/sources.list.d/openrepeater.list" <<DELIM
-deb http://repo.openrepeater.com/openrepeater/release/debian/ jessie main
-DELIM
-
 #####################################
 #Update base os with new repo in list
 #####################################
 apt-get update
-
-###################
-#odroid extra repo
-###################
-if [[ $odroid_boards == "y" ]]; then
-	cat >> "/etc/apt/sources.list.d/odroid.list" << DELIM
-	deb http://deb.odroid.in/ trusty main
-DELIM
-
-#####################################
-#Update base os with new repo in list
-#####################################
-apt-get update
-fi
-
-#########################
-#beagle bone  extra repo
-#########################
-if [[ $beaglebone_boards == "y" ]]; then
-cat >> "/etc/apt/sources.list.d/beaglebone.list" << DELIM
-	deb [arch=armhf] http://repos.rcn-ee.net/debian/ jessie main
-	#deb-src [arch=armhf] http://repos.rcn-ee.net/debian/ jessie main
-DELIM
-
-#####################################
-#Update base os with new repo in list
-#####################################
-apt-get update
-
-#########################
-#raspi2 repo
-#########################
-if [[ $raspi2_os_img == "y" ]]; then
-cat >> "/etc/apt/sources.list.d/raspi2.list" << DELIM
-deb [trusted=yes] https://repositories.collabora.co.uk/debian/ jessie rpi2
-DELIM
-fi
-
-#####################################
-#Update base os with new repo in list
-#####################################
-apt-get update
-fi
-
-#########################
-# Raspbian repo
-#########################
-if [[ $raspbian_os_img == "y" ]]; then
-cat >> "/etc/apt/sources.list.d/raspbian.list" << DELIM
-deb http://mirrordirector.raspbian.org/raspbian/ jessie main contrib non-free rpi
-DELIM
-#####################################
-#add in the raspbian key for the repo
-#####################################
-wget http://mirrordirector.raspbian.org/raspbian.public.key | apt-key add -
-
-#####################################
-#Update base os with new repo in list
-#####################################
-apt-get update
-fi
 
 ###################
 # Notes / Warnings
@@ -319,12 +155,6 @@ cat << DELIM
      If It Fails For Any Reason Please Report To kb3vgw@gmail.com
 
    Please Include Any Screen Output You Can To Show Where It Fails
-   
-  Note:
-
-  Pre-Install Information:
-
-  This script uses Sqlite by default. No plans to use Other DB. 
 
 DELIM
 
@@ -349,20 +179,33 @@ echo
 printf ' Current ip is : '; ip -f inet addr show dev eth0 | sed -n 's/^ *inet *\([.0-9]*\).*/\1/p'
 echo
 
+##########################
+#Installing Deps
+##########################
+apt-get install -y --force-yes sqlite3 libopus0 alsa-utils vorbis-tools sox libsox-fmt-mp3 librtlsdr0 \
+		ntp libasound2 libspeex1 libgcrypt20 libpopt0 libgsm1 tcl8.6 alsa-base bzip2 flite screen time \
+		uuid rsyslog vim install-info whiptail dialog logrotate cron usbutils
+
+##########################
+# Adding OpenRepeater Repo
+##########################
+echo " Installing OpenRepeater repo "
+echo " svxlink & openrepeater pkgs "
+cat > "/etc/apt/sources.list.d/openrepeater.list" <<DELIM
+deb http://repo.openrepeater.com/openrepeater/release/debian/ jessie main
+DELIM
+
+apt-get update
+
 ######################
-#Install Dependancies
+#Install svxlink
 #####################
 echo " Installing install deps and svxlink + remotetrx"
-apt-get install -y --force-yes memcached sqlite3 libopus0 alsa-utils vorbis-tools sox libsox-fmt-mp3 librtlsdr0 \
-		ntp libasound2 libspeex1 libgcrypt20 libpopt0 libgsm1 tcl8.6 alsa-base bzip2 sudo gpsd gpsd-clients \
-		flite wvdial htop screen time uuid rsyslog vim install-info usbutils whiptail dialog \
-		svxlink-server remotetrx 
+apt-get -y --force-yes install svxlink-server
 apt-get clean
 
-if [[ $raspbian_os_img == "n" ]]; then
-apt-get install -y network-manager tcpd python-pysqlite2 
-fi
-rm /var/cache/apt/archive/*
+#making links...
+ln -s /etc/openrepeater/svxlink/local-events.d/ /usr/share/svxlink/events.d/local
 
 #Working on sounds pkgs for future release of svxlink
 cd /usr/share/svxlink/sounds
@@ -382,106 +225,19 @@ DELIM
 # Set fs to run in a tempfs ramdrive
 ####################################
 cat >> /etc/fstab << DELIM
+tmpfs /tmp  tmpfs nodev,nosuid,mode=1777  0 0
 tmpfs /var/tmp  tmpfs nodev,nosuid,mode=1777  0 0
 DELIM
 
-# ####################################
-# DISABLE BEAGLEBONE 101 WEB SERVICES
-# ####################################
-if [[ $beaglebone_boards == "y" ]]; then
-	echo " Disabling The Beaglebone 101 web services "
-	systemctl disable cloud9.service
-	systemctl disable gateone.service
-	systemctl disable bonescript.service
-	systemctl disable bonescript.socket
-	systemctl disable bonescript-autorun.service
-	systemctl disable avahi-daemon.service
-	systemctl disable gdm.service
-	systemctl disable mpd.service
-
-	echo " Stoping The Beaglebone 101 web services "
-	systemctl stop cloud9.service
-	systemctl stop gateone.service
-	systemctl stop bonescript.service
-	systemctl stop bonescript.socket
-	systemctl stop bonescript-autorun.service
-	systemctl stop avahi-daemon.service
-	systemctl stop gdm.service
-	systemctl stop mpd.service
-
-cat >> /boot/uEnv.txt << DELIM
-
-#####################
-#Disable HDMI sound
-#####################
-optargs=capemgr.disable_partno=BB-BONELT-HDMI
-DELIM
-
-apt-get -y autoremove apache2*
-fi
-
-##########################################
-# Overclock the Raspi-2 to 1ghz for better
-# Performance and stablization.
-##########################################
-if [[ $raspi2_overclock == "y" ]]; then
-cat >> /boot/firmware/config.txt << DELIM
-#over clocking for stability
-arm_freq=1000
-sdram_freq=500
-core_freq=500
-over_voltage=2
-DELIM
-fi
-
-if [[ $use_gps_ntp == "y" ]]; then
-########################################
-# Configure nptd to use gpsd/ntpd servers
-# for getting and setting time correctly
-########################################
-cp /etc/ntp.conf /etc/ntp.conf.orig
-
-cat > /etc/ntp.conf << DELIM
-# /etc/ntp.conf, configuration for ntpd; see ntp.conf(5) for help
-driftfile       /var/lib/ntp/ntp.drift 
-# Enable this if you want statistics to be logged.
-# statsdir /var/log/ntpstats/
-statistics      loopstats       peerstats       clockstats
-filegen loopstats       file    loopstats       type    day     enable
-filegen peerstats       file    peerstats       type    day     enable
-filegen clockstats      file    clockstats      type    day     enable
-# Access control configuration; see /usr/share/doc/ntp-doc/html/accopt.html for
-# details.  The web page <http://support.ntp.org/bin/view/Support/AccessRestrictions>
-# might also be helpful.
 #
-# Note that "restrict" applies to both servers and clients, so a configuration
-# that might be intended to block requests from certain clients could also end
-# up blocking replies from your own upstream servers.
-# By default, exchange time with everybody, but don't allow configuration.
-restrict        -4      default kod     notrap  nomodify        nopeer  noquery
-restrict        -6      default kod     notrap  nomodify        nopeer  noquery
-restrict        127.0.0.1 # Local users may interrogate the ntp server more closely.
-restrict        ::1
-# Read the rough GPS time from device 127.127.28.0
-# Read the accurate PPS time from device 127.127.28.1
-server 127.127.28.0 minpoll 4 maxpoll 4
-fudge 127.127.28.0 time1 0.535 refid GPS
-server 127.127.28.1 minpoll 4 maxpoll 4 prefer
-fudge 127.127.28.1 refid PPS
-# Use servers from the ntp pool for the first synchronization,
-# or as a backup if the GPS is disconnected
-server	0.pool.ntp.org
-server  1.pool.ntp.org
-server  2.pool.ntp.org
-server  3.pool.ntp.org
-DELIM
-fi
-
 ##########################################
 #---Start of nginx / php5 install --------
 ##########################################
-apt-get -y install ssl-cert nginx php5-cli php5-common php-apc php5-gd php-db php5-fpm php5-memcache php5-sqlite
+apt-get -y install ssl-cert openssl-blacklist nginx memcached php5-cli php5-common \
+		php-apc php5-gd php-db php5-fpm php5-memcache php5-sqlite
+
 apt-get clean
+rm /var/cache/apt/archive/*
 
 ##################################################
 # Changing file upload size from 2M to upload_size
@@ -650,7 +406,6 @@ for i in nginx php5-fpm ;do service "${i}" restart > /dev/null 2>&1 ; done
 #################################################
 # Fetch and Install open repeater project web ui
 # ################################################
-mkdir $WWW_PATH/$gui_name
 
 apt-get install -y --force-yes openrepeater
 
@@ -714,9 +469,7 @@ ENV="ASYNC_AUDIO_NOTRIGGER=1"
 
 DELIM
 
-#############################################
-#making links to make svxlink work correctly
-#############################################
+#making links...
 ln -s /usr/share/openrepeater/sounds/courtesy_tones /var/www/openrepeater/courtesy_tones
 ln -s /etc/openrepeater/svxlink/local-events.d/ /usr/share/svxlink/events.d/local
 ln -s /var/log/svxlink /var/www/openrepeater/log
@@ -734,9 +487,9 @@ chown -R www-data:www-data /var/lib/openrepeater /etc/openrepeater
 #########################
 service svxlink restart
 
-#####################################################################
-# Configure Sudo / scripts for the gui to start/stop/restart svxlink
-#####################################################################
+#################
+# Configure Sudo 
+#################
 cat > "/usr/local/bin/svxlink_restart" << DELIM
 #!/bin/bash
 SERVICE=svxlink
@@ -799,65 +552,10 @@ cat >> /etc/sudoers << DELIM
 www-data   ALL=(ALL) NOPASSWD: /usr/local/bin/svxlink_restart, NOPASSWD: /usr/local/bin/svxlink_start, NOPASSWD: /usr/local/bin/svxlink_stop, NOPASSWD: /usr/local/bin/repeater_reboot
 DELIM
 
-#########################################################
-#-----Installing Fail2Ban/monit Protection services------
-#########################################################
-for i in fail2ban monit ;do apt-get -y install "${i}" ; done
-
-###############################################
-# INSTALL FTP SERVER / ADD USER FOR DEVELOPMENT
-###############################################
-if [[ $install_vsftpd == "y" ]]; then
-	apt-get install vsftpd
-
-	edit_config $FTP_CONFIG_PATH anonymous_enable NO enabled
-	edit_config $FTP_CONFIG_PATH local_enable YES enabled
-	edit_config $FTP_CONFIG_PATH write_enable YES enabled
-	edit_config $FTP_CONFIG_PATH local_umask 022 enabled
-
-	cat "force_dot_files=YES" >> "$FTP_CONFIG_PATH"
-
-	system vsftpd restart
-
-	# ############################
-	# ADD FTP USER & SET PASSWORD
-	# ############################
-	adduser $vsftpd_user
-fi
-
-#############################
-#Install Ajenti Admin Portal
-#############################
-if [[ $raspbian_os_img == "y" ]]; then
-	return
-else
-	if [[ $install_ajenti == "y" ]]; then
-	##########################
-	#ADD Ajenti repo & ajenti
-	##########################
-	echo "Installing Ajenti Admin Portal"
-	cat > "/etc/apt/sources.list.d/ajenti.list" <<DELIM
-	deb http://repo.ajenti.org/debian main main debian
-DELIM
-
-######################
-# add ajenti repo key
-######################
-	wget http://repo.ajenti.org/debian/key -O- | apt-key add -
-
-#################
-# install ajenti
-#################
-	apt-get update
-	apt-get install -y ajenti task openvpn supervisor python-memcache python-beautifulsoup cron
-	apt-get clean
-	rm /var/cache/apt/archive/*
-	fi
-fi
 #############################
 #Setting Host/Domain name
 #############################
-cat >> /etc/hostname << DELIM
+cat > /etc/hostname << DELIM
 $cs-repeater
 DELIM
 
@@ -865,7 +563,7 @@ DELIM
 #Setup /etc/hosts
 #################
 cat > /etc/hosts << DELIM
-127.0.0.1       localhost
+127.0.0.1       localhost 
 ::1             localhost ip6-localhost ip6-loopback
 fe00::0         ip6-localnet
 ff00::0         ip6-mcastprefix
@@ -873,27 +571,35 @@ ff02::1         ip6-allnodes
 ff02::2         ip6-allrouters
 
 127.0.0.1       $cs-repeater
+
 DELIM
 
-#Install new system shell menu
-#cat > /usr/local/bin/svxlink-shell-menu.sh << DELIM
+##########################
+#ADD Ajenti repo 
+##########################
+echo "Installing Ajenti Admin Portal repo"
+cat > "/etc/apt/sources.list.d/ajenti.list" <<DELIM
+deb http://repo.ajenti.org/debian main main debian
+DELIM
 
-#DELIM
+######################
+# add ajenti repo key
+######################
+wget http://repo.ajenti.org/debian/key -O- | apt-key add -
 
-#enable shell menu
-#cat > /etc/profile << DELIM
-#if [ -f /usr/local/bin/svxlink-shell-menu.sh ]; then
-#        . /usr/local/bin/svxlink-shell-menu.sh
-#fi
-#DELIM
+#################
+# install ajenti
+#################
+#apt-get update
+#apt-get install -y ajenti task python-memcache python-beautifulsoup
+#apt-get clean
 
-echo " You will need to edit the php.ini file and add extensions=memcache.so " 
-echo " location : /etc/php5/fpm/php.ini and then restart web service "
+########################################
+#Install raspi-openrepeater-config menu
+########################################
+#apt-get install openrepeater-menu
 
 echo " ########################################################################################## "
-echo " #    The Open Repeater Project / SVXLink / Echolink server Install is now complete       # "
+echo " #             The SVXLink Repeater / Echolink server Install is now complete             # "
 echo " #                          and your system is ready for use..                            # "
-echo " #                                                                                        # "
-echo " #                   Please send any feed back to kb3vgw@gmail.com                        # "
 echo " ########################################################################################## "
-) | tee /root/install.log
