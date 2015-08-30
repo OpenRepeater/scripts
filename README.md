@@ -17,10 +17,6 @@ Currently we have 3 boards supported the BeagleBone Black, The Raspi B+/Pi-2, an
 
 These scripts will most Likly work on other system but will need modifications.
 
-There will be a generic install set of scripts added .
-
-All these Scripts are arm based. we currently dont have support intel/amd64/mips boards.
-
-This script is not finished and some things still need to be done by hand...so it still needs work. 
+All these Scripts are arm based. We currently dont have support intel/amd64/mips boards.
 
 To use it, simply WGET it to your home directory and run it as root.

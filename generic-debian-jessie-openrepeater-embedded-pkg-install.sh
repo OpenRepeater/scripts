@@ -32,11 +32,6 @@
 ####################################################
 cs="Set-This"
 
-######################################
-#set up odroid repo for odroid boards
-######################################
-odroid_boards="n" #y/n
-
 ###############################################
 # Configure ntpd to use gpsd to get time.
 # Requires a gps hat/usb dongle
