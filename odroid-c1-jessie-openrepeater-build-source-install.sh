@@ -797,8 +797,8 @@ fi
 ##################################
 cat > /root/.profile << DELIM
 
-if [ -f /usr/local/bin/c1-openrepeater-conf ]; then
-        . /usr/local/bin/c1-openrepeater-conf
+if [ -f /usr/local/bin/odroid-openrepeater-conf ]; then
+        . /usr/local/bin/odroid-openrepeater-conf
 fi
 
 DELIM
