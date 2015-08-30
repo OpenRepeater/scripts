@@ -1,10 +1,26 @@
 OpenRepeater Build Scripts
 =======
 
-Misc scripts live here like system build scripts. This is a Work-In-Progress...
+Misc scripts live here like system build scripts and pkg based install scripts.
 
-The idea behind the repeater_build.sh file is that it can be used by developers to build fresh systems on new installs of Raspbian (Raspberry Pi) and Debian on the Beaglebone Black. These are the two SBCs I've been playing with, but it could be used or tweaked to run on other Debian based SBCs. These could then be used to create system images for others to download and get up and running more quickly by just flashing their device with the appropriate image. 
+There are 2 scripts per board. 
 
-This script is not finished and some things still need to be done by hand...so it still needs work. Hopefully others with more Shell experience can make it better.
+Script 1 is a install source. and it builds and installs svxlink/openrepeater. Support (all armhf/armel)
+
+Script 2 installs via debian pkgs for debian jessie os imgs .Support (ARMHF only)
+
+This is a Work-In-Progress... If a script is broken . Please report it but be polite about it.
+Do not just send a msg saying its broken and comment on how can this happen . This is a opensource 
+project and the developers are not getting paid for the time they put in on this project.
+
+Currently we have 3 boards supported the BeagleBone Black, The Raspi B+/Pi-2, and the Odroid C1/C1+.
+
+These scripts will most Likly work on other system but will need modifications.
+
+There will be a generic install set of scripts added .
+
+All these Scripts are arm based. we currently dont have support intel/amd64/mips boards.
+
+This script is not finished and some things still need to be done by hand...so it still needs work. 
 
 To use it, simply WGET it to your home directory and run it as root.

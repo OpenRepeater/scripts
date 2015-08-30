@@ -745,6 +745,7 @@ DELIM
 ##########################
 #ADD Ajenti repo 
 ##########################
+if [[ $install_ajenti == "y" ]]; then
 echo "Installing Ajenti Admin Portal repo"
 cat > "/etc/apt/sources.list.d/ajenti.list" <<DELIM
 deb http://repo.ajenti.org/debian main main debian
@@ -758,7 +759,6 @@ wget http://repo.ajenti.org/debian/key -O- | apt-key add -
 #################
 # install ajenti
 #################
-if [[ $install_ajenti == "y" ]]; then
 apt-get update
 apt-get install -y ajenti task python-memcache python-beautifulsoup
 apt-get clean

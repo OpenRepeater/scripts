@@ -32,30 +32,6 @@
 ####################################################
 cs="Set-This"
 
-######################################
-#set up odroid repo for odroid boards
-######################################
-odroid_boards="n" #y/n
-
-###########################################
-# Use for configuring beaglebone arm boards
-# Disable Default Web Service
-###########################################
-beaglebone_boards="n" #y/n
-
-###########################################
-# Use for configuring Raspi-2 arm boards
-###########################################
-raspi2_os_img="n" #y/n
-
-###########################################
-# if your using the raspbian jessie img 
-# Please set this to y
-# Must Be Raspbian updated to Jessie avaible 
-# on our repo server
-###########################################
-raspbian_os_img="n" #y/n 
-
 ################################################
 # Enable overclocking of the pi2 for performance
 ################################################
@@ -216,49 +192,11 @@ deb-src http://httpredir.debian.org/debian/ jessie-backports main contrib non-fr
 
 DELIM
 
-######################
-#Update base os
-######################
-for i in update upgrade ;do apt-get -y "${i}" ; done
-
-apt-get clean
-rm /var/cache/apt/archive/*
-
 ##########################
 # Adding OpenRepeater Repo
 ##########################
-echo " Installing OpenRepeater repo "
-echo " svxlink & openrepeater pkgs "
 cat > "/etc/apt/sources.list.d/openrepeater.list" <<DELIM
 deb http://repo.openrepeater.com/openrepeater/release/debian/ jessie main
-DELIM
-
-#####################################
-#Update base os with new repo in list
-#####################################
-apt-get update
-
-###################
-#odroid extra repo
-###################
-if [[ $odroid_boards == "y" ]]; then
-	cat >> "/etc/apt/sources.list.d/odroid.list" << DELIM
-	deb http://deb.odroid.in/ trusty main
-DELIM
-
-#####################################
-#Update base os with new repo in list
-#####################################
-apt-get update
-fi
-
-#########################
-#beagle bone  extra repo
-#########################
-if [[ $beaglebone_boards == "y" ]]; then
-cat >> "/etc/apt/sources.list.d/beaglebone.list" << DELIM
-	deb [arch=armhf] http://repos.rcn-ee.net/debian/ jessie main
-	#deb-src [arch=armhf] http://repos.rcn-ee.net/debian/ jessie main
 DELIM
 
 #####################################
@@ -269,22 +207,14 @@ apt-get update
 #########################
 #raspi2 repo
 #########################
-if [[ $raspi2_os_img == "y" ]]; then
 cat >> "/etc/apt/sources.list.d/raspi2.list" << DELIM
 deb [trusted=yes] https://repositories.collabora.co.uk/debian/ jessie rpi2
 DELIM
 fi
 
-#####################################
-#Update base os with new repo in list
-#####################################
-apt-get update
-fi
-
 #########################
 # Raspbian repo
 #########################
-if [[ $raspbian_os_img == "y" ]]; then
 cat >> "/etc/apt/sources.list.d/raspbian.list" << DELIM
 deb http://mirrordirector.raspbian.org/raspbian/ jessie main contrib non-free rpi
 DELIM
@@ -293,11 +223,11 @@ DELIM
 #####################################
 wget http://mirrordirector.raspbian.org/raspbian.public.key | apt-key add -
 
-#####################################
-#Update base os with new repo in list
-#####################################
-apt-get update
-fi
+######################
+#Update base os
+######################
+for i in update upgrade ;do apt-get -y "${i}" ; done
+apt-get clean
 
 ###################
 # Notes / Warnings
@@ -828,10 +758,7 @@ fi
 #############################
 #Install Ajenti Admin Portal
 #############################
-if [[ $raspbian_os_img == "y" ]]; then
-	return
-else
-	if [[ $install_ajenti == "y" ]]; then
+if [[ $install_ajenti == "y" ]]; then
 	##########################
 	#ADD Ajenti repo & ajenti
 	##########################
@@ -852,7 +779,6 @@ DELIM
 	apt-get install -y ajenti task openvpn supervisor python-memcache python-beautifulsoup cron
 	apt-get clean
 	rm /var/cache/apt/archive/*
-	fi
 fi
 #############################
 #Setting Host/Domain name
@@ -875,17 +801,45 @@ ff02::2         ip6-allrouters
 127.0.0.1       $cs-repeater
 DELIM
 
-#Install new system shell menu
-#cat > /usr/local/bin/svxlink-shell-menu.sh << DELIM
+###############################################
+# INSTALL FTP SERVER / ADD USER FOR DEVELOPMENT
+###############################################
+if [[ $install_vsftpd == "y" ]]; then
+	apt-get install vsftpd
 
-#DELIM
+	edit_config $FTP_CONFIG_PATH anonymous_enable NO enabled
+	edit_config $FTP_CONFIG_PATH local_enable YES enabled
+	edit_config $FTP_CONFIG_PATH write_enable YES enabled
+	edit_config $FTP_CONFIG_PATH local_umask 022 enabled
 
-#enable shell menu
-#cat > /etc/profile << DELIM
-#if [ -f /usr/local/bin/svxlink-shell-menu.sh ]; then
-#        . /usr/local/bin/svxlink-shell-menu.sh
-#fi
-#DELIM
+	cat "force_dot_files=YES" >> "$FTP_CONFIG_PATH"
+
+	system vsftpd restart
+
+	# ############################
+	# ADD FTP USER & SET PASSWORD
+	# ############################
+	adduser $vsftpd_user
+fi
+
+
+########################################
+#Install raspi-openrepeater-config menu
+########################################
+#apt-get install openrepeater-menu
+
+##################################
+# Enable New shellmenu for logins
+# on enabled for root and only if 
+# the file exist
+##################################
+cat > /root/.profile << DELIM
+
+if [ -f /usr/local/bin/raspi-openrepeater-conf ]; then
+        . /usr/local/bin/raspi-openrepeater-conf
+fi
+
+DELIM
 
 echo " You will need to edit the php.ini file and add extensions=memcache.so " 
 echo " location : /etc/php5/fpm/php.ini and then restart web service "

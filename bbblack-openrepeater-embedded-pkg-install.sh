@@ -32,48 +32,11 @@
 ####################################################
 cs="Set-This"
 
-######################################
-#set up odroid repo for odroid boards
-######################################
-odroid_boards="n" #y/n
-
-###########################################
-# Use for configuring beaglebone arm boards
-# Disable Default Web Service
-###########################################
-beaglebone_boards="n" #y/n
-
-###########################################
-# Use for configuring Raspi-2 arm boards
-###########################################
-raspi2_os_img="n" #y/n
-
-###########################################
-# if your using the raspbian jessie img 
-# Please set this to y
-# Must Be Raspbian updated to Jessie avaible 
-# on our repo server
-###########################################
-raspbian_os_img="n" #y/n 
-
-################################################
-# Enable overclocking of the pi2 for performance
-################################################
-# Do Not use if using Raspbian 
-###############################################
-raspi2_overclock="n" #y/n
-
 ###############################################
 # Configure ntpd to use gpsd to get time.
 # Requires a gps hat/usb dongle
 ###############################################
 use_gps_ntp="y" # y/n
-
-################################################################
-# Install Ajenti Optional Admin Portal (Optional) (Not Required)
-#           (Currently broken on beaglebone installs)
-################################################################
-install_ajenti="n" #y/n
 
 ####################################################
 # Install vsftpd for devel (Optional) (Not Required)
@@ -216,88 +179,25 @@ deb-src http://httpredir.debian.org/debian/ jessie-backports main contrib non-fr
 
 DELIM
 
-######################
-#Update base os
-######################
-for i in update upgrade ;do apt-get -y "${i}" ; done
-
-apt-get clean
-rm /var/cache/apt/archive/*
+##########################
+# Adding bbblack Repo
+##########################
+cat >> "/etc/apt/sources.list.d/beaglebone.list" << DELIM
+deb [arch=armhf] http://repos.rcn-ee.net/debian/ jessie main
+DELIM
 
 ##########################
 # Adding OpenRepeater Repo
 ##########################
-echo " Installing OpenRepeater repo "
-echo " svxlink & openrepeater pkgs "
 cat > "/etc/apt/sources.list.d/openrepeater.list" <<DELIM
 deb http://repo.openrepeater.com/openrepeater/release/debian/ jessie main
 DELIM
 
-#####################################
-#Update base os with new repo in list
-#####################################
-apt-get update
 
-###################
-#odroid extra repo
-###################
-if [[ $odroid_boards == "y" ]]; then
-	cat >> "/etc/apt/sources.list.d/odroid.list" << DELIM
-	deb http://deb.odroid.in/ trusty main
-DELIM
-
-#####################################
-#Update base os with new repo in list
-#####################################
-apt-get update
-fi
-
-#########################
-#beagle bone  extra repo
-#########################
-if [[ $beaglebone_boards == "y" ]]; then
-cat >> "/etc/apt/sources.list.d/beaglebone.list" << DELIM
-	deb [arch=armhf] http://repos.rcn-ee.net/debian/ jessie main
-	#deb-src [arch=armhf] http://repos.rcn-ee.net/debian/ jessie main
-DELIM
-
-#####################################
-#Update base os with new repo in list
-#####################################
-apt-get update
-
-#########################
-#raspi2 repo
-#########################
-if [[ $raspi2_os_img == "y" ]]; then
-cat >> "/etc/apt/sources.list.d/raspi2.list" << DELIM
-deb [trusted=yes] https://repositories.collabora.co.uk/debian/ jessie rpi2
-DELIM
-fi
-
-#####################################
-#Update base os with new repo in list
-#####################################
-apt-get update
-fi
-
-#########################
-# Raspbian repo
-#########################
-if [[ $raspbian_os_img == "y" ]]; then
-cat >> "/etc/apt/sources.list.d/raspbian.list" << DELIM
-deb http://mirrordirector.raspbian.org/raspbian/ jessie main contrib non-free rpi
-DELIM
-#####################################
-#add in the raspbian key for the repo
-#####################################
-wget http://mirrordirector.raspbian.org/raspbian.public.key | apt-key add -
-
-#####################################
-#Update base os with new repo in list
-#####################################
-apt-get update
-fi
+######################
+#Update base os
+######################
+for i in update upgrade ;do apt-get -y "${i}" ; done
 
 ###################
 # Notes / Warnings
@@ -388,26 +288,25 @@ DELIM
 # ####################################
 # DISABLE BEAGLEBONE 101 WEB SERVICES
 # ####################################
-if [[ $beaglebone_boards == "y" ]]; then
-	echo " Disabling The Beaglebone 101 web services "
-	systemctl disable cloud9.service
-	systemctl disable gateone.service
-	systemctl disable bonescript.service
-	systemctl disable bonescript.socket
-	systemctl disable bonescript-autorun.service
-	systemctl disable avahi-daemon.service
-	systemctl disable gdm.service
-	systemctl disable mpd.service
+echo " Disabling The Beaglebone 101 web services "
+systemctl disable cloud9.service
+systemctl disable gateone.service
+systemctl disable bonescript.service
+systemctl disable bonescript.socket
+systemctl disable bonescript-autorun.service
+systemctl disable avahi-daemon.service
+systemctl disable gdm.service
+systemctl disable mpd.service
 
-	echo " Stoping The Beaglebone 101 web services "
-	systemctl stop cloud9.service
-	systemctl stop gateone.service
-	systemctl stop bonescript.service
-	systemctl stop bonescript.socket
-	systemctl stop bonescript-autorun.service
-	systemctl stop avahi-daemon.service
-	systemctl stop gdm.service
-	systemctl stop mpd.service
+echo " Stoping The Beaglebone 101 web services "
+systemctl stop cloud9.service
+systemctl stop gateone.service
+systemctl stop bonescript.service
+systemctl stop bonescript.socket
+systemctl stop bonescript-autorun.service
+systemctl stop avahi-daemon.service
+systemctl stop gdm.service
+systemctl stop mpd.service
 
 cat >> /boot/uEnv.txt << DELIM
 
@@ -418,21 +317,6 @@ optargs=capemgr.disable_partno=BB-BONELT-HDMI
 DELIM
 
 apt-get -y autoremove apache2*
-fi
-
-##########################################
-# Overclock the Raspi-2 to 1ghz for better
-# Performance and stablization.
-##########################################
-if [[ $raspi2_overclock == "y" ]]; then
-cat >> /boot/firmware/config.txt << DELIM
-#over clocking for stability
-arm_freq=1000
-sdram_freq=500
-core_freq=500
-over_voltage=2
-DELIM
-fi
 
 if [[ $use_gps_ntp == "y" ]]; then
 ########################################
@@ -627,6 +511,78 @@ http {
 	include /etc/nginx/sites-enabled/*;
 }
 
+DELIM
+
+#################################
+# Backup and replace www.conf
+#################################
+cp /etc/php5/fpm/pool.d/www.conf /etc/php5/fpm/pool.d/www.conf.orig
+
+cat >  /etc/php5/fpm/pool.d/www.conf << DELIM
+[www]
+
+user = www-data
+group = www-data
+
+listen = /var/run/php5-fpm.sock
+
+listen.owner = www-data
+listen.group = www-data
+
+pm = static
+
+pm.max_children = 5
+
+pm.start_servers = 2
+
+pm.max_requests = 100
+
+chdir = /
+DELIM
+
+#################################
+# Backup and replace php5-fpm.conf
+#################################
+cp /etc/php5/fpm/php5-fpm.conf /etc/php5/fpm/php5-fpm.conf.orig
+
+cat > /etc/php5/fpm/php5-fpm.conf << DELIM
+;;;;;;;;;;;;;;;;;;;;;
+; FPM Configuration ;
+;;;;;;;;;;;;;;;;;;;;;
+
+;include=/etc/php5/fpm/*.conf
+
+;;;;;;;;;;;;;;;;;;
+; Global Options ;
+;;;;;;;;;;;;;;;;;;
+
+[global]
+
+pid = /run/php5-fpm.pid
+
+; Error log file
+error_log = /var/log/php5-fpm.log
+
+; syslog_facility is used to specify what type of program is logging the
+; message. This lets syslogd specify that messages from different facilities
+; will be handled differently.
+; See syslog(3) for possible values (ex daemon equiv LOG_DAEMON)
+; Default Value: daemon
+;syslog.facility = daemon
+
+syslog.ident = php-fpm
+
+emergency_restart_threshold = 10
+
+emergency_restart_interval = 1m
+
+process_control_timeout = 10
+
+process.max = 12
+
+systemd_interval = 60
+
+include=/etc/php5/fpm/pool.d/*.conf
 DELIM
 
 ##############################################################
@@ -826,35 +782,6 @@ if [[ $install_vsftpd == "y" ]]; then
 fi
 
 #############################
-#Install Ajenti Admin Portal
-#############################
-if [[ $raspbian_os_img == "y" ]]; then
-	return
-else
-	if [[ $install_ajenti == "y" ]]; then
-	##########################
-	#ADD Ajenti repo & ajenti
-	##########################
-	echo "Installing Ajenti Admin Portal"
-	cat > "/etc/apt/sources.list.d/ajenti.list" <<DELIM
-	deb http://repo.ajenti.org/debian main main debian
-DELIM
-
-######################
-# add ajenti repo key
-######################
-	wget http://repo.ajenti.org/debian/key -O- | apt-key add -
-
-#################
-# install ajenti
-#################
-	apt-get update
-	apt-get install -y ajenti task openvpn supervisor python-memcache python-beautifulsoup cron
-	apt-get clean
-	rm /var/cache/apt/archive/*
-	fi
-fi
-#############################
 #Setting Host/Domain name
 #############################
 cat >> /etc/hostname << DELIM
@@ -875,17 +802,23 @@ ff02::2         ip6-allrouters
 127.0.0.1       $cs-repeater
 DELIM
 
-#Install new system shell menu
-#cat > /usr/local/bin/svxlink-shell-menu.sh << DELIM
+########################################
+#Install raspi-openrepeater-config menu
+########################################
+#apt-get install bbb-openrepeater-menu
 
-#DELIM
+##################################
+# Enable New shellmenu for logins
+# on enabled for root and only if 
+# the file exist
+##################################
+cat > /root/.profile << DELIM
 
-#enable shell menu
-#cat > /etc/profile << DELIM
-#if [ -f /usr/local/bin/svxlink-shell-menu.sh ]; then
-#        . /usr/local/bin/svxlink-shell-menu.sh
-#fi
-#DELIM
+if [ -f /usr/local/bin/bbb-openrepeater-conf ]; then
+        . /usr/local/bin/bbb-openrepeater-conf
+fi
+
+DELIM
 
 echo " You will need to edit the php.ini file and add extensions=memcache.so " 
 echo " location : /etc/php5/fpm/php.ini and then restart web service "

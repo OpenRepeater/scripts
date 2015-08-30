@@ -32,6 +32,27 @@
 ####################################################
 cs="my"
 
+################################################################
+# Install Ajenti Optional Admin Portal (Optional) (Not Required)
+#           (Currently broken on beaglebone installs)
+################################################################
+install_ajenti="n" #y/n
+
+####################################################
+# Install vsftpd for devel (Optional) (Not Required)
+####################################################
+install_vsftpd="y" #y/n
+
+#####################
+# set vsftp user name
+#####################
+vsftpd_user=""
+
+########################
+# set vsftp config path
+########################
+FTP_CONFIG_PATH="/etc/vsftpd.conf"
+
 # ----- Stop Edit Here ------- #
 ########################################################
 # Set mp3/wav file upload/post size limit for php/nginx
@@ -577,6 +598,7 @@ DELIM
 ##########################
 #ADD Ajenti repo 
 ##########################
+if [[ $install_ajenti == "y" ]]; then
 echo "Installing Ajenti Admin Portal repo"
 cat > "/etc/apt/sources.list.d/ajenti.list" <<DELIM
 deb http://repo.ajenti.org/debian main main debian
@@ -590,9 +612,31 @@ wget http://repo.ajenti.org/debian/key -O- | apt-key add -
 #################
 # install ajenti
 #################
-#apt-get update
-#apt-get install -y ajenti task python-memcache python-beautifulsoup
-#apt-get clean
+apt-get update
+apt-get install -y ajenti task python-memcache python-beautifulsoup
+apt-get clean
+fi
+
+###############################################
+# INSTALL FTP SERVER / ADD USER FOR DEVELOPMENT
+###############################################
+if [[ $install_vsftpd == "y" ]]; then
+	apt-get install vsftpd
+
+	edit_config $FTP_CONFIG_PATH anonymous_enable NO enabled
+	edit_config $FTP_CONFIG_PATH local_enable YES enabled
+	edit_config $FTP_CONFIG_PATH write_enable YES enabled
+	edit_config $FTP_CONFIG_PATH local_umask 022 enabled
+
+	cat "force_dot_files=YES" >> "$FTP_CONFIG_PATH"
+
+	system vsftpd restart
+
+	# ############################
+	# ADD FTP USER & SET PASSWORD
+	# ############################
+	adduser $vsftpd_user
+fi
 
 ########################################
 #Install raspi-openrepeater-config menu
