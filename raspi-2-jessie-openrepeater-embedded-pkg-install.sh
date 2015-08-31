@@ -199,11 +199,6 @@ cat > "/etc/apt/sources.list.d/openrepeater.list" <<DELIM
 deb http://repo.openrepeater.com/openrepeater/release/debian/ jessie main
 DELIM
 
-#####################################
-#Update base os with new repo in list
-#####################################
-apt-get update
-
 #########################
 #raspi2 repo
 #########################
@@ -218,6 +213,7 @@ fi
 cat >> "/etc/apt/sources.list.d/raspbian.list" << DELIM
 deb http://mirrordirector.raspbian.org/raspbian/ jessie main contrib non-free rpi
 DELIM
+
 #####################################
 #add in the raspbian key for the repo
 #####################################
@@ -289,11 +285,6 @@ apt-get install -y --force-yes memcached sqlite3 libopus0 alsa-utils vorbis-tool
 		svxlink-server remotetrx 
 apt-get clean
 
-if [[ $raspbian_os_img == "n" ]]; then
-apt-get install -y network-manager tcpd python-pysqlite2 
-fi
-rm /var/cache/apt/archive/*
-
 #Working on sounds pkgs for future release of svxlink
 cd /usr/share/svxlink/sounds
 wget https://github.com/sm0svx/svxlink-sounds-en_US-heather/releases/download/14.08/svxlink-sounds-en_US-heather-16k-13.12.tar.bz2
@@ -314,41 +305,6 @@ DELIM
 cat >> /etc/fstab << DELIM
 tmpfs /var/tmp  tmpfs nodev,nosuid,mode=1777  0 0
 DELIM
-
-# ####################################
-# DISABLE BEAGLEBONE 101 WEB SERVICES
-# ####################################
-if [[ $beaglebone_boards == "y" ]]; then
-	echo " Disabling The Beaglebone 101 web services "
-	systemctl disable cloud9.service
-	systemctl disable gateone.service
-	systemctl disable bonescript.service
-	systemctl disable bonescript.socket
-	systemctl disable bonescript-autorun.service
-	systemctl disable avahi-daemon.service
-	systemctl disable gdm.service
-	systemctl disable mpd.service
-
-	echo " Stoping The Beaglebone 101 web services "
-	systemctl stop cloud9.service
-	systemctl stop gateone.service
-	systemctl stop bonescript.service
-	systemctl stop bonescript.socket
-	systemctl stop bonescript-autorun.service
-	systemctl stop avahi-daemon.service
-	systemctl stop gdm.service
-	systemctl stop mpd.service
-
-cat >> /boot/uEnv.txt << DELIM
-
-#####################
-#Disable HDMI sound
-#####################
-optargs=capemgr.disable_partno=BB-BONELT-HDMI
-DELIM
-
-apt-get -y autoremove apache2*
-fi
 
 ##########################################
 # Overclock the Raspi-2 to 1ghz for better
@@ -800,28 +756,6 @@ ff02::2         ip6-allrouters
 
 127.0.0.1       $cs-repeater
 DELIM
-
-###############################################
-# INSTALL FTP SERVER / ADD USER FOR DEVELOPMENT
-###############################################
-if [[ $install_vsftpd == "y" ]]; then
-	apt-get install vsftpd
-
-	edit_config $FTP_CONFIG_PATH anonymous_enable NO enabled
-	edit_config $FTP_CONFIG_PATH local_enable YES enabled
-	edit_config $FTP_CONFIG_PATH write_enable YES enabled
-	edit_config $FTP_CONFIG_PATH local_umask 022 enabled
-
-	cat "force_dot_files=YES" >> "$FTP_CONFIG_PATH"
-
-	system vsftpd restart
-
-	# ############################
-	# ADD FTP USER & SET PASSWORD
-	# ############################
-	adduser $vsftpd_user
-fi
-
 
 ########################################
 #Install raspi-openrepeater-config menu

@@ -31,7 +31,7 @@
 # Repeater call sign
 # Please change this to match the repeater call sign
 ####################################################
-cs="Set_This"
+cs="Set-This"
 
 ################################################################
 # Install Ajenti Optional Admin Portal (Optional) (Not Required)
@@ -701,6 +701,27 @@ ff02::2         ip6-allrouters
 
 DELIM
 
+###############################################
+# INSTALL FTP SERVER / ADD USER FOR DEVELOPMENT
+###############################################
+if [[ $install_vsftpd == "y" ]]; then
+	apt-get install vsftpd
+
+	edit_config $FTP_CONFIG_PATH anonymous_enable NO enabled
+	edit_config $FTP_CONFIG_PATH local_enable YES enabled
+	edit_config $FTP_CONFIG_PATH write_enable YES enabled
+	edit_config $FTP_CONFIG_PATH local_umask 022 enabled
+
+	cat "force_dot_files=YES" >> "$FTP_CONFIG_PATH"
+
+	system vsftpd restart
+
+	# ############################
+	# ADD FTP USER & SET PASSWORD
+	# ############################
+	adduser $vsftpd_user
+fi
+
 ##########################
 #ADD Ajenti repo 
 ##########################
@@ -723,26 +744,12 @@ apt-get install -y ajenti task python-memcache python-beautifulsoup
 apt-get clean
 fi
 
-###############################################
-# INSTALL FTP SERVER / ADD USER FOR DEVELOPMENT
-###############################################
-if [[ $install_vsftpd == "y" ]]; then
-	apt-get install vsftpd
-
-	edit_config $FTP_CONFIG_PATH anonymous_enable NO enabled
-	edit_config $FTP_CONFIG_PATH local_enable YES enabled
-	edit_config $FTP_CONFIG_PATH write_enable YES enabled
-	edit_config $FTP_CONFIG_PATH local_umask 022 enabled
-
-	cat "force_dot_files=YES" >> "$FTP_CONFIG_PATH"
-
-	system vsftpd restart
-
-	# ############################
-	# ADD FTP USER & SET PASSWORD
-	# ############################
-	adduser $vsftpd_user
-fi
+############################
+# set usb power level
+############################
+cat >> /boot/config.txt << DELIM
+usb_max_current=1
+DELIM
 
 ########################################
 #Install raspi-openrepeater-config menu

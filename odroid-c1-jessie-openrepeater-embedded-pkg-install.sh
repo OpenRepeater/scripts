@@ -790,6 +790,7 @@ DELIM
 	rm /var/cache/apt/archive/*
 	fi
 fi
+
 #############################
 #Setting Host/Domain name
 #############################
@@ -828,6 +829,12 @@ if [ -f /usr/local/bin/odroid-openrepeater-conf ]; then
 fi
 
 DELIM
+
+######################
+# Enable the spi/i2c
+######################
+echo "spicc" >> /etc/modules
+echo "aml_i2c" >> /etc/modules
 
 
 echo " You will need to edit the php.ini file and add extensions=memcache.so " 

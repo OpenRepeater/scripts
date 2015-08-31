@@ -742,6 +742,27 @@ ff02::2         ip6-allrouters
 
 DELIM
 
+###############################################
+# INSTALL FTP SERVER / ADD USER FOR DEVELOPMENT
+###############################################
+if [[ $install_vsftpd == "y" ]]; then
+	apt-get install vsftpd
+
+	edit_config $FTP_CONFIG_PATH anonymous_enable NO enabled
+	edit_config $FTP_CONFIG_PATH local_enable YES enabled
+	edit_config $FTP_CONFIG_PATH write_enable YES enabled
+	edit_config $FTP_CONFIG_PATH local_umask 022 enabled
+
+	cat "force_dot_files=YES" >> "$FTP_CONFIG_PATH"
+
+	system vsftpd restart
+
+	# ############################
+	# ADD FTP USER & SET PASSWORD
+	# ############################
+	adduser $vsftpd_user
+fi
+
 ##########################
 #ADD Ajenti repo 
 ##########################
@@ -764,27 +785,6 @@ apt-get install -y ajenti task python-memcache python-beautifulsoup
 apt-get clean
 fi
 
-###############################################
-# INSTALL FTP SERVER / ADD USER FOR DEVELOPMENT
-###############################################
-if [[ $install_vsftpd == "y" ]]; then
-	apt-get install vsftpd
-
-	edit_config $FTP_CONFIG_PATH anonymous_enable NO enabled
-	edit_config $FTP_CONFIG_PATH local_enable YES enabled
-	edit_config $FTP_CONFIG_PATH write_enable YES enabled
-	edit_config $FTP_CONFIG_PATH local_umask 022 enabled
-
-	cat "force_dot_files=YES" >> "$FTP_CONFIG_PATH"
-
-	system vsftpd restart
-
-	# ############################
-	# ADD FTP USER & SET PASSWORD
-	# ############################
-	adduser $vsftpd_user
-fi
-
 ########################################
 #Install raspi-openrepeater-config menu
 ########################################
@@ -802,6 +802,12 @@ if [ -f /usr/local/bin/odroid-openrepeater-conf ]; then
 fi
 
 DELIM
+
+######################
+# Enable the spi/i2c
+######################
+echo "spicc" >> /etc/modules
+echo "aml_i2c" >> /etc/modules
 
 echo " ########################################################################################## "
 echo " #             The SVXLink Repeater / Echolink server Install is now complete             # "
