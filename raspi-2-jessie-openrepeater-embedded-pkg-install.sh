@@ -767,7 +767,7 @@ DELIM
 # on enabled for root and only if 
 # the file exist
 ##################################
-cat > /root/.profile << DELIM
+cat >> /root/.profile << DELIM
 
 if [ -f /usr/local/bin/raspi-openrepeater-conf ]; then
         . /usr/local/bin/raspi-openrepeater-conf
