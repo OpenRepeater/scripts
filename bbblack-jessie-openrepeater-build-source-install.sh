@@ -742,7 +742,7 @@ sudo chmod 550 /usr/local/bin/svxlink_restart /usr/local/bin/svxlink_start /usr/
 
 cat >> /etc/sudoers << DELIM
 #allow www-data to access amixer and service
-www-data   ALL=(ALL) NOPASSWD: /usr/local/bin/svxlink_restart, NOPASSWD: /usr/local/bin/svxlink_start, NOPASSWD: /usr/local/bin/svxlink_stop, NOPASSWD: /usr/local/bin/repeater_reboot
+www-data   ALL=(ALL) NOPASSWD: /usr/local/bin/svxlink_restart, NOPASSWD: /usr/local/bin/svxlink_start, NOPASSWD: /usr/local/bin/svxlink_stop, NOPASSWD: /usr/local/bin/repeater_reboot, NOPASSWD: /usr/bin/aplay, NOPASSWD: /usr/bin/arecord
 DELIM
 
 #############################

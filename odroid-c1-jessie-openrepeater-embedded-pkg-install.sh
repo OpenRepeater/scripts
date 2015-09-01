@@ -185,6 +185,7 @@ DELIM
 # Odroid c1 c1+ repo
 ####################
 cat > /etc/apt/source.list.d/odroid.list << DELIM
+deb http://deb.odroid.in/c1/ trusty main
 deb http://deb.odroid.in/ trusty main
 DELIM
 
@@ -715,7 +716,7 @@ sudo chmod 550 /usr/local/bin/svxlink_restart /usr/local/bin/svxlink_start /usr/
 
 cat >> /etc/sudoers << DELIM
 #allow www-data to access amixer and service
-www-data   ALL=(ALL) NOPASSWD: /usr/local/bin/svxlink_restart, NOPASSWD: /usr/local/bin/svxlink_start, NOPASSWD: /usr/local/bin/svxlink_stop, NOPASSWD: /usr/local/bin/repeater_reboot
+www-data   ALL=(ALL) NOPASSWD: /usr/local/bin/svxlink_restart, NOPASSWD: /usr/local/bin/svxlink_start, NOPASSWD: /usr/local/bin/svxlink_stop, NOPASSWD: /usr/local/bin/repeater_reboot, NOPASSWD: /usr/bin/aplay, NOPASSWD: /usr/bin/arecord
 DELIM
 
 #########################################################
@@ -748,26 +749,26 @@ fi
 #Install Ajenti Admin Portal
 #############################
 if [[ $install_ajenti == "y" ]]; then
-	##########################
-	#ADD Ajenti repo & ajenti
-	##########################
-	echo "Installing Ajenti Admin Portal"
-	cat > "/etc/apt/sources.list.d/ajenti.list" <<DELIM
-	deb http://repo.ajenti.org/debian main main debian
+##########################
+#ADD Ajenti repo & ajenti
+##########################
+echo "Installing Ajenti Admin Portal"
+cat > "/etc/apt/sources.list.d/ajenti.list" <<DELIM
+deb http://repo.ajenti.org/debian main main debian
 DELIM
 
 ######################
 # add ajenti repo key
 ######################
-	wget http://repo.ajenti.org/debian/key -O- | apt-key add -
+wget http://repo.ajenti.org/debian/key -O- | apt-key add -
 
 #################
 # install ajenti
 #################
-	apt-get update
-	apt-get install -y ajenti task python-memcache python-beautifulsoup cron
-	apt-get clean
-	rm /var/cache/apt/archive/*
+apt-get update
+apt-get install -y ajenti task python-memcache python-beautifulsoup cron
+apt-get clean
+rm /var/cache/apt/archive/*
 fi
 
 #############################

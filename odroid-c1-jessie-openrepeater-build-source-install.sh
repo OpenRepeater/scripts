@@ -232,19 +232,18 @@ DELIM
 #c1 c1+ repo
 #########################
 cat >> "/etc/apt/sources.list.d/odroid.list" << DELIM
+deb http://deb.odroid.in/c1/ trusty main
 deb http://deb.odroid.in/ trusty main
 DELIM
 
 ######################
 #Update base os
 ######################
-for i in update upgrade ;do apt-get -y "${i}" ; done
+for i in update upgrade clean ;do apt-get -y "${i}" ; done
 
-apt-get clean
-
-##########################
+#################
 #Installing Deps
-##########################
+#################
 apt-get install -y --force-yes sqlite3 libopus0 alsa-utils vorbis-tools sox libsox-fmt-mp3 librtlsdr0 \
 		ntp libasound2 libspeex1 libgcrypt20 libpopt0 libgsm1 tcl8.6 alsa-base bzip2 flite screen time \
 		uuid rsyslog vim install-info whiptail dialog logrotate cron usbutils git-core
@@ -717,7 +716,7 @@ sudo chmod 550 /usr/local/bin/svxlink_restart /usr/local/bin/svxlink_start /usr/
 
 cat >> /etc/sudoers << DELIM
 #allow www-data to access amixer and service
-www-data   ALL=(ALL) NOPASSWD: /usr/local/bin/svxlink_restart, NOPASSWD: /usr/local/bin/svxlink_start, NOPASSWD: /usr/local/bin/svxlink_stop, NOPASSWD: /usr/local/bin/repeater_reboot
+www-data   ALL=(ALL) NOPASSWD: /usr/local/bin/svxlink_restart, NOPASSWD: /usr/local/bin/svxlink_start, NOPASSWD: /usr/local/bin/svxlink_stop, NOPASSWD: /usr/local/bin/repeater_reboot, NOPASSWD: /usr/bin/aplay, NOPASSWD: /usr/bin/arecord
 DELIM
 
 #############################
@@ -801,7 +800,7 @@ echo "aml_i2c" >> /etc/modules
 # on enabled for root and only if 
 # the file exist
 ##################################
-cat > /root/.profile << DELIM
+cat >> /root/.profile << DELIM
 
 if [ -f /usr/local/bin/odroid-openrepeater-conf ]; then
         . /usr/local/bin/odroid-openrepeater-conf
