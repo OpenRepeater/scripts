@@ -32,17 +32,6 @@
 ####################################################
 cs="Set-This"
 
-######################################
-#set up odroid repo for odroid boards
-######################################
-odroid_boards="n" #y/n
-
-###############################################
-# Configure ntpd to use gpsd to get time.
-# Requires a gps hat/usb dongle
-###############################################
-use_gps_ntp="y" # y/n
-
 ################################################################
 # Install Ajenti Optional Admin Portal (Optional) (Not Required)
 #           (Currently broken on beaglebone installs)
@@ -177,7 +166,9 @@ cp /etc/apt/sources.list /etc/apt/sources.list.preOpenRepeater
 # not dnS to serve content so is safe to use with Google dnS.
 # See also <which httpredir.debian.org>.  This service is identical to http.debian.net.
 #################################################################################################
-echo "installing jessie release repo"
+#####################
+#jessie release repo
+#####################
 cat > "/etc/apt/sources.list" << DELIM
 deb http://httpredir.debian.org/debian/ jessie main contrib non-free
 deb-src http://httpredir.debian.org/debian/ jessie main contrib non-free
@@ -190,27 +181,19 @@ deb-src http://httpredir.debian.org/debian/ jessie-backports main contrib non-fr
 
 DELIM
 
-##########################
-# Adding OpenRepeater Repo
-##########################
-echo " Installing OpenRepeater repo "
-echo " svxlink & openrepeater pkgs "
-cat > "/etc/apt/sources.list.d/openrepeater.list" <<DELIM
-deb http://repo.openrepeater.com/openrepeater/release/debian/ jessie main
-DELIM
-
-#####################################
-#Update base os with new repo in list
-#####################################
-apt-get update
-
-###################
-#odroid extra repo
-###################
-cat >> "/etc/apt/sources.list.d/odroid.list" << DELIM
+####################
+# Odroid c1 c1+ repo
+####################
+cat > /etc/apt/source.list.d/odroid.list << DELIM
 deb http://deb.odroid.in/ trusty main
 DELIM
 
+##########################
+# Adding OpenRepeater Repo
+##########################
+cat > "/etc/apt/sources.list.d/openrepeater.list" <<DELIM
+deb http://repo.openrepeater.com/openrepeater/release/debian/ jessie main
+DELIM
 
 ######################
 #Update base os
@@ -218,7 +201,6 @@ DELIM
 for i in update upgrade ;do apt-get -y "${i}" ; done
 
 apt-get clean
-rm /var/cache/apt/archive/*
 
 ###################
 # Notes / Warnings
@@ -276,7 +258,7 @@ echo
 echo " Installing install deps and svxlink + remotetrx"
 apt-get install -y --force-yes memcached sqlite3 libopus0 alsa-utils vorbis-tools sox libsox-fmt-mp3 librtlsdr0 \
 		ntp libasound2 libspeex1 libgcrypt20 libpopt0 libgsm1 tcl8.6 alsa-base bzip2 sudo gpsd gpsd-clients \
-		flite wvdial htop screen time uuid rsyslog vim install-info usbutils whiptail dialog python-pysqlite2 \
+		flite wvdial htop screen time uuid rsyslog vim install-info usbutils whiptail dialog \
 		svxlink-server remotetrx 
 apt-get clean
 
@@ -301,7 +283,6 @@ cat >> /etc/fstab << DELIM
 tmpfs /var/tmp  tmpfs nodev,nosuid,mode=1777  0 0
 DELIM
 
-if [[ $use_gps_ntp == "y" ]]; then
 ########################################
 # Configure nptd to use gpsd/ntpd servers
 # for getting and setting time correctly
@@ -342,7 +323,6 @@ server  1.pool.ntp.org
 server  2.pool.ntp.org
 server  3.pool.ntp.org
 DELIM
-fi
 
 ##########################################
 #---Start of nginx / php5 install --------
@@ -788,7 +768,6 @@ DELIM
 	apt-get install -y ajenti task python-memcache python-beautifulsoup cron
 	apt-get clean
 	rm /var/cache/apt/archive/*
-	fi
 fi
 
 #############################
@@ -812,6 +791,12 @@ ff02::2         ip6-allrouters
 127.0.0.1       $cs-repeater
 DELIM
 
+######################
+# Enable the spi/i2c
+######################
+echo "spicc" >> /etc/modules
+echo "aml_i2c" >> /etc/modules
+
 ########################################
 #Install raspi-openrepeater-config menu
 ########################################
@@ -822,20 +807,13 @@ DELIM
 # on enabled for root and only if 
 # the file exist
 ##################################
-cat > /root/.profile << DELIM
+cat >> /root/.profile << DELIM
 
 if [ -f /usr/local/bin/odroid-openrepeater-conf ]; then
         . /usr/local/bin/odroid-openrepeater-conf
 fi
 
 DELIM
-
-######################
-# Enable the spi/i2c
-######################
-echo "spicc" >> /etc/modules
-echo "aml_i2c" >> /etc/modules
-
 
 echo " You will need to edit the php.ini file and add extensions=memcache.so " 
 echo " location : /etc/php5/fpm/php.ini and then restart web service "

@@ -532,7 +532,7 @@ cp -rp theme functions dev includes *.php /var/www/openrepeater
 
 #################################################
 # Fetch and Install open repeater project web ui
-# ################################################
+#################################################
 
 apt-get install -y --force-yes openrepeater
 
