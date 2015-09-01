@@ -251,9 +251,10 @@ apt-get install -y --force-yes sqlite3 libopus0 alsa-utils vorbis-tools sox libs
 
 ########################
 # Install Build Depends
-#######################		
-apt-get install -y g++ make libsigc++-2.0-dev groff libgsm1-dev libpopt-dev tcl8.6-dev libgcrypt20-dev \
-	libspeex1-dev libasound2-dev doxygen
+#######################
+apt-get install gawk uuid-dev g++ make cmake libsigc++-2.0-dev libgsm1-dev libpopt-dev libgcrypt11-dev \
+			libspeex-dev libasound2-dev alsa-utils vorbis-tools sox libsox-fmt-mp3 sqlite3 \
+			unzip opus-tools tcl8.6-dev alsa-base ntp groff doxygen libopus-dev librtlsdr-dev
 
 #########################
 # get svxlink src
