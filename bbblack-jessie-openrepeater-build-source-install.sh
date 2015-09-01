@@ -233,9 +233,7 @@ DELIM
 ######################
 #Update base os
 ######################
-for i in update upgrade ;do apt-get -y "${i}" ; done
-
-apt-get clean
+for i in update upgrade clean ;do apt-get -y "${i}" ; done
 
 # ####################################
 # DISABLE BEAGLEBONE 101 WEB SERVICES
@@ -800,7 +798,7 @@ fi
 # on enabled for root and only if 
 # the file exist
 ##################################
-cat > /root/.profile << DELIM
+cat >> /root/.profile << DELIM
 
 if [ -f /usr/local/bin/bbb-openrepeater-conf ]; then
         . /usr/local/bin/bbb-openrepeater-conf
