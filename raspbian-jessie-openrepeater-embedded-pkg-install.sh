@@ -642,6 +642,8 @@ fi
 # set usb power level
 ############################
 cat >> /boot/config.txt << DELIM
+
+#usb max current
 usb_max_current=1
 DELIM
 
@@ -649,6 +651,19 @@ DELIM
 #Install raspi-openrepeater-config menu
 ########################################
 #apt-get install openrepeater-menu
+
+##################################
+# Enable New shellmenu for logins
+# on enabled for root and only if 
+# the file exist
+##################################
+cat >> /root/.profile << DELIM
+
+if [ -f /usr/local/bin/raspi-openrepeater-conf ]; then
+        . /usr/local/bin/raspi-openrepeater-conf
+fi
+
+DELIM
 
 echo " ########################################################################################## "
 echo " #             The SVXLink Repeater / Echolink server Install is now complete             # "
