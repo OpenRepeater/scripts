@@ -41,7 +41,7 @@ install_ajenti="n" #y/n
 ####################################################
 # Install vsftpd for devel (Optional) (Not Required)
 ####################################################
-install_vsftpd="y" #y/n
+install_vsftpd="n" #y/n
 
 #####################
 # set vsftp user name
@@ -152,12 +152,6 @@ echo
 exit
 esac
 
-################################
-#backup default repo source.list
-################################
-echo " Making backup of sources.list prior to editing... "
-cp /etc/apt/sources.list /etc/apt/sources.list.preOpenRepeater
-
 #################################################################################################
 # Setting apt_get to use the httpredirecter to get
 # To have <APT> automatically select a mirror close to you, use the Geo-ip redirector in your
@@ -171,20 +165,20 @@ cp /etc/apt/sources.list /etc/apt/sources.list.preOpenRepeater
 #####################
 cat > "/etc/apt/sources.list" << DELIM
 deb http://httpredir.debian.org/debian/ jessie main contrib non-free
-deb-src http://httpredir.debian.org/debian/ jessie main contrib non-free
+#deb-src http://httpredir.debian.org/debian/ jessie main contrib non-free
 
 deb http://httpredir.debian.org/debian/ jessie-updates main contrib non-free
-deb-src http://httpredir.debian.org/debian/ jessie-updates main contrib non-free
+#deb-src http://httpredir.debian.org/debian/ jessie-updates main contrib non-free
 
 deb http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
-deb-src http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
+#deb-src http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
 
 DELIM
 
 ####################
 # Odroid c1 c1+ repo
 ####################
-cat > /etc/apt/source.list.d/odroid.list << DELIM
+cat > /etc/apt/sources.list.d/odroid.list << DELIM
 deb http://deb.odroid.in/c1/ trusty main
 deb http://deb.odroid.in/ trusty main
 DELIM
@@ -199,9 +193,7 @@ DELIM
 ######################
 #Update base os
 ######################
-for i in update upgrade ;do apt-get -y "${i}" ; done
-
-apt-get clean
+for i in update upgrade clean ;do apt-get -y "${i}" ; done
 
 ###################
 # Notes / Warnings
@@ -228,7 +220,7 @@ cat << DELIM
 
   Pre-Install Information:
 
-  This script uses Sqlite by default. No plans to use Other DB. 
+       This script uses Sqlite by default. No plans to use Other DB. 
 
 DELIM
 
@@ -507,9 +499,9 @@ DELIM
 #################################
 # Backup and replace php5-fpm.conf
 #################################
-cp /etc/php5/fpm/php5-fpm.conf /etc/php5/fpm/php5-fpm.conf.orig
+cp /etc/php5/fpm/php-fpm.conf /etc/php5/fpm/php-fpm.conf.orig
 
-cat > /etc/php5/fpm/php5-fpm.conf << DELIM
+cat > /etc/php5/fpm/php-fpm.conf << DELIM
 ;;;;;;;;;;;;;;;;;;;;;
 ; FPM Configuration ;
 ;;;;;;;;;;;;;;;;;;;;;
@@ -774,7 +766,7 @@ fi
 #############################
 #Setting Host/Domain name
 #############################
-cat >> /etc/hostname << DELIM
+cat > /etc/hostname << DELIM
 $cs-repeater
 DELIM
 

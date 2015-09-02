@@ -43,7 +43,7 @@ raspi2_overclock="n" #y/n
 # Configure ntpd to use gpsd to get time.
 # Requires a gps hat/usb dongle
 ###############################################
-use_gps_ntp="y" # y/n
+use_gps_ntp="n" # y/n
 
 ################################################################
 # Install Ajenti Optional Admin Portal (Optional) (Not Required)
@@ -515,8 +515,80 @@ http {
 
 DELIM
 
+#################################
+# Backup and replace www.conf
+#################################
+cp /etc/php5/fpm/pool.d/www.conf /etc/php5/fpm/pool.d/www.conf.orig
+
+cat >  /etc/php5/fpm/pool.d/www.conf << DELIM
+[www]
+
+user = www-data
+group = www-data
+
+listen = /var/run/php5-fpm.sock
+
+listen.owner = www-data
+listen.group = www-data
+
+pm = static
+
+pm.max_children = 5
+
+pm.start_servers = 2
+
+pm.max_requests = 100
+
+chdir = /
+DELIM
+
+#################################
+# Backup and replace php5-fpm.conf
+#################################
+cp /etc/php5/fpm/php-fpm.conf /etc/php5/fpm/php-fpm.conf.orig
+
+cat > /etc/php5/fpm/php-fpm.conf << DELIM
+;;;;;;;;;;;;;;;;;;;;;
+; FPM Configuration ;
+;;;;;;;;;;;;;;;;;;;;;
+
+;include=/etc/php5/fpm/*.conf
+
+;;;;;;;;;;;;;;;;;;
+; Global Options ;
+;;;;;;;;;;;;;;;;;;
+
+[global]
+
+pid = /run/php5-fpm.pid
+
+; Error log file
+error_log = /var/log/php5-fpm.log
+
+; syslog_facility is used to specify what type of program is logging the
+; message. This lets syslogd specify that messages from different facilities
+; will be handled differently.
+; See syslog(3) for possible values (ex daemon equiv LOG_DAEMON)
+; Default Value: daemon
+;syslog.facility = daemon
+
+syslog.ident = php-fpm
+
+emergency_restart_threshold = 10
+
+emergency_restart_interval = 1m
+
+process_control_timeout = 10
+
+process.max = 12
+
+systemd_interval = 60
+
+include=/etc/php5/fpm/pool.d/*.conf
+DELIM
+
 ##############################################################
-# linking fusionpbx nginx config from avaible to enabled sites
+# linking openrepeater nginx config from avaible to enabled sites
 ##############################################################
 ln -s /etc/nginx/sites-available/"$gui_name" /etc/nginx/sites-enabled/"$gui_name"
 
@@ -739,7 +811,7 @@ fi
 #############################
 #Setting Host/Domain name
 #############################
-cat >> /etc/hostname << DELIM
+cat > /etc/hostname << DELIM
 $cs-repeater
 DELIM
 

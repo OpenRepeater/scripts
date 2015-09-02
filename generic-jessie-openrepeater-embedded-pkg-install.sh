@@ -47,7 +47,7 @@ install_ajenti="n" #y/n
 ####################################################
 # Install vsftpd for devel (Optional) (Not Required)
 ####################################################
-install_vsftpd="y" #y/n
+install_vsftpd="n" #y/n
 
 #####################
 # set vsftp user name
@@ -508,9 +508,9 @@ DELIM
 #################################
 # Backup and replace php5-fpm.conf
 #################################
-cp /etc/php5/fpm/php5-fpm.conf /etc/php5/fpm/php5-fpm.conf.orig
+cp /etc/php5/fpm/php-fpm.conf /etc/php5/fpm/php-fpm.conf.orig
 
-cat > /etc/php5/fpm/php5-fpm.conf << DELIM
+cat > /etc/php5/fpm/php-fpm.conf << DELIM
 ;;;;;;;;;;;;;;;;;;;;;
 ; FPM Configuration ;
 ;;;;;;;;;;;;;;;;;;;;;
@@ -551,7 +551,7 @@ include=/etc/php5/fpm/pool.d/*.conf
 DELIM
 
 ##############################################################
-# linking fusionpbx nginx config from avaible to enabled sites
+# linking openrepeater nginx config from avaible to enabled sites
 ##############################################################
 ln -s /etc/nginx/sites-available/"$gui_name" /etc/nginx/sites-enabled/"$gui_name"
 
@@ -774,7 +774,7 @@ fi
 #############################
 #Setting Host/Domain name
 #############################
-cat >> /etc/hostname << DELIM
+cat > /etc/hostname << DELIM
 $cs-repeater
 DELIM
 
