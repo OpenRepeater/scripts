@@ -381,6 +381,9 @@ server{
             try_files \$uri \$uri/ =404;
         }
 
+        client_max_body_size 25M;
+        client_body_buffer_size 128k;
+
         access_log /var/log/nginx/access.log;
         error_log /var/log/nginx/error.log;
 
