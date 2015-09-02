@@ -35,7 +35,6 @@ cs="Set_This"
 
 ################################################################
 # Install Ajenti Optional Admin Portal (Optional) (Not Required)
-#           (Currently broken on beaglebone installs)
 ################################################################
 install_ajenti="n" #y/n
 
@@ -152,11 +151,6 @@ echo
 exit
 esac
 
-#####################################
-#Update base os with new repo in list
-#####################################
-apt-get update
-
 ###################
 # Notes / Warnings
 ###################
@@ -201,12 +195,6 @@ echo
 printf ' Current ip is : '; ip -f inet addr show dev eth0 | sed -n 's/^ *inet *\([.0-9]*\).*/\1/p'
 echo
 
-
-backup default repo source.list
-################################
-echo " Making backup of sources.list prior to editing... "
-cp /etc/apt/sources.list /etc/apt/sources.list.preOpenRepeater
-
 #################################################################################################
 # Setting apt_get to use the httpredirecter to get
 # To have <APT> automatically select a mirror close to you, use the Geo-ip redirector in your
@@ -215,23 +203,22 @@ cp /etc/apt/sources.list /etc/apt/sources.list.preOpenRepeater
 # not dnS to serve content so is safe to use with Google dnS.
 # See also <which httpredir.debian.org>.  This service is identical to http.debian.net.
 #################################################################################################
-echo "installing jessie release repo"
 cat > "/etc/apt/sources.list" << DELIM
 deb http://httpredir.debian.org/debian/ jessie main contrib non-free
-deb-src http://httpredir.debian.org/debian/ jessie main contrib non-free
+#deb-src http://httpredir.debian.org/debian/ jessie main contrib non-free
 
 deb http://httpredir.debian.org/debian/ jessie-updates main contrib non-free
-deb-src http://httpredir.debian.org/debian/ jessie-updates main contrib non-free
+#deb-src http://httpredir.debian.org/debian/ jessie-updates main contrib non-free
 
 deb http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
-deb-src http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
+#deb-src http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
 
 DELIM
 
 #########################
 #c1 c1+ repo
 #########################
-cat >> "/etc/apt/sources.list.d/odroid.list" << DELIM
+cat > "/etc/apt/sources.list.d/odroid.list" << DELIM
 deb http://deb.odroid.in/c1/ trusty main
 deb http://deb.odroid.in/ trusty main
 DELIM
@@ -246,30 +233,81 @@ for i in update upgrade clean ;do apt-get -y "${i}" ; done
 #################
 apt-get install -y --force-yes sqlite3 libopus0 alsa-utils vorbis-tools sox libsox-fmt-mp3 librtlsdr0 \
 		ntp libasound2 libspeex1 libgcrypt20 libpopt0 libgsm1 tcl8.6 alsa-base bzip2 flite screen time \
-		uuid rsyslog vim install-info whiptail dialog logrotate cron usbutils git-core
+		uuid rsyslog vim install-info whiptail dialog logrotate cron usbutils git-core tk8.6
 
 ########################
 # Install Build Depends
 #######################		
-apt-get install gawk uuid-dev g++ make cmake libsigc++-2.0-dev libgsm1-dev libpopt-dev libgcrypt11-dev \
-			libspeex-dev libasound2-dev alsa-utils vorbis-tools sox libsox-fmt-mp3 sqlite3 \
-			unzip opus-tools tcl8.6-dev alsa-base ntp groff doxygen libopus-dev librtlsdr-dev
+apt-get install -y gawk uuid-dev g++ make cmake libsigc++-2.0-dev libgsm1-dev libpopt-dev libgcrypt11-dev \
+		libspeex-dev libasound2-dev alsa-utils vorbis-tools sox libsox-fmt-mp3 sqlite3 unzip opus-tools \
+		tcl8.6-dev alsa-base ntp groff doxygen libopus-dev librtlsdr-dev tk8.6-dev
+
+##################################
+# Add User and include in groupds
+#################################
+# Sane defaults:
+[ -z "$SERVER_HOME" ] && SERVER_HOME=/usr/bin
+[ -z "$SERVER_USER" ] && SERVER_USER=svxlink
+[ -z "$SERVER_NAME" ] && SERVER_NAME="Svxlink-related Daemons"
+[ -z "$SERVER_GROUP" ] && SERVER_GROUP=daemon
+     
+# Groups that the user will be added to, if undefined, then none.
+ADDGROUP="audio dialout"
+     
+# create user to avoid running server as root
+# 1. create group if not existing
+if ! getent group | grep -q "^$SERVER_GROUP:" ; then
+   echo -n "Adding group $SERVER_GROUP.."
+   addgroup --quiet --system $SERVER_GROUP 2>/dev/null ||true
+   echo "..done"
+fi
+    
+# 2. create homedir if not existing
+test -d $SERVER_HOME || mkdir $SERVER_HOME
+    
+# 3. create user if not existing
+if ! getent passwd | grep -q "^$SERVER_USER:"; then
+   echo -n "Adding system user $SERVER_USER.."
+   adduser --quiet \
+           --system \
+           --ingroup $SERVER_GROUP \
+           --no-create-home \
+           --disabled-password \
+           $SERVER_USER 2>/dev/null || true
+   echo "..done"
+fi
+    
+# 4. adjust passwd entry
+usermod -c "$SERVER_NAME" \
+    -d $SERVER_HOME   \
+    -g $SERVER_GROUP  \
+    $SERVER_USER
+# 5. Add the user to the ADDGROUP group
+
+for group in $ADDGROUP ; do
+if test -n "$group"
+then
+    if ! groups $SERVER_USER | cut -d: -f2 | grep -qw "$group"; then
+	adduser $SERVER_USER "$group"
+    fi
+fi
+done
 
 #########################
 # get svxlink src
 #########################
-cd /usr/src
+cd /usr/src || exit
 wget https://github.com/sm0svx/svxlink/archive/14.08.1.tar.gz
-tar xzvf 14.08.01.tar.gz
+tar xzvf 14.08.1.tar.gz
 
 #############################
 #Build & Install svxllink
 #############################
-cd cd /usr/src/svxlink-14.08.1/src
-mkdir build
-cd build
-cmake -DCMAKE_INSTALL_PREFIX=/usr -DSYSCONF_INSTALL_DIR=/etc -DLOCAL_STATE_DIR=/var -DBUILD_STATIC_LIBS -DUSE_OSS=no -DUSE_QT=no
-make
+cd /usr/src/svxlink-14.08.1/src || exit
+mkdir /usr/src/svxlink-14.08.1/src/build
+cd /usr/src/svxlink-14.08.1/src/build || exit
+cmake -DCMAKE_INSTALL_PREFIX=/usr -DSYSCONF_INSTALL_DIR=/etc -DLOCAL_STATE_DIR=/var -DBUILD_STATIC_LIBS=YES -DUSE_OSS=NO -DUSE_QT=NO ..
+make -j4
 make doc
 make install
 ldconfig
@@ -278,11 +316,11 @@ ldconfig
 #Install svxlink en_US sounds
 #Working on sounds pkgs for future release of svxlink
 ########################################################
-cd /usr/share/svxlink/sounds
+cd /usr/share/svxlink/sounds || exit
 wget https://github.com/sm0svx/svxlink-sounds-en_US-heather/releases/download/14.08/svxlink-sounds-en_US-heather-16k-13.12.tar.bz2
 tar xjvf svxlink-sounds-en_US-heather-16k-13.12.tar.bz2
 mv en_US-heather* en_US
-cd /root
+cd /root || exit
 
 ##############################
 #Set a reboot if Kernel Panic
@@ -548,9 +586,9 @@ for i in nginx php5-fpm ;do service "${i}" restart > /dev/null 2>&1 ; done
 ######################################################
 # Pull openrepeater from github and then cp into place
 ######################################################
-cd /usr/src
+cd /usr/src || exit
 git clone https://github.com/OpenRepeater/webapp.git openrepeater-gui
-cd openrepeater-gui
+cd /usr/src/openrepeater-gui || exit
 
 ###############################
 # create fhs layout directories
@@ -569,7 +607,7 @@ mkdir -p /var/www/openrepeater
 cp -rp install/sql /usr/share/examples/openrepeater/install
 cp -rp install/svxlink /usr/share/examples/openrepeater/install
 cp -rp install/courtesy_tones /usr/share/openrepeater/sounds
-cp -rp theme functions dev includes *.php /var/www/openrepeater
+cp -rp theme functions dev includes ./*.php /var/www/openrepeater
 
 #################################################
 # Fetch and Install open repeater project web ui
