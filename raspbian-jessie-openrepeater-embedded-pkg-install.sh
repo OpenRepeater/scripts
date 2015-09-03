@@ -714,6 +714,26 @@ DELIM
 ###############################
 swapoff --all
 apt-get remove dphys-swapfile
+rm -rf /var/swap
+
+##########################################
+#addon extra scripts for cloning the drive
+##########################################
+cd /usr/local/bin
+wget https://raw.githubusercontent.com/billw2/rpi-clone/master/rpi-clone
+chmod +x rpi-clone
+cd /root 
+
+#####################################################
+#fix usb sound/nic issue so network interface gets IP
+#####################################################
+cat > /etc/network/interfaces << DELIM
+auto lo eth0
+
+iface lo inet loopback
+iface eth0 inet dhcp
+
+DELIM
 
 ########################################
 #Install raspi-openrepeater-config menu
