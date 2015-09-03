@@ -694,10 +694,31 @@ cat >> /boot/config.txt << DELIM
 usb_max_current=1
 DELIM
 
+###########################################
+# Enable Kernel Modules for interface card
+###########################################
+cat > /etc/modules << DELIM
+#disable onboard sound
+#snd-bcm2835
+#Enable sound on radio interface card
+snd_soc_bcm2708
+snd_soc_bcm2708_i2s
+bcm2708_dmaengine
+snd_soc_pcm5102a
+snd_soc_hifiberry_dac
+DELIM
+
+###############################
+# Disable the dphys swap file
+# Extend life of sd card
+###############################
+swapoff --all
+apt-get remove dphys-swapfile
+
 ########################################
 #Install raspi-openrepeater-config menu
 ########################################
-#apt-get install openrepeater-menu
+#apt-get install raspi-openrepeater-menu
 
 ##################################
 # Enable New shellmenu for logins
