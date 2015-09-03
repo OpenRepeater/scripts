@@ -1,4 +1,5 @@
 #!/bin/bash
+(
 ####################################################################
 #
 #   Open Repeater Project
@@ -20,10 +21,10 @@
 #
 #    If not, see <http://www.gnu.org/licenses/gpl-3.0.en.html>
 #
-###################################################################
+#######################################
 # Auto Install Configuration options
 # (set it, forget it, run it)
-###################################################################
+#######################################
 
 # ----- Start Edit Here ----- #
 ####################################################
@@ -32,9 +33,10 @@
 ####################################################
 cs="Set-This"
 
-#########################################################################
-# Disable the dphys swap. Not Needed on the pi-2 and pi-1/512 mb versions
-#########################################################################
+#######################################
+# Disable the dphys swap. Not Needed on 
+# the pi-2 and pi-1/512 mb versions
+#######################################
 disable_swap="y"
 
 ####################################################
@@ -257,7 +259,6 @@ apt-get -y install ssl-cert openssl-blacklist nginx memcached php5-cli php5-comm
 		php-apc php5-gd php-db php5-fpm php5-memcache php5-sqlite
 
 apt-get clean
-rm /var/cache/apt/archive/*
 
 ##################################################
 # Changing file upload size from 2M to upload_size
@@ -726,7 +727,7 @@ DELIM
 ###############################
 if [[ $disable_swap == "y" ]]; then
 swapoff --all
-apt-get remove dphys-swapfile
+apt-get -y remove dphys-swapfile
 rm -rf /var/swap
 fi
 ##########################################
@@ -769,3 +770,4 @@ echo " #########################################################################
 echo " #             The SVXLink Repeater / Echolink server Install is now complete             # "
 echo " #                          and your system is ready for use..                            # "
 echo " ########################################################################################## "
+) | tee /root/install.log
