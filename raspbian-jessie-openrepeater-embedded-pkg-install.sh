@@ -736,7 +736,6 @@ cd /root
 #####################################################
 cat > /etc/network/interfaces << DELIM
 auto lo eth0
-
 iface lo inet loopback
 iface eth0 inet dhcp
 
