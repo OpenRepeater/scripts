@@ -32,12 +32,6 @@
 ####################################################
 cs="Set-This"
 
-################################################################
-# Install Ajenti Optional Admin Portal (Optional) (Not Required)
-#           (Currently broken on beaglebone installs)
-################################################################
-install_ajenti="n" #y/n
-
 ####################################################
 # Install vsftpd for devel (Optional) (Not Required)
 ####################################################
@@ -738,32 +732,6 @@ if [[ $install_vsftpd == "y" ]]; then
 	# ADD FTP USER & SET PASSWORD
 	# ############################
 	adduser $vsftpd_user
-fi
-
-#############################
-#Install Ajenti Admin Portal
-#############################
-if [[ $install_ajenti == "y" ]]; then
-##########################
-#ADD Ajenti repo & ajenti
-##########################
-echo "Installing Ajenti Admin Portal"
-cat > "/etc/apt/sources.list.d/ajenti.list" <<DELIM
-deb http://repo.ajenti.org/debian main main debian
-DELIM
-
-######################
-# add ajenti repo key
-######################
-wget http://repo.ajenti.org/debian/key -O- | apt-key add -
-
-#################
-# install ajenti
-#################
-apt-get update
-apt-get install -y ajenti task python-memcache python-beautifulsoup cron
-apt-get clean
-rm /var/cache/apt/archive/*
 fi
 
 #############################
