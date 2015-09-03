@@ -32,6 +32,11 @@
 ####################################################
 cs="Set-This"
 
+#########################################################################
+# Disable the dphys swap. Not Needed on the pi-2 and pi-1/512 mb versions
+#########################################################################
+disable_swap="y"
+
 ####################################################
 # Install vsftpd for devel (Optional) (Not Required)
 ####################################################
@@ -719,10 +724,11 @@ DELIM
 # Disable the dphys swap file
 # Extend life of sd card
 ###############################
+if [[ $disable_swap == "y" ]]; then
 swapoff --all
 apt-get remove dphys-swapfile
 rm -rf /var/swap
-
+fi
 ##########################################
 #addon extra scripts for cloning the drive
 ##########################################
