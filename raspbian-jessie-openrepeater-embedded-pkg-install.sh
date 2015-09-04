@@ -35,12 +35,15 @@ cs="Set-This"
 
 #######################################
 # Disable the dphys swap. Not Needed on 
-# the pi-2 and pi-1/512 mb versions
+# the pi-2 and pi-1/512 mb versions will
+#extend life of sd
 #######################################
-disable_swap="y"
+disable_swap="n"
 
 ###################################################
 # Put /var/log into a tmpfs to improve performance 
+# Super user option dont try this if you must keep 
+# logs after every reboot
 ###################################################
 put_logs_tmpfs="n"
 
@@ -205,6 +208,33 @@ fi
 echo
 printf ' Current ip is : '; ip -f inet addr show dev eth0 | sed -n 's/^ *inet *\([.0-9]*\).*/\1/p'
 echo
+
+#################################################################################################
+# Setting apt_get to use the httpredirecter to get
+# To have <APT> automatically select a mirror close to you, use the Geo-ip redirector in your
+# sources.list "deb http://httpredir.debian.org/debian/ jessie main".
+# See http://httpredir.debian.org/ for more information.  The redirector uses HTTP 302 redirects
+# not dnS to serve content so is safe to use with Google dnS.
+# See also <which httpredir.debian.org>.  This service is identical to http.debian.net.
+#################################################################################################
+cat > "/etc/apt/sources.list" << DELIM
+deb http://httpredir.debian.org/debian/ jessie main contrib non-free
+#deb-src http://httpredir.debian.org/debian/ jessie main contrib non-free
+
+deb http://httpredir.debian.org/debian/ jessie-updates main contrib non-free
+#deb-src http://httpredir.debian.org/debian/ jessie-updates main contrib non-free
+
+deb http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
+#deb-src http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
+
+DELIM
+
+############
+# Raspi Repo
+############
+cat > /etc/apt/sources.list.d/raspi.list << DELIM
+deb http://mirrordirector.raspbian.org/raspbian/ jessie main contrib non-free rpi
+DELIM
 
 ##########################
 #Installing Deps
@@ -832,7 +862,7 @@ case "${1:-''}" in
   *)
 DELIM
 
-chmod 755 /etc/initd/preplog-dirs
+chmod 755 /etc/init.d/preplog-dirs
 
 fi
 

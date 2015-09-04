@@ -35,6 +35,8 @@ cs="Set_This"
 
 ###################################################
 # Put /var/log into a tmpfs to improve performance 
+# Super user option dont try this if you must keep 
+# logs after every reboot
 ###################################################
 put_logs_tmpfs="n"
 
@@ -105,11 +107,11 @@ fi
 #################
 # Os/Distro Check
 #################
-lsb_release -c |grep -i jessie &> /dev/null 2>&1
+lsb_release -c |grep -i wheezy &> /dev/null 2>&1
 if [ $? -eq 0 ]; then
-	echo " OK you are running Debian 8 : Jessie "
+	echo " OK you are running Debian 8 : wheezy "
 else
-	echo " This script was written for Debian 8 Jessie "
+	echo " This script was written for Debian 8 wheezy "
 	echo
 	echo " Your OS appears to be: " lsb_release -a
 	echo
@@ -166,7 +168,7 @@ cat << DELIM
 
          This Script Is Ment To Be Run On A Fresh Install Of
 
-                         Debian 8 (Jessie)
+                         Debian 8 (wheezy)
 
      If It Fails For Any Reason Please Report To kb3vgw@gmail.com
 
@@ -198,29 +200,28 @@ echo
 #################################################################################################
 # Setting apt_get to use the httpredirecter to get
 # To have <APT> automatically select a mirror close to you, use the Geo-ip redirector in your
-# sources.list "deb http://httpredir.debian.org/debian/ jessie main".
+# sources.list "deb http://httpredir.debian.org/debian/ wheezy main".
 # See http://httpredir.debian.org/ for more information.  The redirector uses HTTP 302 redirects
 # not dnS to serve content so is safe to use with Google dnS.
 # See also <which httpredir.debian.org>.  This service is identical to http.debian.net.
 #################################################################################################
 cat > "/etc/apt/sources.list" << DELIM
-deb http://httpredir.debian.org/debian/ jessie main contrib non-free
-#deb-src http://httpredir.debian.org/debian/ jessie main contrib non-free
+deb http://httpredir.debian.org/debian/ wheezy main contrib non-free
+#deb-src http://httpredir.debian.org/debian/ wheezy main contrib non-free
 
-deb http://httpredir.debian.org/debian/ jessie-updates main contrib non-free
-#deb-src http://httpredir.debian.org/debian/ jessie-updates main contrib non-free
+deb http://httpredir.debian.org/debian/ wheezy-updates main contrib non-free
+#deb-src http://httpredir.debian.org/debian/ wheezy-updates main contrib non-free
 
-deb http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
-#deb-src http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
+deb http://httpredir.debian.org/debian/ wheezy-backports main contrib non-free
+#deb-src http://httpredir.debian.org/debian/ wheezy-backports main contrib non-free
 
 DELIM
 
-#########################
-#c1 c1+ repo
-#########################
-cat > "/etc/apt/sources.list.d/odroid.list" << DELIM
-deb http://deb.odroid.in/c1/ trusty main
-deb http://deb.odroid.in/ trusty main
+############
+#Raspi Repo
+############
+cat > /etc/apt/sources.list.d/raspi.list << DELIM
+deb http://mirrordirector.raspbian.org/raspbian/ wheezy main contrib non-free rpi
 DELIM
 
 ######################
@@ -1261,7 +1262,7 @@ case "${1:-''}" in
   *)
 DELIM
 
-chmod 755 /etc/initd/preplog-dirs
+chmod 755 /etc/init.d/preplog-dirs
 
 fi
 

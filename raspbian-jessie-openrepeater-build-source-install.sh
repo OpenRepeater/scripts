@@ -35,6 +35,8 @@ cs="Set_This"
 
 ###################################################
 # Put /var/log into a tmpfs to improve performance 
+# Super user option dont try this if you must keep 
+# logs after every reboot
 ###################################################
 put_logs_tmpfs="n"
 
@@ -215,12 +217,11 @@ deb http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
 
 DELIM
 
-#########################
-#c1 c1+ repo
-#########################
-cat > "/etc/apt/sources.list.d/odroid.list" << DELIM
-deb http://deb.odroid.in/c1/ trusty main
-deb http://deb.odroid.in/ trusty main
+############
+#Raspi Repo
+############
+cat > /etc/apt/sources.list.d/raspi.list << DELIM
+deb http://mirrordirector.raspbian.org/raspbian/ jessie main contrib non-free rpi
 DELIM
 
 ######################
@@ -1261,7 +1262,7 @@ case "${1:-''}" in
   *)
 DELIM
 
-chmod 755 /etc/initd/preplog-dirs
+chmod 755 /etc/init.d/preplog-dirs
 
 fi
 
