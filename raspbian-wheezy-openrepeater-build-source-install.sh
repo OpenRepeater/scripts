@@ -657,7 +657,7 @@ UMask=0007
 WantedBy=multi-user.target
 DELIM
 
-cat > /lib/systemd/system/svxlink.service << DELIM
+cat > /lib/systemd/system/remotetrx.service << DELIM
 ;;;;; Author: Richard Neese<kb3vgw@gmail.com>
 
 [Unit]
@@ -694,6 +694,32 @@ UMask=0007
 WantedBy=multi-user.target
 DELIM
 
+cat > /etc/logrotate.d/svxlink-server << DELIM
+/var/log/svxlink {
+    missingok
+    notifempty
+    weekly
+    create 0644 svxlink adm
+    postrotate
+        killall -HUP svxlink
+    endscript
+}
+DELIM
+
+cat > /etc/logrotate.d/remotetrx << DELIM
+/var/log/remotetrx {
+    missingok
+    notifempty
+    weekly
+    create 0644 svxlink adm
+    postrotate
+        killall -HUP remotetrx
+    endscript
+}
+
+DELIM
+
+chmod +x /etc/init.d/svxlink /etc/init.x/remotetrx
 #######################################################
 #Install svxlink en_US sounds
 #Working on sounds pkgs for future release of svxlink
@@ -715,8 +741,8 @@ DELIM
 # Set fs to run in a tempfs ramdrive
 ####################################
 cat >> /etc/fstab << DELIM
-tmpfs /tmp  tmpfs nodev,nosuid,mode=1777  0 0
-tmpfs /var/tmp  tmpfs nodev,nosuid,mode=1777  0 0
+tmpfs /tmp  tmpfs size=20M,defaults,nodev,nosuid,mode=1777  0 0
+tmpfs /var/tmp  tmpfs size=20M,defaults,nodev,nosuid,mode=1777  0 0
 tmpfs /var/cache/apt/archives tmpfs   size=100M,defaults,noexec,nosuid,nodev,mode=0755 0 0
 DELIM
 
@@ -1065,7 +1091,7 @@ ln -s /var/log/svxlink /var/www/openrepeater/log
 
 chown www-data:www-data /var/www/openrepeater/courtesy_tones
 
-cp -rp /usr/share/examples/openrepeater/install/svxlink/* /etc/openrepeater/svxlink
+cp -rp /usr/share/examples/openrepeater/install/svxlink-conf/* /etc/openrepeater/svxlink
 cp -rp /usr/share/examples/openrepeater/install/sql/openrepeater.db /var/lib/openrepeater/db
 cp -rp /usr/share/examples/openrepeater/install/sql/database.php /etc/openrepeater
 
