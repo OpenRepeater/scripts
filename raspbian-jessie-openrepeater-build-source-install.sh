@@ -40,6 +40,11 @@ cs="Set_This"
 ###################################################
 put_logs_tmpfs="n"
 
+########################
+# Disable dphyus-swap
+########################
+disable_swap="n"
+
 ####################################################
 # Install vsftpd for devel (Optional) (Not Required)
 ####################################################
@@ -1265,6 +1270,15 @@ chmod 755 /etc/init.d/preplog-dirs
 
 fi
 
+###############################
+# Disable the dphys swap file
+# Extend life of sd card
+###############################
+if [[ $disable_swap == "y" ]]; then
+swapoff --all
+apt-get -y remove dphys-swapfile
+rm -rf /var/swap
+fi
 
 ########################################
 #Install raspi-openrepeater-config menu
