@@ -1219,7 +1219,6 @@ if [[ $put_logs_tmpfs == "y" ]]; then
 #################
 cat >>/etc/fstab << DELIM
 tmpfs   /var/log                tmpfs   size=20M,defaults,noatime,mode=0755 0 0 
-tmpfs   /var/cache/apt/archives tmpfs   size=100M,defaults,noexec,nosuid,nodev,mode=0755 0 0
 DELIM
 
 ####################
@@ -1292,11 +1291,23 @@ chmod 755 /etc/init.d/preplog-dirs
 
 fi
 
-######################
-# Enable the spi/i2c
-######################
-echo "spicc" >> /etc/modules
-echo "aml_i2c" >> /etc/modules
+###############################
+# Disable the dphys swap file
+# Extend life of sd card
+###############################
+if [[ $disable_swap == "y" ]]; then
+swapoff --all
+apt-get -y remove dphys-swapfile
+rm -rf /var/swap
+fi
+
+##########################################
+#addon extra scripts for cloning the drive
+##########################################
+cd /usr/local/bin
+wget https://raw.githubusercontent.com/billw2/rpi-clone/master/rpi-clone
+chmod +x rpi-clone
+cd /root 
 
 ########################################
 #Install raspi-openrepeater-config menu

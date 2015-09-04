@@ -1193,7 +1193,6 @@ if [[ $put_logs_tmpfs == "y" ]]; then
 #################
 cat >>/etc/fstab << DELIM
 tmpfs   /var/log                tmpfs   size=20M,defaults,noatime,mode=0755 0 0 
-tmpfs   /var/cache/apt/archives tmpfs   size=100M,defaults,noexec,nosuid,nodev,mode=0755 0 0
 DELIM
 
 ####################
@@ -1266,11 +1265,6 @@ chmod 755 /etc/init.d/preplog-dirs
 
 fi
 
-######################
-# Enable the spi/i2c
-######################
-echo "spicc" >> /etc/modules
-echo "aml_i2c" >> /etc/modules
 
 ########################################
 #Install raspi-openrepeater-config menu
