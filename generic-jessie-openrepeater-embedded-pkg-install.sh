@@ -641,7 +641,7 @@ ln -s /var/log/svxlink /var/www/openrepeater/log
 
 chown www-data:www-data /var/www/openrepeater/courtesy_tones
 
-cp -rp /usr/share/examples/openrepeater/install/svxlink/* /etc/openrepeater/svxlink
+cp -rp /usr/share/examples/openrepeater/install/svxlink-conf/* /etc/openrepeater/svxlink
 cp -rp /usr/share/examples/openrepeater/install/sql/openrepeater.db /var/lib/openrepeater/db
 cp -rp /usr/share/examples/openrepeater/install/sql/database.php /etc/openrepeater
 
