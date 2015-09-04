@@ -756,6 +756,17 @@ DELIM
 #snd_soc_hifiberry_dac
 #DELIM
 
+#################################################
+# Enable Kernel Modules for radio interface card
+#################################################
+#cat >> /etc/modules << DELIM
+snd_soc_bcm2708
+snd_soc_bcm2708_i2s
+bcm2708_dmaengine
+snd_soc_wm8731
+snd_soc_rpi_proto
+DELIM
+
 ###############################
 # Disable the dphys swap file
 # Extend life of sd card
