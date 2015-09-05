@@ -1223,7 +1223,7 @@ if [[ $put_logs_tmpfs == "y" ]]; then
 #configure fstab
 #################
 cat >>/etc/fstab << DELIM
-tmpfs   /var/log                tmpfs   size=20M,defaults,noatime,mode=0755 0 0 
+tmpfs   /var/log  tmpfs   size=20M,defaults,noatime,mode=0755 0 0 
 DELIM
 
 ####################
