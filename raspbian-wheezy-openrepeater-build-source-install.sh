@@ -210,24 +210,6 @@ echo
 # not dnS to serve content so is safe to use with Google dnS.
 # See also <which httpredir.debian.org>.  This service is identical to http.debian.net.
 #################################################################################################
-cat > "/etc/apt/sources.list" << DELIM
-deb http://httpredir.debian.org/debian/ wheezy main contrib non-free
-#deb-src http://httpredir.debian.org/debian/ wheezy main contrib non-free
-
-deb http://httpredir.debian.org/debian/ wheezy-updates main contrib non-free
-#deb-src http://httpredir.debian.org/debian/ wheezy-updates main contrib non-free
-
-deb http://httpredir.debian.org/debian/ wheezy-backports main contrib non-free
-#deb-src http://httpredir.debian.org/debian/ wheezy-backports main contrib non-free
-
-DELIM
-
-############
-#Raspi Repo
-############
-cat > /etc/apt/sources.list.d/raspi.list << DELIM
-deb http://mirrordirector.raspbian.org/raspbian/ wheezy main contrib non-free rpi
-DELIM
 
 ######################
 #Update base os
@@ -238,15 +220,15 @@ for i in update upgrade clean ;do apt-get -y "${i}" ; done
 #Installing Deps
 #################
 apt-get install -y --force-yes sqlite3 libopus0 alsa-utils vorbis-tools sox libsox-fmt-mp3 librtlsdr0 \
-		ntp libasound2 libspeex1 libgcrypt20 libpopt0 libgsm1 tcl8.6 alsa-base bzip2 flite screen time \
-		uuid rsyslog vim install-info whiptail dialog logrotate cron usbutils git-core tk8.6
+		ntp libasound2 libspeex1 libgcrypt11 libpopt0 libgsm1 tcl8.5 alsa-base bzip2 flite screen time \
+		uuid rsyslog vim install-info whiptail dialog logrotate cron usbutils git-core tk8.5
 
 ########################
 # Install Build Depends
 #######################		
-apt-get install -y gawk uuid-dev g++ make cmake libsigc++-2.0-dev libgsm1-dev libpopt-dev libgcrypt11-dev \
-		libspeex-dev libasound2-dev alsa-utils vorbis-tools sox libsox-fmt-mp3 sqlite3 unzip opus-tools \
-		tcl8.6-dev alsa-base ntp groff doxygen libopus-dev librtlsdr-dev tk8.6-dev
+apt-get install -y --force-yes gawk uuid-dev g++ make cmake libsigc++-2.0-dev libgsm1-dev libpopt-dev \
+		libgcrypt11-dev libspeex-dev libasound2-dev alsa-utils vorbis-tools sox libsox-fmt-mp3 sqlite3 \
+		unzip opus-tools tcl8.5-dev alsa-base ntp groff doxygen libopus-dev tk8.5-dev
 
 ##################################
 # Add User and include in groupds
@@ -602,7 +584,7 @@ ENV="ASYNC_AUDIO_NOTRIGGER=1"
 #GPIO_SQL_PIN=""
 DELIM
 
-cat > /etc/defaul/remotetrx<< DELIM
+cat > /etc/default/remotetrx<< DELIM
 #############################################################################
 #
 # Configuration file for the RemoteTrx startup script /etc/init.d/remotetrx
