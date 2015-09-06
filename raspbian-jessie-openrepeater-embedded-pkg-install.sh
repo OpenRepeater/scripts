@@ -33,13 +33,6 @@
 ####################################################
 cs="Set-This"
 
-#######################################
-# Disable the dphys swap. Not Needed on 
-# the pi-2 and pi-1/512 mb versions will
-#extend life of sd
-#######################################
-disable_swap="n"
-
 ###################################################
 # Put /var/log into a tmpfs to improve performance 
 # Super user option dont try this if you must keep 
@@ -209,6 +202,65 @@ echo
 printf ' Current ip is : '; ip -f inet addr show dev eth0 | sed -n 's/^ *inet *\([.0-9]*\).*/\1/p'
 echo
 
+##############################
+#Set a reboot if Kernel Panic
+##############################
+cat > /etc/sysctl.conf << DELIM
+kernel.panic = 10
+DELIM
+
+####################################
+# Set fs to run in a tempfs ramdrive
+####################################
+cat >> /etc/fstab << DELIM
+tmpfs /tmp  tmpfs nodev,nosuid,mode=1777  0 0
+tmpfs /var/tmp  tmpfs nodev,nosuid,mode=1777  0 0
+tmpfs /var/cache/apt/archives tmpfs   size=100M,defaults,noexec,nosuid,nodev,mode=0755 0 0
+DELIM
+
+########################
+# cnfigure tmpfs sizes
+########################
+cp /etc/default/tmpfs /etc/default/tmpfs.orig
+cat > /etc/default/tmpfs << DELIM
+RAMLOCK=yes
+RAMSHM=yes
+RAMTMP=yes
+
+TMPFS_SIZE=10%VM
+RUN_SIZE=10M
+LOCK_SIZE=5M
+SHM_SIZE=10M
+TMP_SIZE=25M
+
+DELIM
+
+############################
+# set usb power level
+############################
+cat >> /boot/config.txt << DELIM
+
+#usb max current
+usb_max_current=1
+DELIM
+
+#####################################
+# Disable Kernel Modules for onboard 
+# sound interface card
+####################################
+cat >> /etc/modules << DELIM
+#disable onboard sound
+#snd-bcm2835
+DELIM
+
+###############################
+# Disable the dphys swap file
+# Extend life of sd card
+###############################
+swapoff --all
+apt-get -y remove dphys-swapfile
+rm -rf /var/swap
+
 #################################################################################################
 # Setting apt_get to use the httpredirecter to get
 # To have <APT> automatically select a mirror close to you, use the Geo-ip redirector in your
@@ -231,17 +283,12 @@ DELIM
 
 ############
 # Raspi Repo
-############
+###########################################################################
+# Put in Proper Location. All addon repos should be source.list.d sub dir
+###########################################################################
 cat > /etc/apt/sources.list.d/raspi.list << DELIM
 deb http://mirrordirector.raspbian.org/raspbian/ jessie main contrib non-free rpi
 DELIM
-
-##########################
-#Installing Deps
-##########################
-apt-get install -y --force-yes sqlite3 libopus0 alsa-utils vorbis-tools sox libsox-fmt-mp3 librtlsdr0 \
-		ntp libasound2 libspeex1 libgcrypt20 libpopt0 libgsm1 tcl8.6 alsa-base bzip2 flite screen time \
-		uuid rsyslog vim install-info whiptail dialog logrotate cron usbutils
 
 ##########################
 # Adding OpenRepeater Repo
@@ -252,7 +299,17 @@ cat > "/etc/apt/sources.list.d/openrepeater.list" <<DELIM
 deb http://repo.openrepeater.com/openrepeater/release/debian/ jessie main
 DELIM
 
-apt-get update
+######################
+#Update base os
+######################
+for i in update upgrade clean ;do apt-get -y "${i}" ; done
+
+##########################
+#Installing Deps
+##########################
+apt-get install -y --force-yes sqlite3 libopus0 alsa-utils vorbis-tools sox libsox-fmt-mp3 librtlsdr0 \
+		ntp libasound2 libspeex1 libgcrypt20 libpopt0 libgsm1 tcl8.6 alsa-base bzip2 flite screen time \
+		uuid rsyslog vim install-info whiptail dialog logrotate cron usbutils
 
 ######################
 #Install svxlink
@@ -270,22 +327,6 @@ wget https://github.com/sm0svx/svxlink-sounds-en_US-heather/releases/download/14
 tar xjvf svxlink-sounds-en_US-heather-16k-13.12.tar.bz2
 mv en_US-heather* en_US
 cd /root
-
-##############################
-#Set a reboot if Kernel Panic
-##############################
-cat > /etc/sysctl.conf << DELIM
-kernel.panic = 10
-DELIM
-
-####################################
-# Set fs to run in a tempfs ramdrive
-####################################
-cat >> /etc/fstab << DELIM
-tmpfs /tmp  tmpfs nodev,nosuid,mode=1777  0 0
-tmpfs /var/tmp  tmpfs nodev,nosuid,mode=1777  0 0
-tmpfs /var/cache/apt/archives tmpfs   size=100M,defaults,noexec,nosuid,nodev,mode=0755 0 0
-DELIM
 
 ##########################################
 #---Start of nginx / php5 install --------
@@ -726,31 +767,6 @@ if [[ $install_vsftpd == "y" ]]; then
 	adduser $vsftpd_user
 fi
 
-############################
-# set usb power level
-############################
-cat >> /boot/config.txt << DELIM
-
-#usb max current
-usb_max_current=1
-DELIM
-
-#####################################
-# Disable Kernel Modules for onboard 
-# sound interface card
-####################################
-cat >> /etc/modules << DELIM
-#disable onboard sound
-#snd-bcm2835
-DELIM
-
-#################################################
-# Enable Kernel Modules for radio interface card
-#################################################
-#cat >> /etc/modules << DELIM
-
-#DELIM
-
 ###############################
 # Disable the dphys swap file
 # Extend life of sd card
@@ -788,22 +804,6 @@ if [[ $put_logs_tmpfs == "y" ]]; then
 #################
 cat >>/etc/fstab << DELIM
 tmpfs   /var/log                tmpfs   size=20M,defaults,noatime,mode=0755 0 0 
-DELIM
-
-####################
-# cnfigure log tmpfs
-####################
-cat > /etc/default/tmpfs << DELIM
-RAMLOCK=yes
-RAMSHM=yes
-RAMTMP=yes
-
-TMPFS_SIZE=10%VM
-RUN_SIZE=10M
-LOCK_SIZE=5M
-SHM_SIZE=10M
-TMP_SIZE=25M
-
 DELIM
 
 #######################################
@@ -865,11 +865,10 @@ fi
 ########################################
 #apt-get install raspi-openrepeater-menu
 
-##################################
-# Enable New shellmenu for logins
-# on enabled for root and only if 
-# the file exist
-##################################
+##############################################
+# Enable New shellmenu for logins  on enabled 
+# for root and only if the file exist
+##############################################
 cat >> /root/.profile << DELIM
 
 if [ -f /usr/local/bin/raspi-openrepeater-conf ]; then

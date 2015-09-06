@@ -246,23 +246,6 @@ echo
 printf ' Current ip is : '; ip -f inet addr show dev eth0 | sed -n 's/^ *inet *\([.0-9]*\).*/\1/p'
 echo
 
-######################
-#Install Dependancies
-#####################
-echo " Installing install deps and svxlink + remotetrx"
-apt-get install -y --force-yes memcached sqlite3 libopus0 alsa-utils vorbis-tools sox libsox-fmt-mp3 librtlsdr0 \
-		ntp libasound2 libspeex1 libgcrypt20 libpopt0 libgsm1 tcl8.6 alsa-base bzip2 sudo gpsd gpsd-clients \
-		flite wvdial htop screen time uuid rsyslog vim install-info usbutils whiptail dialog \
-		svxlink-server remotetrx 
-apt-get clean
-
-#Working on sounds pkgs for future release of svxlink
-cd /usr/share/svxlink/sounds
-wget https://github.com/sm0svx/svxlink-sounds-en_US-heather/releases/download/14.08/svxlink-sounds-en_US-heather-16k-13.12.tar.bz2
-tar xjvf svxlink-sounds-en_US-heather-16k-13.12.tar.bz2
-mv en_US-heather* en_US
-cd /root
-
 ##############################
 #Set a reboot if Kernel Panic
 ##############################
@@ -274,56 +257,67 @@ DELIM
 # Set fs to run in a tempfs ramdrive
 ####################################
 cat >> /etc/fstab << DELIM
-tmpfs /tmp  tmpfs size=20M,defaults,nodev,nosuid,mode=1777  0 0
-tmpfs /var/tmp  tmpfs size=20M,defaults,nodev,nosuid,mode=1777  0 0
+tmpfs /tmp  tmpfs nodev,nosuid,mode=1777  0 0
+tmpfs /var/tmp  tmpfs nodev,nosuid,mode=1777  0 0
 tmpfs /var/cache/apt/archives tmpfs   size=100M,defaults,noexec,nosuid,nodev,mode=0755 0 0
 DELIM
 
-########################################
-# Configure nptd to use gpsd/ntpd servers
-# for getting and setting time correctly
-########################################
-cp /etc/ntp.conf /etc/ntp.conf.orig
+########################
+# cnfigure tmpfs sizes
+########################
+cp /etc/default/tmpfs /etc/default/tmpfs.orig
+cat > /etc/default/tmpfs << DELIM
+RAMLOCK=yes
+RAMSHM=yes
+RAMTMP=yes
 
-cat > /etc/ntp.conf << DELIM
-# /etc/ntp.conf, configuration for ntpd; see ntp.conf(5) for help
-driftfile       /var/lib/ntp/ntp.drift 
-# Enable this if you want statistics to be logged.
-# statsdir /var/log/ntpstats/
-statistics      loopstats       peerstats       clockstats
-filegen loopstats       file    loopstats       type    day     enable
-filegen peerstats       file    peerstats       type    day     enable
-filegen clockstats      file    clockstats      type    day     enable
-# Access control configuration; see /usr/share/doc/ntp-doc/html/accopt.html for
-# details.  The web page <http://support.ntp.org/bin/view/Support/AccessRestrictions>
-# might also be helpful.
-#
-# Note that "restrict" applies to both servers and clients, so a configuration
-# that might be intended to block requests from certain clients could also end
-# up blocking replies from your own upstream servers.
-# By default, exchange time with everybody, but don't allow configuration.
-restrict        -4      default kod     notrap  nomodify        nopeer  noquery
-restrict        -6      default kod     notrap  nomodify        nopeer  noquery
-restrict        127.0.0.1 # Local users may interrogate the ntp server more closely.
-restrict        ::1
-# Read the rough GPS time from device 127.127.28.0
-# Read the accurate PPS time from device 127.127.28.1
-server 127.127.28.0 minpoll 4 maxpoll 4
-fudge 127.127.28.0 time1 0.535 refid GPS
-server 127.127.28.1 minpoll 4 maxpoll 4 prefer
-fudge 127.127.28.1 refid PPS
-# Use servers from the ntp pool for the first synchronization,
-# or as a backup if the GPS is disconnected
-server	0.pool.ntp.org
-server  1.pool.ntp.org
-server  2.pool.ntp.org
-server  3.pool.ntp.org
+TMPFS_SIZE=10%VM
+RUN_SIZE=10M
+LOCK_SIZE=5M
+SHM_SIZE=10M
+TMP_SIZE=25M
+
 DELIM
+
+######################
+# Enable the spi/i2c
+######################
+echo "spicc" >> /etc/modules
+echo "aml_i2c" >> /etc/modules
+
+######################
+#Install Dependancies
+#####################
+apt-get install -y --force-yes memcached sqlite3 libopus0 alsa-utils vorbis-tools sox libsox-fmt-mp3 librtlsdr0 \
+		ntp libasound2 libspeex1 libgcrypt20 libpopt0 libgsm1 tcl8.6 alsa-base bzip2 sudo gpsd gpsd-clients \
+		flite wvdial htop screen time uuid rsyslog vim install-info usbutils whiptail dialog 
+
+#####################
+# Install SvxLink
+#####################		
+apt-get install -y --force-yes svxlink-server remotetrx 
+
+###########
+# Clean Up
+###########
+apt-get clean
+
+#Working on sounds pkgs for future release of svxlink
+cd /usr/share/svxlink/sounds
+wget https://github.com/sm0svx/svxlink-sounds-en_US-heather/releases/download/14.08/svxlink-sounds-en_US-heather-16k-13.12.tar.bz2
+tar xjvf svxlink-sounds-en_US-heather-16k-13.12.tar.bz2
+mv en_US-heather* en_US
+rm svxlink-sounds-en_US-heather-16k-13.12.tar.bz2
+cd /root
 
 ##########################################
 #---Start of nginx / php5 install --------
 ##########################################
 apt-get -y install ssl-cert nginx php5-cli php5-common php-apc php5-gd php-db php5-fpm php5-memcache php5-sqlite
+
+#############
+# Clean UP
+#############
 apt-get clean
 
 ##################################################
@@ -764,12 +758,6 @@ ff02::2         ip6-allrouters
 127.0.0.1       $cs-repeater
 DELIM
 
-######################
-# Enable the spi/i2c
-######################
-echo "spicc" >> /etc/modules
-echo "aml_i2c" >> /etc/modules
-
 ##########################################
 # SETUP configuration for /tmpfs for logs
 ##########################################
@@ -779,22 +767,6 @@ if [[ $put_logs_tmpfs == "y" ]]; then
 #################
 cat >>/etc/fstab << DELIM
 tmpfs   /var/log                tmpfs   size=20M,defaults,noatime,mode=0755 0 0 
-DELIM
-
-####################
-# cnfigure log tmpfs
-####################
-cat > /etc/default/tmpfs << DELIM
-RAMLOCK=yes
-RAMSHM=yes
-RAMTMP=yes
-
-TMPFS_SIZE=10%VM
-RUN_SIZE=10M
-LOCK_SIZE=5M
-SHM_SIZE=10M
-TMP_SIZE=25M
-
 DELIM
 
 #######################################

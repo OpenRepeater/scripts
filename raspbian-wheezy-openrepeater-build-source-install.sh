@@ -202,6 +202,57 @@ echo
 printf ' Current ip is : '; ip -f inet addr show dev eth0 | sed -n 's/^ *inet *\([.0-9]*\).*/\1/p'
 echo
 
+##############################
+#Set a reboot if Kernel Panic
+##############################
+cat > /etc/sysctl.conf << DELIM
+kernel.panic = 10
+DELIM
+
+####################################
+# Set fs to run in a tempfs ramdrive
+####################################
+cat >> /etc/fstab << DELIM
+tmpfs /tmp  tmpfs size=20M,defaults,nodev,nosuid,mode=1777  0 0
+tmpfs /var/tmp  tmpfs size=20M,defaults,nodev,nosuid,mode=1777  0 0
+tmpfs /var/cache/apt/archives tmpfs   size=100M,defaults,noexec,nosuid,nodev,mode=0755 0 0
+DELIM
+
+########################
+# cnfigure tmpfs sizes
+########################
+cp /etc/default/tmpfs /etc/default/tmpfs.orig
+cat > /etc/default/tmpfs << DELIM
+RAMLOCK=yes
+RAMSHM=yes
+RAMTMP=yes
+
+TMPFS_SIZE=10%VM
+RUN_SIZE=10M
+LOCK_SIZE=5M
+SHM_SIZE=10M
+TMP_SIZE=25M
+
+DELIM
+
+############################
+# set usb power level
+############################
+cat >> /boot/config.txt << DELIM
+
+#usb max current
+usb_max_current=1
+DELIM
+
+#####################################
+# Disable Kernel Modules for onboard 
+# hdmi sound interface card
+####################################
+cat >> /etc/modules << DELIM
+#disable onboard sound
+#snd-bcm2835
+DELIM
+
 #################################################################################################
 # Setting apt_get to use the httpredirecter to get
 # To have <APT> automatically select a mirror close to you, use the Geo-ip redirector in your
@@ -232,7 +283,7 @@ apt-get install -y --force-yes gawk uuid-dev g++ make cmake libsigc++-2.0-dev li
 
 ##################################
 # Add User and include in groupds
-#################################
+##################################
 # Sane defaults:
 [ -z "$SERVER_HOME" ] && SERVER_HOME=/usr/bin
 [ -z "$SERVER_USER" ] && SERVER_USER=svxlink
@@ -284,7 +335,7 @@ done
 #########################
 # get svxlink src
 #########################
-cd /usr/src || exit
+cd /usr/src
 wget https://github.com/sm0svx/svxlink/archive/14.08.1.tar.gz
 tar xzvf 14.08.1.tar.gz
 
@@ -299,6 +350,7 @@ make -j4
 make doc
 make install
 ldconfig
+cd /root
 
 #############################
 # Svx Init.d/systamd scripts
@@ -716,22 +768,6 @@ wget https://github.com/sm0svx/svxlink-sounds-en_US-heather/releases/download/14
 tar xjvf svxlink-sounds-en_US-heather-16k-13.12.tar.bz2
 mv en_US-heather* en_US
 cd /root || exit
-
-##############################
-#Set a reboot if Kernel Panic
-##############################
-cat > /etc/sysctl.conf << DELIM
-kernel.panic = 10
-DELIM
-
-####################################
-# Set fs to run in a tempfs ramdrive
-####################################
-cat >> /etc/fstab << DELIM
-tmpfs /tmp  tmpfs size=20M,defaults,nodev,nosuid,mode=1777  0 0
-tmpfs /var/tmp  tmpfs size=20M,defaults,nodev,nosuid,mode=1777  0 0
-tmpfs /var/cache/apt/archives tmpfs   size=100M,defaults,noexec,nosuid,nodev,mode=0755 0 0
-DELIM
 
 ##########################################
 #---Start of nginx / php5 install --------
@@ -1204,24 +1240,8 @@ if [[ $put_logs_tmpfs == "y" ]]; then
 #################
 #configure fstab
 #################
-cat >>/etc/fstab << DELIM
+cat >> /etc/fstab << DELIM
 tmpfs   /var/log  tmpfs   size=20M,defaults,noatime,mode=0755 0 0 
-DELIM
-
-####################
-# cnfigure log tmpfs
-####################
-cat > /etc/default/tmpfs << DELIM
-RAMLOCK=yes
-RAMSHM=yes
-RAMTMP=yes
-
-TMPFS_SIZE=10%VM
-RUN_SIZE=10M
-LOCK_SIZE=5M
-SHM_SIZE=10M
-TMP_SIZE=25M
-
 DELIM
 
 #######################################
