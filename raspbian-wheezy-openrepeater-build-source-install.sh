@@ -40,11 +40,6 @@ cs="Set_This"
 ###################################################
 put_logs_tmpfs="n"
 
-########################
-# Disable dphyus-swap
-########################
-disable_swap="n"
-
 ####################################################
 # Install vsftpd for devel (Optional) (Not Required)
 ####################################################
@@ -202,6 +197,9 @@ echo
 printf ' Current ip is : '; ip -f inet addr show dev eth0 | sed -n 's/^ *inet *\([.0-9]*\).*/\1/p'
 echo
 
+####################################
+# Reconfigure system for performance
+####################################
 ##############################
 #Set a reboot if Kernel Panic
 ##############################
@@ -253,14 +251,78 @@ cat >> /etc/modules << DELIM
 #snd-bcm2835
 DELIM
 
-#################################################################################################
-# Setting apt_get to use the httpredirecter to get
-# To have <APT> automatically select a mirror close to you, use the Geo-ip redirector in your
-# sources.list "deb http://httpredir.debian.org/debian/ wheezy main".
-# See http://httpredir.debian.org/ for more information.  The redirector uses HTTP 302 redirects
-# not dnS to serve content so is safe to use with Google dnS.
-# See also <which httpredir.debian.org>.  This service is identical to http.debian.net.
-#################################################################################################
+##########################################
+# SETUP configuration for /tmpfs for logs
+##########################################
+if [[ $put_logs_tmpfs == "y" ]]; then
+#################
+#configure fstab
+#################
+cat >> /etc/fstab << DELIM
+tmpfs   /var/log  tmpfs   size=20M,defaults,noatime,mode=0755 0 0 
+DELIM
+
+#######################################
+# Configure /var/log dir's on reboots
+#######################################
+cat > /etc/init.d/preplog-dirs << DELIM
+#!/bin/bash
+#
+### BEGIN INIT INFO
+# Provides:          prepare-dirs
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Required-Start:
+# Required-Stop:
+# Short-Description: Create needed directories on /var/log/ for tmpfs at startup
+# Description:       Create needed directories on /var/log/ for tmpfs at startup
+### END INIT INFO
+# needed Dirs
+DIR[0]=/var/log/nginx
+DIR[1]=/var/log/apt
+DIR[2]=/var/log/ConsoleKit
+DIR[3]=/var/log/fsck
+DIR[4]=/var/log/news
+DIR[5]=/var/log/ntpstats
+DIR[6]=/var/log/samba
+DIR[7]=/var/log/lastlog
+DIR[8]=/var/log/exim
+DIR[9]=/var/log/watchdog
+case "${1:-''}" in
+  start)
+        typeset -i i=0 max=${#DIR[*]}
+        while (( i < max ))
+        do
+                mkdir  ${DIR[$i]}
+                chmod 755 ${DIR[$i]}
+                i=i+1
+        done
+        # set rights
+        chown www-data.adm ${DIR[0]}
+        chown root.adm ${DIR[6]}
+    ;;
+  stop)
+    ;;
+  restart)
+   ;;
+  reload|force-reload)
+   ;;
+  status)
+   ;;
+  *)
+DELIM
+
+chmod 755 /etc/init.d/preplog-dirs
+
+fi
+
+###############################
+# Disable the dphys swap file
+# Extend life of sd card
+###############################
+swapoff --all
+apt-get -y remove dphys-swapfile
+rm -rf /var/swap
 
 ######################
 #Update base os
@@ -1231,81 +1293,6 @@ if [[ $install_vsftpd == "y" ]]; then
 	# ADD FTP USER & SET PASSWORD
 	# ############################
 	adduser $vsftpd_user
-fi
-
-##########################################
-# SETUP configuration for /tmpfs for logs
-##########################################
-if [[ $put_logs_tmpfs == "y" ]]; then
-#################
-#configure fstab
-#################
-cat >> /etc/fstab << DELIM
-tmpfs   /var/log  tmpfs   size=20M,defaults,noatime,mode=0755 0 0 
-DELIM
-
-#######################################
-# Configure /var/log dir's on reboots
-#######################################
-cat > /etc/init.d/preplog-dirs << DELIM
-#!/bin/bash
-#
-### BEGIN INIT INFO
-# Provides:          prepare-dirs
-# Default-Start:     2 3 4 5
-# Default-Stop:      0 1 6
-# Required-Start:
-# Required-Stop:
-# Short-Description: Create needed directories on /var/log/ for tmpfs at startup
-# Description:       Create needed directories on /var/log/ for tmpfs at startup
-### END INIT INFO
-# needed Dirs
-DIR[0]=/var/log/nginx
-DIR[1]=/var/log/apt
-DIR[2]=/var/log/ConsoleKit
-DIR[3]=/var/log/fsck
-DIR[4]=/var/log/news
-DIR[5]=/var/log/ntpstats
-DIR[6]=/var/log/samba
-DIR[7]=/var/log/lastlog
-DIR[8]=/var/log/exim
-DIR[9]=/var/log/watchdog
-case "${1:-''}" in
-  start)
-        typeset -i i=0 max=${#DIR[*]}
-        while (( i < max ))
-        do
-                mkdir  ${DIR[$i]}
-                chmod 755 ${DIR[$i]}
-                i=i+1
-        done
-        # set rights
-        chown www-data.adm ${DIR[0]}
-        chown root.adm ${DIR[6]}
-    ;;
-  stop)
-    ;;
-  restart)
-   ;;
-  reload|force-reload)
-   ;;
-  status)
-   ;;
-  *)
-DELIM
-
-chmod 755 /etc/init.d/preplog-dirs
-
-fi
-
-###############################
-# Disable the dphys swap file
-# Extend life of sd card
-###############################
-if [[ $disable_swap == "y" ]]; then
-swapoff --all
-apt-get -y remove dphys-swapfile
-rm -rf /var/swap
 fi
 
 ##########################################

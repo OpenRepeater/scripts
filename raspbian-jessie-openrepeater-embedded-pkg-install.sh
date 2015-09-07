@@ -261,6 +261,110 @@ swapoff --all
 apt-get -y remove dphys-swapfile
 rm -rf /var/swap
 
+##########################################
+#addon extra scripts for cloning the drive
+##########################################
+cd /usr/local/bin
+wget https://raw.githubusercontent.com/billw2/rpi-clone/master/rpi-clone
+chmod +x rpi-clone
+cd /root 
+
+#####################################################
+#fix usb sound/nic issue so network interface gets IP
+#####################################################
+cat > /etc/network/interfaces << DELIM
+auto lo eth0
+iface lo inet loopback
+iface eth0 inet dhcp
+
+DELIM
+
+##########################################
+# SETUP configuration for /tmpfs for logs
+##########################################
+if [[ $put_logs_tmpfs == "y" ]]; then
+#################
+#configure fstab
+#################
+cat >>/etc/fstab << DELIM
+tmpfs   /var/log  tmpfs   size=20M,defaults,noatime,mode=0755 0 0 
+DELIM
+
+#######################################
+# Configure /var/log dir's on reboots
+#######################################
+cat > /etc/init.d/preplog-dirs << DELIM
+#!/bin/bash
+#
+### BEGIN INIT INFO
+# Provides:          prepare-dirs
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Required-Start:
+# Required-Stop:
+# Short-Description: Create needed directories on /var/log/ for tmpfs at startup
+# Description:       Create needed directories on /var/log/ for tmpfs at startup
+### END INIT INFO
+# needed Dirs
+DIR[0]=/var/log/nginx
+DIR[1]=/var/log/apt
+DIR[2]=/var/log/ConsoleKit
+DIR[3]=/var/log/fsck
+DIR[4]=/var/log/news
+DIR[5]=/var/log/ntpstats
+DIR[6]=/var/log/samba
+DIR[7]=/var/log/lastlog
+DIR[8]=/var/log/exim
+DIR[9]=/var/log/watchdog
+case "${1:-''}" in
+  start)
+        typeset -i i=0 max=${#DIR[*]}
+        while (( i < max ))
+        do
+                mkdir  ${DIR[$i]}
+                chmod 755 ${DIR[$i]}
+                i=i+1
+        done
+        # set rights
+        chown www-data.adm ${DIR[0]}
+        chown root.adm ${DIR[6]}
+    ;;
+  stop)
+    ;;
+  restart)
+   ;;
+  reload|force-reload)
+   ;;
+  status)
+   ;;
+  *)
+DELIM
+
+chmod 755 /etc/init.d/preplog-dirs
+
+fi
+
+#############################
+#Setting Host/Domain name
+#############################
+cat > /etc/hostname << DELIM
+$cs-repeater
+DELIM
+
+#################
+#Setup /etc/hosts
+#################
+cat > /etc/hosts << DELIM
+127.0.0.1       localhost 
+::1             localhost ip6-localhost ip6-loopback
+fe00::0         ip6-localnet
+ff00::0         ip6-mcastprefix
+ff02::1         ip6-allnodes
+ff02::2         ip6-allrouters
+
+127.0.0.1       $cs-repeater
+
+DELIM
 #################################################################################################
 # Setting apt_get to use the httpredirecter to get
 # To have <APT> automatically select a mirror close to you, use the Geo-ip redirector in your
@@ -724,28 +828,6 @@ cat >> /etc/sudoers << DELIM
 www-data   ALL=(ALL) NOPASSWD: /usr/local/bin/svxlink_restart, NOPASSWD: /usr/local/bin/svxlink_start, NOPASSWD: /usr/local/bin/svxlink_stop, NOPASSWD: /usr/local/bin/repeater_reboot, NOPASSWD: /usr/bin/aplay, NOPASSWD: /usr/bin/arecord
 DELIM
 
-#############################
-#Setting Host/Domain name
-#############################
-cat > /etc/hostname << DELIM
-$cs-repeater
-DELIM
-
-#################
-#Setup /etc/hosts
-#################
-cat > /etc/hosts << DELIM
-127.0.0.1       localhost 
-::1             localhost ip6-localhost ip6-loopback
-fe00::0         ip6-localnet
-ff00::0         ip6-mcastprefix
-ff02::1         ip6-allnodes
-ff02::2         ip6-allrouters
-
-127.0.0.1       $cs-repeater
-
-DELIM
-
 ###############################################
 # INSTALL FTP SERVER / ADD USER FOR DEVELOPMENT
 ###############################################
@@ -765,99 +847,6 @@ if [[ $install_vsftpd == "y" ]]; then
 	# ADD FTP USER & SET PASSWORD
 	# ############################
 	adduser $vsftpd_user
-fi
-
-###############################
-# Disable the dphys swap file
-# Extend life of sd card
-###############################
-if [[ $disable_swap == "y" ]]; then
-swapoff --all
-apt-get -y remove dphys-swapfile
-rm -rf /var/swap
-fi
-
-##########################################
-#addon extra scripts for cloning the drive
-##########################################
-cd /usr/local/bin
-wget https://raw.githubusercontent.com/billw2/rpi-clone/master/rpi-clone
-chmod +x rpi-clone
-cd /root 
-
-#####################################################
-#fix usb sound/nic issue so network interface gets IP
-#####################################################
-cat > /etc/network/interfaces << DELIM
-auto lo eth0
-iface lo inet loopback
-iface eth0 inet dhcp
-
-DELIM
-
-##########################################
-# SETUP configuration for /tmpfs for logs
-##########################################
-if [[ $put_logs_tmpfs == "y" ]]; then
-#################
-#configure fstab
-#################
-cat >>/etc/fstab << DELIM
-tmpfs   /var/log                tmpfs   size=20M,defaults,noatime,mode=0755 0 0 
-DELIM
-
-#######################################
-# Configure /var/log dir's on reboots
-#######################################
-cat > /etc/init.d/preplog-dirs << DELIM
-#!/bin/bash
-#
-### BEGIN INIT INFO
-# Provides:          prepare-dirs
-# Default-Start:     2 3 4 5
-# Default-Stop:      0 1 6
-# Required-Start:
-# Required-Stop:
-# Short-Description: Create needed directories on /var/log/ for tmpfs at startup
-# Description:       Create needed directories on /var/log/ for tmpfs at startup
-### END INIT INFO
-# needed Dirs
-DIR[0]=/var/log/nginx
-DIR[1]=/var/log/apt
-DIR[2]=/var/log/ConsoleKit
-DIR[3]=/var/log/fsck
-DIR[4]=/var/log/news
-DIR[5]=/var/log/ntpstats
-DIR[6]=/var/log/samba
-DIR[7]=/var/log/lastlog
-DIR[8]=/var/log/exim
-DIR[9]=/var/log/watchdog
-case "${1:-''}" in
-  start)
-        typeset -i i=0 max=${#DIR[*]}
-        while (( i < max ))
-        do
-                mkdir  ${DIR[$i]}
-                chmod 755 ${DIR[$i]}
-                i=i+1
-        done
-        # set rights
-        chown www-data.adm ${DIR[0]}
-        chown root.adm ${DIR[6]}
-    ;;
-  stop)
-    ;;
-  restart)
-   ;;
-  reload|force-reload)
-   ;;
-  status)
-   ;;
-  *)
-DELIM
-
-chmod 755 /etc/init.d/preplog-dirs
-
 fi
 
 ########################################

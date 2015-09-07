@@ -32,26 +32,12 @@
 ####################################################
 cs="Set-This"
 
-###############################################
-# Configure ntpd to use gpsd to get time.
-# Requires a gps hat/usb dongle
-###############################################
-use_gps_ntp="n" # y/n
-
-####################################################
-# Install vsftpd for devel (Optional) (Not Required)
-####################################################
-install_vsftpd="n" #y/n
-
-#####################
-# set vsftp user name
-#####################
-vsftpd_user=""
-
-########################
-# set vsftp config path
-########################
-FTP_CONFIG_PATH="/etc/vsftpd.conf"
+###################################################
+# Put /var/log into a tmpfs to improve performance 
+# Super user option dont try this if you must keep 
+# logs after every reboot
+###################################################
+put_logs_tmpfs="n"
 
 # ----- Stop Edit Here ------- #
 ########################################################
@@ -152,53 +138,6 @@ echo
 exit
 esac
 
-################################
-#backup default repo source.list
-################################
-echo " Making backup of sources.list prior to editing... "
-cp /etc/apt/sources.list /etc/apt/sources.list.preOpenRepeater
-
-#################################################################################################
-# Setting apt_get to use the httpredirecter to get
-# To have <APT> automatically select a mirror close to you, use the Geo-ip redirector in your
-# sources.list "deb http://httpredir.debian.org/debian/ jessie main".
-# See http://httpredir.debian.org/ for more information.  The redirector uses HTTP 302 redirects
-# not dnS to serve content so is safe to use with Google dnS.
-# See also <which httpredir.debian.org>.  This service is identical to http.debian.net.
-#################################################################################################
-echo "installing jessie release repo"
-cat > "/etc/apt/sources.list" << DELIM
-deb http://httpredir.debian.org/debian/ jessie main contrib non-free
-deb-src http://httpredir.debian.org/debian/ jessie main contrib non-free
-
-deb http://httpredir.debian.org/debian/ jessie-updates main contrib non-free
-deb-src http://httpredir.debian.org/debian/ jessie-updates main contrib non-free
-
-deb http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
-deb-src http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
-
-DELIM
-
-##########################
-# Adding bbblack Repo
-##########################
-cat >> "/etc/apt/sources.list.d/beaglebone.list" << DELIM
-deb [arch=armhf] http://repos.rcn-ee.net/debian/ jessie main
-DELIM
-
-##########################
-# Adding OpenRepeater Repo
-##########################
-cat > "/etc/apt/sources.list.d/openrepeater.list" <<DELIM
-deb http://repo.openrepeater.com/openrepeater/release/debian/ jessie main
-DELIM
-
-
-######################
-#Update base os
-######################
-for i in update upgrade ;do apt-get -y "${i}" ; done
-
 ###################
 # Notes / Warnings
 ###################
@@ -224,7 +163,7 @@ cat << DELIM
 
   Pre-Install Information:
 
-  This script uses Sqlite by default. No plans to use Other DB. 
+      This script uses Sqlite by default. No plans to use Other DB. 
 
 DELIM
 
@@ -249,28 +188,9 @@ echo
 printf ' Current ip is : '; ip -f inet addr show dev eth0 | sed -n 's/^ *inet *\([.0-9]*\).*/\1/p'
 echo
 
-######################
-#Install Dependancies
-#####################
-echo " Installing install deps and svxlink + remotetrx"
-apt-get install -y --force-yes memcached sqlite3 libopus0 alsa-utils vorbis-tools sox libsox-fmt-mp3 librtlsdr0 \
-		ntp libasound2 libspeex1 libgcrypt20 libpopt0 libgsm1 tcl8.6 alsa-base bzip2 sudo gpsd gpsd-clients \
-		flite wvdial htop screen time uuid rsyslog vim install-info usbutils whiptail dialog \
-		svxlink-server remotetrx 
-apt-get clean
-
-if [[ $raspbian_os_img == "n" ]]; then
-apt-get install -y network-manager tcpd python-pysqlite2 
-fi
-rm /var/cache/apt/archive/*
-
-#Working on sounds pkgs for future release of svxlink
-cd /usr/share/svxlink/sounds
-wget https://github.com/sm0svx/svxlink-sounds-en_US-heather/releases/download/14.08/svxlink-sounds-en_US-heather-16k-13.12.tar.bz2
-tar xjvf svxlink-sounds-en_US-heather-16k-13.12.tar.bz2
-mv en_US-heather* en_US
-cd /root
-
+#####################################
+# Reconfigure system for performance
+#####################################
 ##############################
 #Set a reboot if Kernel Panic
 ##############################
@@ -282,7 +202,26 @@ DELIM
 # Set fs to run in a tempfs ramdrive
 ####################################
 cat >> /etc/fstab << DELIM
+tmpfs /tmp  tmpfs nodev,nosuid,mode=1777  0 0
 tmpfs /var/tmp  tmpfs nodev,nosuid,mode=1777  0 0
+tmpfs /var/cache/apt/archives tmpfs   size=100M,defaults,noexec,nosuid,nodev,mode=0755 0 0
+DELIM
+
+########################
+# cnfigure tmpfs sizes
+########################
+cp /etc/default/tmpfs /etc/default/tmpfs.orig
+cat > /etc/default/tmpfs << DELIM
+RAMLOCK=yes
+RAMSHM=yes
+RAMTMP=yes
+
+TMPFS_SIZE=10%VM
+RUN_SIZE=10M
+LOCK_SIZE=5M
+SHM_SIZE=10M
+TMP_SIZE=25M
+
 DELIM
 
 # ####################################
@@ -318,53 +257,104 @@ DELIM
 
 apt-get -y autoremove apache2*
 
-if [[ $use_gps_ntp == "y" ]]; then
-########################################
-# Configure nptd to use gpsd/ntpd servers
-# for getting and setting time correctly
-########################################
-cp /etc/ntp.conf /etc/ntp.conf.orig
-
-cat > /etc/ntp.conf << DELIM
-# /etc/ntp.conf, configuration for ntpd; see ntp.conf(5) for help
-driftfile       /var/lib/ntp/ntp.drift 
-# Enable this if you want statistics to be logged.
-# statsdir /var/log/ntpstats/
-statistics      loopstats       peerstats       clockstats
-filegen loopstats       file    loopstats       type    day     enable
-filegen peerstats       file    peerstats       type    day     enable
-filegen clockstats      file    clockstats      type    day     enable
-# Access control configuration; see /usr/share/doc/ntp-doc/html/accopt.html for
-# details.  The web page <http://support.ntp.org/bin/view/Support/AccessRestrictions>
-# might also be helpful.
-#
-# Note that "restrict" applies to both servers and clients, so a configuration
-# that might be intended to block requests from certain clients could also end
-# up blocking replies from your own upstream servers.
-# By default, exchange time with everybody, but don't allow configuration.
-restrict        -4      default kod     notrap  nomodify        nopeer  noquery
-restrict        -6      default kod     notrap  nomodify        nopeer  noquery
-restrict        127.0.0.1 # Local users may interrogate the ntp server more closely.
-restrict        ::1
-# Read the rough GPS time from device 127.127.28.0
-# Read the accurate PPS time from device 127.127.28.1
-server 127.127.28.0 minpoll 4 maxpoll 4
-fudge 127.127.28.0 time1 0.535 refid GPS
-server 127.127.28.1 minpoll 4 maxpoll 4 prefer
-fudge 127.127.28.1 refid PPS
-# Use servers from the ntp pool for the first synchronization,
-# or as a backup if the GPS is disconnected
-server	0.pool.ntp.org
-server  1.pool.ntp.org
-server  2.pool.ntp.org
-server  3.pool.ntp.org
+#############################
+#Setting Host/Domain name
+#############################
+cat > /etc/hostname << DELIM
+$cs-repeater
 DELIM
+
+#################
+#Setup /etc/hosts
+#################
+cat > /etc/hosts << DELIM
+127.0.0.1       localhost
+::1             localhost ip6-localhost ip6-loopback
+fe00::0         ip6-localnet
+ff00::0         ip6-mcastprefix
+ff02::1         ip6-allnodes
+ff02::2         ip6-allrouters
+
+127.0.0.1       $cs-repeater
+DELIM
+
+#################################################################################################
+# Setting apt_get to use the httpredirecter to get
+# To have <APT> automatically select a mirror close to you, use the Geo-ip redirector in your
+# sources.list "deb http://httpredir.debian.org/debian/ jessie main".
+# See http://httpredir.debian.org/ for more information.  The redirector uses HTTP 302 redirects
+# not dnS to serve content so is safe to use with Google dnS.
+# See also <which httpredir.debian.org>.  This service is identical to http.debian.net.
+#################################################################################################
+cat > "/etc/apt/sources.list" << DELIM
+deb http://httpredir.debian.org/debian/ jessie main contrib non-free
+deb-src http://httpredir.debian.org/debian/ jessie main contrib non-free
+
+deb http://httpredir.debian.org/debian/ jessie-updates main contrib non-free
+deb-src http://httpredir.debian.org/debian/ jessie-updates main contrib non-free
+
+deb http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
+deb-src http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
+
+DELIM
+
+##########################
+# Adding bbblack Repo
+##########################
+cat >> "/etc/apt/sources.list.d/beaglebone.list" << DELIM
+deb [arch=armhf] http://repos.rcn-ee.net/debian/ jessie main
+DELIM
+
+##########################
+# Adding OpenRepeater Repo
+##########################
+cat > "/etc/apt/sources.list.d/openrepeater.list" <<DELIM
+deb http://repo.openrepeater.com/openrepeater/release/debian/ jessie main
+DELIM
+
+######################
+#Update base os
+######################
+for i in update upgrade ;do apt-get -y "${i}" ; done
+
+######################
+#Install Dependancies
+#####################
+apt-get install -y --force-yes memcached sqlite3 libopus0 alsa-utils vorbis-tools sox libsox-fmt-mp3 librtlsdr0 \
+		ntp libasound2 libspeex1 libgcrypt20 libpopt0 libgsm1 tcl8.6 alsa-base bzip2 sudo gpsd gpsd-clients \
+		flite wvdial htop screen time uuid rsyslog vim install-info usbutils whiptail dialog 
+
+#####################
+# Install SvxLink
+#####################
+apt-get install -y --force-yes svxlink-server remotetrx 
+
+###########
+# Clean Up
+###########
+apt-get clean
+
+if [[ $raspbian_os_img == "n" ]]; then
+apt-get install -y network-manager tcpd python-pysqlite2 
 fi
+rm /var/cache/apt/archive/*
+
+#Working on sounds pkgs for future release of svxlink
+cd /usr/share/svxlink/sounds
+wget https://github.com/sm0svx/svxlink-sounds-en_US-heather/releases/download/14.08/svxlink-sounds-en_US-heather-16k-13.12.tar.bz2
+tar xjvf svxlink-sounds-en_US-heather-16k-13.12.tar.bz2
+mv en_US-heather* en_US
+rm svxlink-sounds-en_US-heather-16k-13.12.tar.bz2
+cd /root
 
 ##########################################
 #---Start of nginx / php5 install --------
 ##########################################
 apt-get -y install ssl-cert nginx php5-cli php5-common php-apc php5-gd php-db php5-fpm php5-memcache php5-sqlite
+
+###########
+# Clean Up
+###########
 apt-get clean
 
 ##################################################
@@ -762,48 +752,6 @@ DELIM
 #-----Installing Fail2Ban/monit Protection services------
 #########################################################
 for i in fail2ban monit ;do apt-get -y install "${i}" ; done
-
-###############################################
-# INSTALL FTP SERVER / ADD USER FOR DEVELOPMENT
-###############################################
-if [[ $install_vsftpd == "y" ]]; then
-	apt-get install vsftpd
-
-	edit_config $FTP_CONFIG_PATH anonymous_enable NO enabled
-	edit_config $FTP_CONFIG_PATH local_enable YES enabled
-	edit_config $FTP_CONFIG_PATH write_enable YES enabled
-	edit_config $FTP_CONFIG_PATH local_umask 022 enabled
-
-	cat "force_dot_files=YES" >> "$FTP_CONFIG_PATH"
-
-	system vsftpd restart
-
-	# ############################
-	# ADD FTP USER & SET PASSWORD
-	# ############################
-	adduser $vsftpd_user
-fi
-
-#############################
-#Setting Host/Domain name
-#############################
-cat > /etc/hostname << DELIM
-$cs-repeater
-DELIM
-
-#################
-#Setup /etc/hosts
-#################
-cat > /etc/hosts << DELIM
-127.0.0.1       localhost
-::1             localhost ip6-localhost ip6-loopback
-fe00::0         ip6-localnet
-ff00::0         ip6-mcastprefix
-ff02::1         ip6-allnodes
-ff02::2         ip6-allrouters
-
-127.0.0.1       $cs-repeater
-DELIM
 
 ########################################
 #Install raspi-openrepeater-config menu
