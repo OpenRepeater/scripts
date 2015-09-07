@@ -1096,8 +1096,10 @@ do_camera() {
 # Update this Menu 
 ###################
 do_update() {
-  apt-get update &&
-  apt-get install raspi-openrepeater-config &&
+  wget https://raw.githubusercontent.com/OpenRepeater/scripts/master/openrepeater-menu/raspi-openrepeater-config.sh
+  chmod +x raspi-openrepeater-config.sh
+  mv raspi-openrepeater-config.sh /usr/local/bin/raspi-openrepeater-config
+  rm raspi-openrepeater-config.sh
   printf "Sleeping 5 seconds before reloading raspi-config\n" &&
   sleep 5 &&
   exec raspi-openrepeater-config
@@ -1121,7 +1123,6 @@ do_audio() {
 # Reboot after Changes
 #######################
 do_finish() {
-  disable_raspi_config_at_boot
   if [ $ASK_TO_REBOOT -eq 1 ]; then
     whiptail --yesno "Would you like to reboot now?" 20 60 2
     if [ $? -eq 0 ]; then # yes
@@ -1237,23 +1238,6 @@ configuration of the Raspberry Pi/Svxlink Repeater. This is
 a always on Shell menu that will display everytime you login 
 as the root user. I will make it a option for it to display 
 for other users inthe future. \
-" 20 70 1
-}
-
-#####################################
-# Info About Enabling Repeater hats
-######################################
-do_repeater_hats() {
-  whiptail --msgbox "\
-How To enablle repeater hats: 
-
-To enable the repeater hats / plug on boards you must enable the 
-i2c, spi and the wm8731 spi sound card driver interface under 
-OpenRepeater menu. This will require a reboot when completed. 
-
-Once you have completed these steps power down your board and 
-plug on the repeater hat onto the raspi board. Then power your
-system up. Login to the gui and configure your system. \
 " 20 70 1
 }
 
@@ -1401,7 +1385,7 @@ chmod 755 /etc/init.d/preplog-dirs
 ###############################################
 # INSTALL FTP SERVER / ADD USER FOR DEVELOPMENT
 ###############################################
-do_passwd_menu() {
+do_install_vsftpd() {
 ########################
 # set vsftp config path
 ########################
@@ -1425,7 +1409,6 @@ system vsftpd restart
 # ############################
 adduser "$vsftpn"
 }
-
 
 ###############
 # Password Menu
@@ -1597,6 +1580,7 @@ do_networking_menu() {
     "N4 Wlan Security" "Set up basic wireless security ssid/passwd" \
     "N5 Network Reset" "Set netwoking interface back to defaults" \
     "N6 SSH Menu" "SSH Enable/Disable Service / Disable Root / Add/remove Keys" \
+    "N7 Install vsftpd" "Install and configure vsftpd server" \
     3>&1 1>&2 2>&3)
   RET=$?
   if [ $RET -eq 1 ]; then
@@ -1609,6 +1593,7 @@ do_networking_menu() {
       N4\ *) do_wirless_security ;;
       N5\ *) do_net_default ;;
       N6\ *) do_ssh_menu ;;
+      N7\ *) do_install_vsftpd ;;
       *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
     esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
   fi
@@ -1730,6 +1715,7 @@ do_advanced_menu() {
     "A7 Camera Menu " "Raspberry Pi Camera" \
     "A8 Add to Rastrack" "Add this Pi to the online Raspberry Pi Map (Rastrack)" \
     "A9 Overclock Menu " "Overclocking for your Pi" \
+    "A10 Logs " "Put logs into tempfs and configure the system" \
     "A10 Update" "Update this tool to the latest version" \
     3>&1 1>&2 2>&3)
   RET=$?
@@ -1745,6 +1731,7 @@ do_advanced_menu() {
       A7\ *) do_camera_menu ;;
       A8\ *) do_rastrack ;;
       A9\ *) do_overclock_menu ;;
+      A10\ *) do_log_tmpfs ;;
       A10\ *) do_update ;;
       *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
     esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
@@ -1766,8 +1753,7 @@ while true; do
     "6 Power Options" "PowerOff/Reboot system" \
     "7 Drop To Shell" "Drop to system command shell Bash" \
     "8 Logout of terminal" "Logout Of System & Clear Terminal Session" \
-    "9 Repeater Boards" "How to enable the repeater boardson the pi-2 "\
-    "10 About Menu" "Information about this configuration tool" \
+    "9 About Menu" "Information about this configuration tool" \
     3>&1 1>&2 2>&3)
   RET=$?
   if [ $RET -eq 1 ]; then
@@ -1782,8 +1768,7 @@ while true; do
       6\ *) do_power_menu ;;
       7\ *) /bin/bash ;;
       8\ *) clear; kill -HUP "$(pgrep -s 0 -o)";;
-      9\ *) do_repeater_hats ;;
-      10\ *) do_about ;;
+      9\ *) do_about ;;
       *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
     esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
   else
