@@ -334,7 +334,8 @@ for i in update upgrade clean ;do apt-get -y "${i}" ; done
 #################
 apt-get install -y --force-yes sqlite3 libopus0 alsa-utils vorbis-tools sox libsox-fmt-mp3 librtlsdr0 \
 		ntp libasound2 libspeex1 libgcrypt11 libpopt0 libgsm1 tcl8.5 alsa-base bzip2 flite screen time \
-		uuid rsyslog vim install-info whiptail dialog logrotate cron usbutils git-core tk8.5
+		uuid inetutils-syslogd
+ vim install-info whiptail dialog logrotate cron usbutils git-core tk8.5
 
 ########################
 # Install Build Depends
