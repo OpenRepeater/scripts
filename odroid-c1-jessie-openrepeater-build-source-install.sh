@@ -198,22 +198,6 @@ tmpfs /var/tmp  tmpfs nodev,nosuid,mode=1777  0 0
 tmpfs /var/cache/apt/archives tmpfs   size=100M,defaults,noexec,nosuid,nodev,mode=0755 0 0
 DELIM
 
-########################
-# cnfigure tmpfs sizes
-########################
-cp /etc/default/tmpfs /etc/default/tmpfs.orig
-cat > /etc/default/tmpfs << DELIM
-RAMLOCK=yes
-RAMSHM=yes
-RAMTMP=yes
-
-TMPFS_SIZE=10%VM
-RUN_SIZE=10M
-LOCK_SIZE=5M
-SHM_SIZE=10M
-TMP_SIZE=25M
-
-DELIM
 
 ######################
 # Enable the spi/i2c
@@ -230,6 +214,24 @@ if [[ $put_logs_tmpfs == "y" ]]; then
 #################
 cat >>/etc/fstab << DELIM
 tmpfs   /var/log                tmpfs   size=20M,defaults,noatime,mode=0755 0 0 
+DELIM
+
+
+########################
+# cnfigure tmpfs sizes
+########################
+cp /etc/default/tmpfs /etc/default/tmpfs.orig
+cat > /etc/default/tmpfs << DELIM
+RAMLOCK=yes
+RAMSHM=yes
+RAMTMP=yes
+
+TMPFS_SIZE=10%VM
+RUN_SIZE=10M
+LOCK_SIZE=5M
+SHM_SIZE=10M
+TMP_SIZE=25M
+
 DELIM
 
 #######################################
