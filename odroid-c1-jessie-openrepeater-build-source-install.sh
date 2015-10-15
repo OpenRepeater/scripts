@@ -33,6 +33,13 @@
 ####################################################
 cs="Set_This"
 
+###################################################
+# Put /var/log into a tmpfs to improve performance 
+# Super user option dont try this if you must keep 
+# logs after every reboot
+###################################################
+put_logs_tmpfs="n"
+
 # ----- Stop Edit Here ------- #
 ########################################################
 # Set mp3/wav file upload/post size limit for php/nginx
@@ -191,6 +198,94 @@ tmpfs /var/tmp  tmpfs nodev,nosuid,mode=1777  0 0
 tmpfs /var/cache/apt/archives tmpfs   size=100M,defaults,noexec,nosuid,nodev,mode=0755 0 0
 DELIM
 
+########################
+# cnfigure tmpfs sizes
+########################
+cp /etc/default/tmpfs /etc/default/tmpfs.orig
+cat > /etc/default/tmpfs << DELIM
+RAMLOCK=yes
+RAMSHM=yes
+RAMTMP=yes
+
+TMPFS_SIZE=10%VM
+RUN_SIZE=10M
+LOCK_SIZE=5M
+SHM_SIZE=10M
+TMP_SIZE=25M
+
+DELIM
+
+######################
+# Enable the spi/i2c
+######################
+echo "spicc" >> /etc/modules
+echo "aml_i2c" >> /etc/modules
+
+##########################################
+# SETUP configuration for /tmpfs for logs
+##########################################
+if [[ $put_logs_tmpfs == "y" ]]; then
+#################
+#configure fstab
+#################
+cat >>/etc/fstab << DELIM
+tmpfs   /var/log                tmpfs   size=20M,defaults,noatime,mode=0755 0 0 
+DELIM
+
+#######################################
+# Configure /var/log dir's on reboots
+#######################################
+cat > /etc/init.d/preplog-dirs << DELIM
+#!/bin/bash
+#
+### BEGIN INIT INFO
+# Provides:          prepare-dirs
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Required-Start:
+# Required-Stop:
+# Short-Description: Create needed directories on /var/log/ for tmpfs at startup
+# Description:       Create needed directories on /var/log/ for tmpfs at startup
+### END INIT INFO
+# needed Dirs
+DIR[0]=/var/log/nginx
+DIR[1]=/var/log/apt
+DIR[2]=/var/log/ConsoleKit
+DIR[3]=/var/log/fsck
+DIR[4]=/var/log/news
+DIR[5]=/var/log/ntpstats
+DIR[6]=/var/log/samba
+DIR[7]=/var/log/lastlog
+DIR[8]=/var/log/exim
+DIR[9]=/var/log/watchdog
+case "${1:-''}" in
+  start)
+        typeset -i i=0 max=${#DIR[*]}
+        while (( i < max ))
+        do
+                mkdir  ${DIR[$i]}
+                chmod 755 ${DIR[$i]}
+                i=i+1
+        done
+        # set rights
+        chown www-data.adm ${DIR[0]}
+        chown root.adm ${DIR[6]}
+    ;;
+  stop)
+    ;;
+  restart)
+   ;;
+  reload|force-reload)
+   ;;
+  status)
+   ;;
+  *)
+DELIM
+
+chmod 755 /etc/init.d/preplog-dirs
+
+fi
+
 #############################
 #Setting Host/Domain name
 #############################
@@ -212,28 +307,6 @@ ff02::2         ip6-allrouters
 127.0.0.1       $cs-repeater
 
 DELIM
-
-####################
-# cnfigure log tmpfs
-####################
-cat > /etc/default/tmpfs << DELIM
-RAMLOCK=yes
-RAMSHM=yes
-RAMTMP=yes
-
-TMPFS_SIZE=10%VM
-RUN_SIZE=10M
-LOCK_SIZE=5M
-SHM_SIZE=10M
-TMP_SIZE=25M
-
-DELIM
-
-######################
-# Enable the spi/i2c
-######################
-echo "spicc" >> /etc/modules
-echo "aml_i2c" >> /etc/modules
 
 #################################################################################################
 # Setting apt_get to use the httpredirecter to get
