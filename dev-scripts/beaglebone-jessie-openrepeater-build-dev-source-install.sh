@@ -381,7 +381,7 @@ for i in update upgrade clean ;do apt-get -y "${i}" ; done
 apt-get install -y g++ make cmake libsigc++-2.0-dev libgsm1-dev libpopt-dev libgcrypt11-dev \
 	libspeex-dev libspeexdsp-dev libasound2-dev alsa-utils vorbis-tools sox flac libsox-fmt-mp3 \
 	sqlite3 unzip opus-tools tcl8.6-dev alsa-base ntp groff doxygen libopus-dev librtlsdr-dev \
-	git-core uuid-dev qtbase5-dev qttools5-dev-tools qttools5-dev git-core ntp flite screen \
+	git-core uuid-dev qtbase5-dev qttools5-dev-tools qttools5-dev git-core flite screen \
 	time inetutils-syslogd vim install-info whiptail dialog logrotate cron usbutils gawk groff \
 	watchdog
 
@@ -460,9 +460,9 @@ git pull git://github.com/rneese45/svxlink.git systemd-new
 cd /usr/src/svxlink/src
 mkdir build
 cd build
-time wc cmake -DCMAKE_INSTALL_PREFIX=/usr -DSYSCONF_INSTALL_DIR=/etc -DLIB_INSTALL_DIR=/usr/lib -DBUILD_STATIC_LIBS=YES ..
-time wc make -j5
-time wc make doc
+ cmake -DCMAKE_INSTALL_PREFIX=/usr -DSYSCONF_INSTALL_DIR=/etc -DLIB_INSTALL_DIR=/usr/lib -DBUILD_STATIC_LIBS=YES ..
+make -j5
+make doc
 make install
 ldconfig
 
