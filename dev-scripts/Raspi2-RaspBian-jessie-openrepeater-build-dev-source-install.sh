@@ -202,8 +202,7 @@ DELIM
 ######################
 # Enable the spi/i2c
 ######################
-echo "spicc" >> /etc/modules
-echo "aml_i2c" >> /etc/modules
+
 
 ##########################################
 # SETUP configuration for /tmpfs for logs
@@ -333,7 +332,7 @@ DELIM
 ############
 #Raspi Repo
 ############
-cat > /etc/apt/sources.list.d/raspi.list << DELIM
+cat > /etc/apt/sources.list.d/raspbian.list << DELIM
 deb http://mirrordirector.raspbian.org/raspbian/ jessie main contrib non-free rpi
 DELIM
 
