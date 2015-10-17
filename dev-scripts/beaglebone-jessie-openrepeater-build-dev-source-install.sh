@@ -199,6 +199,40 @@ tmpfs /var/cache/apt/archives tmpfs   size=100M,defaults,noexec,nosuid,nodev,mod
 DELIM
 
 
+# ####################################
+# DISABLE BEAGLEBONE 101 WEB SERVICES
+# ####################################
+echo " Disabling The Beaglebone 101 web services "
+systemctl disable cloud9.service
+systemctl disable gateone.service
+systemctl disable bonescript.service
+systemctl disable bonescript.socket
+systemctl disable bonescript-autorun.service
+systemctl disable avahi-daemon.service
+systemctl disable gdm.service
+systemctl disable mpd.service
+
+echo " Stoping The Beaglebone 101 web services "
+systemctl stop cloud9.service
+systemctl stop gateone.service
+systemctl stop bonescript.service
+systemctl stop bonescript.socket
+systemctl stop bonescript-autorun.service
+systemctl stop avahi-daemon.service
+systemctl stop gdm.service
+systemctl stop mpd.service
+
+cat >> /boot/uEnv.txt << DELIM
+
+#####################
+#Disable HDMI sound
+#####################
+optargs=capemgr.disable_partno=BB-BONELT-HDMI
+DELIM
+
+apt-get -y autoremove apache2*
+
+
 ######################
 # Enable the spi/i2c
 ######################
@@ -329,12 +363,11 @@ deb http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
 
 DELIM
 
-#########################
-#c1 c1+ repo
-#########################
-cat > "/etc/apt/sources.list.d/odroid.list" << DELIM
-deb http://deb.odroid.in/c1/ trusty main
-deb http://deb.odroid.in/ trusty main
+##########################
+# Adding bbblack Repo
+##########################
+cat >> "/etc/apt/sources.list.d/beaglebone.list" << DELIM
+deb [arch=armhf] http://repos.rcn-ee.net/debian/ jessie main
 DELIM
 
 ######################
@@ -852,7 +885,7 @@ DELIM
 #########################################################
 #-----Installing Fail2Ban/monit Protection services------
 #########################################################
-for i in fail2ban ;do apt-get -y install "${i}" ; done
+#for i in fail2ban ;do apt-get -y install "${i}" ; done
 
 ########################################
 #Install raspi-openrepeater-config menu
@@ -866,8 +899,8 @@ for i in fail2ban ;do apt-get -y install "${i}" ; done
 ##################################
 #cat >> /root/.profile << DELIM
 
-#if [ -f /usr/local/bin/odroid-openrepeater-conf ]; then
-#        . /usr/local/bin/odroid-openrepeater-conf
+#if [ -f /usr/local/bin/openrepeater-conf ]; then
+#        . /usr/local/bin/openrepeater-conf
 #fi
 
 #DELIM
