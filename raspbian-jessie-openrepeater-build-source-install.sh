@@ -326,20 +326,15 @@ DELIM
 ######################
 for i in update upgrade clean ;do apt-get -y "${i}" ; done
 
-#################
-#Installing Deps
-#################
-apt-get install -y --force-yes sqlite3 libopus0 alsa-utils vorbis-tools sox libsox-fmt-mp3 librtlsdr0 \
-		ntp libasound2 libspeex1 libgcrypt20 libpopt0 libgsm1 tcl8.6 alsa-base bzip2 flite screen time \
-		uuid inetutils-syslogd vim install-info whiptail dialog logrotate cron usbutils git-core tk8.6
-
 ########################
 # Install Build Depends
 #######################		
-apt-get install -y gawk uuid-dev g++ make cmake libsigc++-2.0-dev libgsm1-dev libpopt-dev libgcrypt11-dev \
-		libspeex-dev libasound2-dev alsa-utils vorbis-tools sox libsox-fmt-mp3 sqlite3 unzip opus-tools \
-		tcl8.6-dev alsa-base ntp groff doxygen libopus-dev librtlsdr-dev tk8.6-dev
-
+apt-get install -y  g++ make cmake libsigc++-2.0-dev libgsm1-dev libpopt-dev libgcrypt11-dev \
+	libspeex-dev libspeexdsp-dev libasound2-dev alsa-utils vorbis-tools sox flac libsox-fmt-mp3 \
+	sqlite3 unzip opus-tools tcl8.6-dev tk-dev alsa-base ntp groff doxygen libopus-dev librtlsdr-dev \
+	git-core uuid-dev qtbase5-dev qttools5-dev-tools qttools5-dev git-core tk8.6-dev ntp flite screen \
+	time inetutils-syslogd vim install-info whiptail dialog logrotate cron usbutils gawk groff watchdog
+	
 ##################################
 # Add User and include in groupds
 #################################
@@ -1248,13 +1243,13 @@ DELIM
 # on enabled for root and only if 
 # the file exist
 ##################################
-cat >> /root/.profile << DELIM
+#cat >> /root/.profile << DELIM
 
-if [ -f /usr/local/bin/odroid-openrepeater-conf ]; then
-        . /usr/local/bin/odroid-openrepeater-conf
-fi
+#if [ -f /usr/local/bin/odroid-openrepeater-conf ]; then
+#        . /usr/local/bin/odroid-openrepeater-conf
+#fi
 
-DELIM
+#DELIM
 
 echo " ########################################################################################## "
 echo " #             The SVXLink Repeater / Echolink server Install is now complete             # "

@@ -330,12 +330,11 @@ deb http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
 
 DELIM
 
-#########################
-#c1 c1+ repo
-#########################
-cat > "/etc/apt/sources.list.d/odroid.list" << DELIM
-deb http://deb.odroid.in/c1/ trusty main
-deb http://deb.odroid.in/ trusty main
+############
+#Raspi Repo
+############
+cat > /etc/apt/sources.list.d/raspi.list << DELIM
+deb http://mirrordirector.raspbian.org/raspbian/ jessie main contrib non-free rpi
 DELIM
 
 ######################
