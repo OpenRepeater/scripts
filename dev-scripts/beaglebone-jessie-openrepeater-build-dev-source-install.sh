@@ -746,12 +746,14 @@ mkdir -p /var/www/openrepeater
 cd /usr/src || exit
 git clone https://github.com/OpenRepeater/webapp.git openrepeater-gui
 cd /usr/src/openrepeater-gui || exit
+git pull https://github.com/OpenRepeater/webapp.git Beta-4
+cd /usr/src/openrepeater-gui || exit
 
 ##########################################
 #copy openrepeater into proper fhs layout
 ##########################################
 cp -rp install/sql /usr/share/examples/openrepeater/install
-cp -rp install/svxlink /usr/share/examples/openrepeater/install
+cp -rp install/svxlink-conf /usr/share/examples/openrepeater/install
 cp -rp install/courtesy_tones /usr/share/openrepeater/sounds
 cp -rp theme functions dev includes ./*.php /var/www/openrepeater
 
