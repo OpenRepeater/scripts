@@ -383,7 +383,7 @@ apt-get install -y g++ make cmake libsigc++-2.0-dev libgsm1-dev libpopt-dev libg
 	sqlite3 unzip opus-tools tcl8.6-dev alsa-base ntp groff doxygen libopus-dev librtlsdr-dev \
 	git-core uuid-dev qtbase5-dev qttools5-dev-tools qttools5-dev git-core flite screen \
 	time inetutils-syslogd vim install-info whiptail dialog logrotate cron usbutils gawk groff \
-	watchdog
+	watchdog python3-serial
 
 apt-get clean
 
@@ -669,9 +669,9 @@ DELIM
 #################################
 # Backup and replace php5-fpm.conf
 #################################
-cp /etc/php5/fpm/php5-fpm.conf /etc/php5/fpm/php5-fpm.conf.orig
+cp /etc/php5/fpm/php-fpm.conf /etc/php5/fpm/php-fpm.conf.orig
 
-cat > /etc/php5/fpm/php5-fpm.conf << DELIM
+cat > /etc/php5/fpm/php-fpm.conf << DELIM
 ;;;;;;;;;;;;;;;;;;;;;
 ; FPM Configuration ;
 ;;;;;;;;;;;;;;;;;;;;;
@@ -823,7 +823,7 @@ chown -R www-data:www-data /var/lib/openrepeater /etc/openrepeater
 #####################################################################
 # Configure Sudo / scripts for the gui to start/stop/restart svxlink
 #####################################################################
-cat > "/usr/local/bin/svxlink_restart" << DELIM
+cat > "/usr/local/bin/openrepeater_svxlink_restart" << DELIM
 #!/bin/bash
 SERVICE=svxlink
 
@@ -841,7 +841,7 @@ else
 fi
 DELIM
 
-cat > "/usr/local/bin/svxlink_stop" << DELIM
+cat > "/usr/local/bin/openrepeater_svxlink_stop" << DELIM
 #!/bin/bash
 SERVICE=svxlink
 
@@ -856,7 +856,7 @@ else
 fi
 DELIM
 
-cat > "/usr/local/bin/svxlink_start" << DELIM
+cat > "/usr/local/bin/openrepeater_svxlink_start" << DELIM
 #!/bin/bash
 SERVICE=svxlink
 
@@ -877,36 +877,44 @@ cat > "/usr/local/bin/repeater_reboot" << DELIM
 sudo -u www-data /sbin/reboot
 DELIM
 
-sudo chown root:www-data /usr/local/bin/svxlink_restart /usr/local/bin/svxlink_start /usr/local/bin/svxlink_stop /usr/local/bin/repeater_reboot
-sudo chmod 550 /usr/local/bin/svxlink_restart /usr/local/bin/svxlink_start /usr/local/bin/svxlink_stop /usr/local/bin/repeater_reboot
+cat > "/usr/local/bin/openrepeater_enable_svxlink_service" << DELIM
+#!/bin/bash
+SERVICE=svxlink
+
+ps -u $SERVICE | grep -v grep | grep $SERVICE > /dev/null
+result=$?
+echo "exit code: ${result}"
+if [ "${result}" -eq "0" ] ; then
+    echo "$(date): $SERVICE service running, all is fine"
+else
+    echo "$(date): $SERVICE is not running"
+    echo "$(date): Atempting to start svxlink"
+    sudo systemctl enable svxlink.service
+    sudo service svxlink start
+fi
+DELIM
+
+cat > "/usr/local/bin/openrepeater_disable_svxlink_service" << DELIM
+#!/bin/bash
+SERVICE=svxlink
+
+sudo service svxlink stop
+sudo systemctl disable svxlink.service
+
+DELIM
+
+sudo chown root:www-data /usr/local/bin/openrepeater_svxlink_restart /usr/local/bin/openrepeater_svxlink_start /usr/local/bin/svxlink_stop /usr/local/bin/openrepeater_repeater_reboot /usr/local/bin/openrepeater_enable_svxlink_sevice /usr/local/bin/openrepeater_disable_svxlink_service
+sudo chmod 550 /usr/local/bin/openrepeater_svxlink_restart /usr/local/bin/openrepeater_svxlink_start /usr/local/bin/openrepeater_svxlink_stop /usr/local/bin/openrepeater_repeater_reboot /usr/local/bin/openrepeater_enable_svxlink_sevice /usr/local/bin/openrepeater_disable_svxlink_service
 
 cat >> /etc/sudoers << DELIM
 #allow www-data to access amixer and service
-www-data   ALL=(ALL) NOPASSWD: /usr/local/bin/svxlink_restart, NOPASSWD: /usr/local/bin/svxlink_start, NOPASSWD: /usr/local/bin/svxlink_stop, NOPASSWD: /usr/local/bin/repeater_reboot, NOPASSWD: /usr/bin/aplay, NOPASSWD: /usr/bin/arecord
+www-data   ALL=(ALL) NOPASSWD: /usr/local/bin/openrepeater_svxlink_restart, NOPASSWD: /usr/local/bin/openrepeater_svxlink_start, NOPASSWD: /usr/local/bin/openrepeater_svxlink_stop, NOPASSWD: /usr/local/bin/openrepeater_svxlink_restart, NOPASSWD: /usr/local/bin/openrepeater_enable_svxlink_sevice, NOPASSWD: /usr/local/bin/openrepeater_disable_svxlink_service, NOPASSWD: /usr/bin/aplay, NOPASSWD: /usr/bin/arecord
 DELIM
 
 #########################################################
 #-----Installing Fail2Ban/monit Protection services------
 #########################################################
 #for i in fail2ban ;do apt-get -y install "${i}" ; done
-
-########################################
-#Install raspi-openrepeater-config menu
-########################################
-#apt-get install openrepeater-menu
-
-##################################
-# Enable New shellmenu for logins
-# on enabled for root and only if 
-# the file exist
-##################################
-#cat >> /root/.profile << DELIM
-
-#if [ -f /usr/local/bin/openrepeater-conf ]; then
-#        . /usr/local/bin/openrepeater-conf
-#fi
-
-#DELIM
 
 echo " ########################################################################################## "
 echo " #             The SVXLink Repeater / Echolink server Install is now complete             # "
