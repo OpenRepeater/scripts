@@ -460,7 +460,7 @@ git pull git://github.com/rneese45/svxlink.git systemd-new
 cd /usr/src/svxlink/src
 mkdir build
 cd build
- cmake -DCMAKE_INSTALL_PREFIX=/usr -DSYSCONF_INSTALL_DIR=/etc -DLIB_INSTALL_DIR=/usr/lib -DBUILD_STATIC_LIBS=YES ..
+ cmake -DCMAKE_INSTALL_PREFIX=/usr -DSYSCONF_INSTALL_DIR=/etc -DBUILD_STATIC_LIBS=YES ..
 make -j5
 make doc
 make install
