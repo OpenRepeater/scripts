@@ -710,12 +710,14 @@ mkdir -p /var/www/openrepeater
 cd /usr/src || exit
 git clone https://github.com/OpenRepeater/webapp.git openrepeater-gui
 cd /usr/src/openrepeater-gui || exit
+git pull https://github.com/OpenRepeater/webapp.git Beta-4
+cd /usr/src/openrepeater-gui || exit
 
 ##########################################
 #copy openrepeater into proper fhs layout
 ##########################################
 cp -rp install/sql /usr/share/examples/openrepeater/install
-cp -rp install/svxlink /usr/share/examples/openrepeater/install
+cp -rp install/svxlink-conf /usr/share/examples/openrepeater/install
 cp -rp install/courtesy_tones /usr/share/openrepeater/sounds
 cp -rp theme functions dev includes ./*.php /var/www/openrepeater
 
@@ -841,7 +843,6 @@ cat > "/usr/local/bin/repeater_reboot" << DELIM
 sudo -u www-data /sbin/reboot
 DELIM
 
-
 cat > "/usr/local/bin/openrepeater_enable_svxlink_service" << DELIM
 #!/bin/bash
 SERVICE=svxlink
@@ -876,14 +877,14 @@ cat >> /etc/sudoers << DELIM
 www-data   ALL=(ALL) NOPASSWD: /usr/local/bin/openrepeater_svxlink_restart, NOPASSWD: /usr/local/bin/openrepeater_svxlink_start, NOPASSWD: /usr/local/bin/openrepeater_svxlink_stop, NOPASSWD: /usr/local/bin/openrepeater_svxlink_restart, NOPASSWD: /usr/local/bin/openrepeater_enable_svxlink_sevice, NOPASSWD: /usr/local/bin/openrepeater_disable_svxlink_service, NOPASSWD: /usr/bin/aplay, NOPASSWD: /usr/bin/arecord
 DELIM
 
-
 #########################################################
 #-----Installing Fail2Ban/monit Protection services------
 #########################################################
-for i in fail2ban ;do apt-get -y install "${i}" ; done
+#for i in fail2ban ;do apt-get -y install "${i}" ; done
 
 echo " ########################################################################################## "
 echo " #             The SVXLink Repeater / Echolink server Install is now complete             # "
 echo " #                          and your system is ready for use..                            # "
 echo " ########################################################################################## "
 ) | tee /root/install.log
+
