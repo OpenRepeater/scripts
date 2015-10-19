@@ -712,12 +712,14 @@ mkdir -p /var/www/openrepeater
 cd /usr/src || exit
 git clone https://github.com/OpenRepeater/webapp.git openrepeater-gui
 cd /usr/src/openrepeater-gui || exit
+git pull https://github.com/OpenRepeater/webapp.git Beta-4
+cd /usr/src/openrepeater-gui || exit
 
 ##########################################
 #copy openrepeater into proper fhs layout
 ##########################################
 cp -rp install/sql /usr/share/examples/openrepeater/install
-cp -rp install/svxlink /usr/share/examples/openrepeater/install
+cp -rp install/svxlink-conf /usr/share/examples/openrepeater/install
 cp -rp install/courtesy_tones /usr/share/openrepeater/sounds
 cp -rp theme functions dev includes ./*.php /var/www/openrepeater
 
@@ -822,7 +824,6 @@ else
 fi
 DELIM
 
-
 cat > "/usr/local/bin/openrepeater_svxlink_start" << DELIM
 #!/bin/bash
 SERVICE=svxlink
@@ -843,7 +844,6 @@ cat > "/usr/local/bin/repeater_reboot" << DELIM
 #!/bin/bash
 sudo -u www-data /sbin/reboot
 DELIM
-
 
 cat > "/usr/local/bin/openrepeater_enable_svxlink_service" << DELIM
 #!/bin/bash
@@ -882,12 +882,7 @@ DELIM
 #########################################################
 #-----Installing Fail2Ban/monit Protection services------
 #########################################################
-for i in fail2ban ;do apt-get -y install "${i}" ; done
-
-########################################
-#Install raspi-openrepeater-config menu
-########################################
-#apt-get install openrepeater-menu
+#for i in fail2ban ;do apt-get -y install "${i}" ; done
 
 echo " ########################################################################################## "
 echo " #             The SVXLink Repeater / Echolink server Install is now complete             # "
