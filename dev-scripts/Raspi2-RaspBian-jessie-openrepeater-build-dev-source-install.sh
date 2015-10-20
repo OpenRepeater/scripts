@@ -868,7 +868,7 @@ sudo systemctl disable svxlink.service
 
 DELIM
 
-sudo chown root:www-data /usr/local/bin/openrepeater_svxlink_restart /usr/local/bin/openrepeater_svxlink_start /usr/local/bin/svxlink_stop /usr/local/bin/openrepeater_repeater_reboot /usr/local/bin/openrepeater_enable_svxlink_sevice /usr/local/bin/openrepeater_disable_svxlink_service
+sudo chown root:www-data /usr/local/bin/openrepeater_svxlink_restart /usr/local/bin/openrepeater_svxlink_start /usr/local/bin/openrepeater_svxlink_stop /usr/local/bin/openrepeater_repeater_reboot /usr/local/bin/openrepeater_enable_svxlink_sevice /usr/local/bin/openrepeater_disable_svxlink_service
 sudo chmod 550 /usr/local/bin/openrepeater_svxlink_restart /usr/local/bin/openrepeater_svxlink_start /usr/local/bin/openrepeater_svxlink_stop /usr/local/bin/openrepeater_repeater_reboot /usr/local/bin/openrepeater_enable_svxlink_sevice /usr/local/bin/openrepeater_disable_svxlink_service
 
 cat >> /etc/sudoers << DELIM
@@ -886,8 +886,10 @@ echo " #             The SVXLink Repeater / Echolink server Install is now compl
 echo " #                          and your system is ready for use..                            # "
 echo " #                                                                                        # "
 echo " #                This is a build from dev source install with systemd                    # "
+echo " #                                                                                        # "
 echo " #                   To Start the service fo svxlink on the cmd line                      # "
 echo " #                        run cmd: systemctl enable svxlink.service                       # "
+echo " #                                                                                        # "
 echo " #                   To Start the service fo remotetrx on the cmd line                    # "
 echo " #                        run cmd: systemctl enable remotetrx.service                     # "
 echo " #                                                                                        # "
