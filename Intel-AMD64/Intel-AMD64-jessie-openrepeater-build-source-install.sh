@@ -131,7 +131,7 @@ esac
 #############
 # Intel/AMD
 #############
-case $(uname -m) in x86_64|i[3-6]86)
+case $(uname -m) in x86_64|i[4-6]86)
 echo
 echo " Intel / Amd boards currently Supported"
 echo
@@ -318,15 +318,23 @@ DELIM
 # See also <which httpredir.debian.org>.  This service is identical to http.debian.net.
 #################################################################################################
 cat > "/etc/apt/sources.list" << DELIM
-deb http://httpredir.debian.org/debian/ jessie main contrib non-free testing
-deb-src http://httpredir.debian.org/debian/ jessie main contrib non-free
+deb http://httpredir.debian.org/debian/ jessie main contrib non-free
+#deb-src http://httpredir.debian.org/debian/ jessie main contrib non-free
 
 deb http://httpredir.debian.org/debian/ jessie-updates main contrib non-free
-deb-src http://httpredir.debian.org/debian/ jessie-updates main contrib non-free
+#deb-src http://httpredir.debian.org/debian/ jessie-updates main contrib non-free
 
 deb http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
-deb-src http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
+#deb-src http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
 
+DELIM
+
+#########################
+#c1 c1+ repo
+#########################
+cat > "/etc/apt/sources.list.d/odroid.list" << DELIM
+deb http://deb.odroid.in/c1/ trusty main
+deb http://deb.odroid.in/ trusty main
 DELIM
 
 ######################
@@ -339,10 +347,9 @@ for i in update upgrade clean ;do apt-get -y "${i}" ; done
 ########################
 apt-get install -y g++ make cmake libsigc++-2.0-dev libgsm1-dev libpopt-dev libgcrypt11-dev \
 	libspeex-dev libspeexdsp-dev libasound2-dev alsa-utils vorbis-tools sox flac libsox-fmt-mp3 \
-	sqlite3 unzip opus-tools tcl8.6-dev tk8.6-dev alsa-base ntp groff doxygen libopus-dev \
-	librtlsdr-dev git-core uuid-dev qtbase5-dev qttools5-dev-tools qttools5-dev git-core flite screen \
-	time inetutils-syslogd vim install-info whiptail dialog logrotate cron usbutils gawk watchdog \
-	python3-serial
+	sqlite3 unzip opus-tools tcl8.6-dev tk-dev alsa-base ntp groff doxygen libopus-dev librtlsdr-dev \
+	git-core uuid-dev qtbase5-dev qttools5-dev-tools qttools5-dev git-core tk8.6-dev ntp flite screen \
+	time inetutils-syslogd vim install-info whiptail dialog logrotate cron usbutils gawk groff watchdog
 	
 ##################################
 # Add User and include in groupds
@@ -417,7 +424,7 @@ git pull git://github.com/rneese45/svxlink.git systemd-new
 cd /usr/src/svxlink/src
 mkdir build
 cd build
-time wc cmake -DCMAKE_INSTALL_PREFIX=/usr -DSYSCONF_INSTALL_DIR=/etc -DBUILD_STATIC_LIBS=YES ..
+time wc cmake -DCMAKE_INSTALL_PREFIX=/usr -DSYSCONF_INSTALL_DIR=/etc -DLIB_INSTALL_DIR=/usr/lib -DBUILD_STATIC_LIBS=YES ..
 time wc make -j5
 time wc make doc
 make install
@@ -700,26 +707,26 @@ mkdir -p /var/www/openrepeater
 ######################################################
 # Pull openrepeater from github and then cp into place
 ######################################################
-git clone git://github.com/rneese45/webapp.git systemd-new /usr/src/openrepeater-gui
-cd /usr/src/openrepeater-gui || exit
-git pull git://github.com/rneese45/webapp.git beta3
+cd /usr/src || exit
+git clone https://github.com/OpenRepeater/webapp.git openrepeater-gui
 cd /usr/src/openrepeater-gui || exit
 
 ##########################################
 #copy openrepeater into proper fhs layout
 ##########################################
 cp -rp install/sql /usr/share/examples/openrepeater/install
-cp -rp install/svxlink-conf /usr/share/examples/openrepeater/install
+cp -rp install/svxlink /usr/share/examples/openrepeater/install
 cp -rp install/courtesy_tones /usr/share/openrepeater/sounds
-cp -rp install/scripts/* /usr/local/bin
-cp -rp dev theme functions includes ./*.php /var/www/openrepeater
+cp -rp theme functions dev includes ./*.php /var/www/openrepeater
+
+#################################################
+# Fetch and Install open repeater project web ui
+# ################################################
 
 find "$WWW_PATH" -type d -exec chmod 775 {} +
 find "$WWW_PATH" -type f -exec chmod 664 {} +
 
 chown -R www-data:www-data $WWW_PATH
-
-chmod +x /usr/local/bin/openrepeater_*
 
 cp /etc/default/svxlink /etc/default/svxlink.orig
 cat > "/etc/default/svxlink" << DELIM
@@ -777,33 +784,78 @@ cp -rp /usr/share/examples/openrepeater/install/sql/database.php /etc/openrepeat
 
 chown -R www-data:www-data /var/lib/openrepeater /etc/openrepeater
 
-###################################
-# configure sudo for www-data
-###################################
-sudo chown root:www-data /usr/local/bin/openrepeater_svxlink_restart /usr/local/bin/openrepeater_svxlink_start /usr/local/bin/openrepeater_svxlink_stop /usr/local/bin/openrepeater_repeater_reboot /usr/local/bin/openrepeater_enable_svxlink_sevice /usr/local/bin/openrepeater_disable_svxlink_service
-sudo chmod 550 /usr/local/bin/openrepeater_svxlink_restart /usr/local/bin/openrepeater_svxlink_start /usr/local/bin/openrepeater_svxlink_stop /usr/local/bin/openrepeater_repeater_reboot /usr/local/bin/openrepeater_enable_svxlink_sevice /usr/local/bin/openrepeater_disable_svxlink_service
+#####################################################################
+# Configure Sudo / scripts for the gui to start/stop/restart svxlink
+#####################################################################
+cat > "/usr/local/bin/svxlink_restart" << DELIM
+#!/bin/bash
+SERVICE=svxlink
+
+ps -u \$SERVICE | grep -v grep | grep \$SERVICE > /dev/null
+result=\$?
+echo "exit code: \${result}"
+if [ "\${result}" -eq "0" ] ; then
+    echo "\$(date): \$SERVICE service running"
+    echo "\$(date): Restarting svxlink service with updated configuration"
+    sudo service svxlink restart
+else
+    echo "\$(date): \$SERVICE is not running"
+    echo "\$(date): Starting svxlink up with first time new configuration"
+    sudo service svxlink start
+fi
+DELIM
+
+cat > "/usr/local/bin/svxlink_stop" << DELIM
+#!/bin/bash
+SERVICE=svxlink
+
+ps -u \$SERVICE | grep -v grep | grep \$SERVICE > /dev/null
+result=\$?
+echo "exit code: \${result}"
+if [ "\${result}" -eq "0" ] ; then
+    echo "\$(date): \$SERVICE service running, Stopping svxlink service"
+    sudo svxlink stop
+else
+    echo "\$(date): \$SERVICE is not running"
+fi
+DELIM
+
+cat > "/usr/local/bin/svxlink_start" << DELIM
+#!/bin/bash
+SERVICE=svxlink
+
+ps -u \$SERVICE | grep -v grep | grep \$SERVICE > /dev/null
+result=\$?
+echo "exit code: \${result}"
+if [ "\${result}" -eq "0" ] ; then
+    echo "\$(date): \$SERVICE service running, all is fine"
+else
+    echo "\$(date): \$SERVICE is not running"
+    echo "\$(date): Atempting to start svxlink"
+    sudo service svxlink start
+fi
+DELIM
+
+cat > "/usr/local/bin/repeater_reboot" << DELIM
+#!/bin/bash
+sudo -u www-data /sbin/reboot
+DELIM
+
+sudo chown root:www-data /usr/local/bin/svxlink_restart /usr/local/bin/svxlink_start /usr/local/bin/svxlink_stop /usr/local/bin/repeater_reboot
+sudo chmod 550 /usr/local/bin/svxlink_restart /usr/local/bin/svxlink_start /usr/local/bin/svxlink_stop /usr/local/bin/repeater_reboot
 
 cat >> /etc/sudoers << DELIM
 #allow www-data to access amixer and service
-www-data   ALL=(ALL) NOPASSWD: /usr/local/bin/openrepeater_svxlink_restart, NOPASSWD: /usr/local/bin/openrepeater_svxlink_start, NOPASSWD: /usr/local/bin/openrepeater_svxlink_stop, NOPASSWD: /usr/local/bin/openrepeater_svxlink_restart, NOPASSWD: /usr/local/bin/openrepeater_enable_svxlink_sevice, NOPASSWD: /usr/local/bin/openrepeater_disable_svxlink_service, NOPASSWD: /usr/bin/aplay, NOPASSWD: /usr/bin/arecord
+www-data   ALL=(ALL) NOPASSWD: /usr/local/bin/svxlink_restart, NOPASSWD: /usr/local/bin/svxlink_start, NOPASSWD: /usr/local/bin/svxlink_stop, NOPASSWD: /usr/local/bin/repeater_reboot, NOPASSWD: /usr/bin/aplay, NOPASSWD: /usr/bin/arecord
 DELIM
 
 #########################################################
 #-----Installing Fail2Ban/monit Protection services------
 #########################################################
-#for i in fail2ban ;do apt-get -y install "${i}" ; done
+for i in fail2ban ;do apt-get -y install "${i}" ; done
 
 echo " ########################################################################################## "
 echo " #             The SVXLink Repeater / Echolink server Install is now complete             # "
 echo " #                          and your system is ready for use..                            # "
-echo " #                                                                                        # "
-echo " #                This is a build from dev source install with systemd                    # "
-echo " #                                                                                        # "
-echo " #                   To Start the service fo svxlink on the cmd line                      # "
-echo " #                        run cmd: systemctl enable svxlink.service                       # "
-echo " #                                                                                        # "
-echo " #                   To Start the service fo remotetrx on the cmd line                    # "
-echo " #                        run cmd: systemctl enable remotetrx.service                     # "
-echo " #                                                                                        # "
 echo " ########################################################################################## "
 ) | tee /root/install.log

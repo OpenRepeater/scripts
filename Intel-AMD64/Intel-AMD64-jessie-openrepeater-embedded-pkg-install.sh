@@ -1,7 +1,6 @@
 #!/bin/bash
 (
-####################################################################
-#
+###################################################################
 #   Open Repeater Project
 #
 #    Copyright (C) <2015>  <Richard Neese> kb3vgw@gmail.com
@@ -22,7 +21,7 @@
 #    If not, see <http://www.gnu.org/licenses/gpl-3.0.en.html>
 #
 ###################################################################
-# Auto Install Configuration options
+# Auto Install Configuration options 
 # (set it, forget it, run it)
 ###################################################################
 
@@ -31,7 +30,7 @@
 # Repeater call sign
 # Please change this to match the repeater call sign
 ####################################################
-cs="Set_This"
+cs="Set-This"
 
 ###################################################
 # Put /var/log into a tmpfs to improve performance 
@@ -61,6 +60,7 @@ gui_name="openrepeater"
 #Php ini config file
 #####################
 php_ini="/etc/php5/fpm/php.ini"
+
 ######################################################################
 # check to see that the configuration portion of the script was edited
 ######################################################################
@@ -124,16 +124,16 @@ esac
 ########
 case $(uname -m) in armv[6-9]l)
 echo
-echo " ArmHF arm v6 v7 v8 v9 boards supported "
+echo " ArmHF arm v7 v8 v9 boards supported "
 echo
 esac
 
 #############
 # Intel/AMD
 #############
-case $(uname -m) in x86_64|i[3-6]86)
+case $(uname -m) in x86_64|i[4-6]86)
 echo
-echo " Intel / Amd boards currently Supported"
+echo " Intel / Amd boards currently Support "
 echo
 esac
 
@@ -157,6 +157,12 @@ cat << DELIM
      If It Fails For Any Reason Please Report To kb3vgw@gmail.com
 
    Please Include Any Screen Output You Can To Show Where It Fails
+   
+  Note:
+
+  Pre-Install Information:
+
+       This script uses Sqlite by default. No plans to use Other DB. 
 
 DELIM
 
@@ -181,6 +187,9 @@ echo
 printf ' Current ip is : '; ip -f inet addr show dev eth0 | sed -n 's/^ *inet *\([.0-9]*\).*/\1/p'
 echo
 
+######################################
+# Reconfigure system for performance
+######################################
 ##############################
 #Set a reboot if Kernel Panic
 ##############################
@@ -198,8 +207,9 @@ tmpfs /var/cache/apt/archives tmpfs   size=100M,defaults,noexec,nosuid,nodev,mod
 DELIM
 
 
+
 ######################
-# Enable the spi/i2c
+# Enable the spi & i2c
 ######################
 echo "spicc" >> /etc/modules
 echo "aml_i2c" >> /etc/modules
@@ -214,7 +224,6 @@ if [[ $put_logs_tmpfs == "y" ]]; then
 cat >>/etc/fstab << DELIM
 tmpfs   /var/log                tmpfs   size=20M,defaults,noatime,mode=0755 0 0 
 DELIM
-
 
 ########################
 # cnfigure tmpfs sizes
@@ -298,7 +307,7 @@ DELIM
 #Setup /etc/hosts
 #################
 cat > /etc/hosts << DELIM
-127.0.0.1       localhost 
+127.0.0.1       localhost
 ::1             localhost ip6-localhost ip6-loopback
 fe00::0         ip6-localnet
 ff00::0         ip6-mcastprefix
@@ -306,7 +315,6 @@ ff02::1         ip6-allnodes
 ff02::2         ip6-allrouters
 
 127.0.0.1       $cs-repeater
-
 DELIM
 
 #################################################################################################
@@ -319,14 +327,21 @@ DELIM
 #################################################################################################
 cat > "/etc/apt/sources.list" << DELIM
 deb http://httpredir.debian.org/debian/ jessie main contrib non-free testing
-deb-src http://httpredir.debian.org/debian/ jessie main contrib non-free
+#deb-src http://httpredir.debian.org/debian/ jessie main contrib non-free
 
 deb http://httpredir.debian.org/debian/ jessie-updates main contrib non-free
-deb-src http://httpredir.debian.org/debian/ jessie-updates main contrib non-free
+#deb-src http://httpredir.debian.org/debian/ jessie-updates main contrib non-free
 
 deb http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
-deb-src http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
+#deb-src http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
 
+DELIM
+
+##########################
+# Adding OpenRepeater Repo
+##########################
+cat > "/etc/apt/sources.list.d/openrepeater.list" <<DELIM
+deb http://repo.openrepeater.com/openrepeater/release/debian/ jessie main
 DELIM
 
 ######################
@@ -334,119 +349,39 @@ DELIM
 ######################
 for i in update upgrade clean ;do apt-get -y "${i}" ; done
 
-########################
-# Install Build Depends
-########################
-apt-get install -y g++ make cmake libsigc++-2.0-dev libgsm1-dev libpopt-dev libgcrypt11-dev \
-	libspeex-dev libspeexdsp-dev libasound2-dev alsa-utils vorbis-tools sox flac libsox-fmt-mp3 \
-	sqlite3 unzip opus-tools tcl8.6-dev tk8.6-dev alsa-base ntp groff doxygen libopus-dev \
-	librtlsdr-dev git-core uuid-dev qtbase5-dev qttools5-dev-tools qttools5-dev git-core flite screen \
-	time inetutils-syslogd vim install-info whiptail dialog logrotate cron usbutils gawk watchdog \
-	python3-serial
-	
-##################################
-# Add User and include in groupds
-# Required for svxlink to install 
-# properly
-#################################
-# Sane defaults:
-[ -z "$SERVER_HOME" ] && SERVER_HOME=/usr/bin
-[ -z "$SERVER_USER" ] && SERVER_USER=svxlink
-[ -z "$SERVER_NAME" ] && SERVER_NAME="Svxlink-related Daemons"
-[ -z "$SERVER_GROUP" ] && SERVER_GROUP=daemon
-     
-# Groups that the user will be added to, if undefined, then none.
-ADDGROUP="audio dialout"
-     
-# create user to avoid running server as root
-# 1. create group if not existing
-if ! getent group | grep -q "^$SERVER_GROUP:" ; then
-   echo -n "Adding group $SERVER_GROUP.."
-   addgroup --quiet --system $SERVER_GROUP 2>/dev/null ||true
-   echo "..done"
-fi
-    
-# 2. create homedir if not existing
-test -d $SERVER_HOME || mkdir $SERVER_HOME
-    
-# 3. create user if not existing
-if ! getent passwd | grep -q "^$SERVER_USER:"; then
-   echo -n "Adding system user $SERVER_USER.."
-   adduser --quiet \
-           --system \
-           --ingroup $SERVER_GROUP \
-           --no-create-home \
-           --disabled-password \
-           $SERVER_USER 2>/dev/null || true
-   echo "..done"
-fi
-    
-# 4. adjust passwd entry
-usermod -c "$SERVER_NAME" \
-    -d $SERVER_HOME   \
-    -g $SERVER_GROUP  \
-    $SERVER_USER
-# 5. Add the user to the ADDGROUP group
+######################
+#Install Dependancies
+#####################
+apt-get install -y --force-yes memcached sqlite3 libopus0 alsa-utils vorbis-tools sox libsox-fmt-mp3 librtlsdr0 \
+		ntp libasound2 libspeex1 libgcrypt20 libpopt0 libgsm1 tcl8.6 alsa-base bzip2 sudo gpsd gpsd-clients \
+		flite wvdial inetutils-syslogd screen time uuid vim install-info usbutils whiptail dialog 
 
-for group in $ADDGROUP ; do
-if test -n "$group"
-then
-    if ! groups $SERVER_USER | cut -d: -f2 | grep -qw "$group"; then
-	adduser $SERVER_USER "$group"
-    fi
-fi
-done
+#####################
+# Install SvxLink
+#####################		
+apt-get install -y --force-yes svxlink-server remotetrx 
 
-#########################
-# get svxlink src
-#########################
-git clone git://github.com/rneese45/svxlink.git /usr/src/svxlink
-cd /usr/src/svxlink
-git pull git://github.com/rneese45/svxlink.git spelling-fixes
-git pull git://github.com/rneese45/svxlink.git hypen-vs-minus
-git pull git://github.com/rneese45/svxlink.git new-file-svxlink_gpio.conf.in
-git pull git://github.com/rneese45/svxlink.git qt5-Update
-git pull git://github.com/rneese45/svxlink.git fix-missing-home-enviroment
-git pull git://github.com/rneese45/svxlink.git fix-init.d-script
-git pull git://github.com/rneese45/svxlink.git svxlink-debian-pkg
-git pull git://github.com/rneese45/svxlink.git systemd-new
+###########
+# Clean Up
+###########
+apt-get clean
 
-#############################
-#Build & Install svxllink
-#############################
-cd /usr/src/svxlink/src
-mkdir build
-cd build
-time wc cmake -DCMAKE_INSTALL_PREFIX=/usr -DSYSCONF_INSTALL_DIR=/etc -DBUILD_STATIC_LIBS=YES ..
-time wc make -j5
-time wc make doc
-make install
-ldconfig
-
-systemctrl enable svxlink.serviceclear
-
-service svxlink start
-
-#######################################################
-#Install svxlink en_US sounds
 #Working on sounds pkgs for future release of svxlink
-########################################################
-cd /usr/src || exit
+cd /usr/share/svxlink/sounds
 wget https://github.com/sm0svx/svxlink-sounds-en_US-heather/releases/download/14.08/svxlink-sounds-en_US-heather-16k-13.12.tar.bz2
 tar xjvf svxlink-sounds-en_US-heather-16k-13.12.tar.bz2
-rm *.bz2
 mv en_US-heather* en_US
-mv en_US /usr/share/svxlink/sounds
-cd  ~ || exit
+rm svxlink-sounds-en_US-heather-16k-13.12.tar.bz2
+cd /root
 
 ##########################################
 #---Start of nginx / php5 install --------
 ##########################################
-apt-get -y install ssl-cert openssl-blacklist nginx memcached php5-cli php5-common \
-		php-apc php5-gd php-db php5-fpm php5-memcache php5-sqlite
-###############
-#clean up
-###############
+apt-get -y install ssl-cert nginx php5-cli php5-common php-apc php5-gd php-db php5-fpm php5-memcache php5-sqlite
+
+#############
+# Clean UP
+#############
 apt-get clean
 
 ##################################################
@@ -507,6 +442,9 @@ server{
             try_files \$uri \$uri/ =404;
         }
 
+        client_max_body_size 25M;
+        client_body_buffer_size 128k;
+
         access_log /var/log/nginx/access.log;
         error_log /var/log/nginx/error.log;
 
@@ -534,7 +472,6 @@ DELIM
 ###############################################
 # set nginx worker level limit for performance
 ###############################################
-cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.orig
 cat > "/etc/nginx/nginx.conf"  << DELIM
 user www-data;
 worker_processes 4;
@@ -626,9 +563,9 @@ DELIM
 #################################
 # Backup and replace php5-fpm.conf
 #################################
-cp /etc/php5/fpm/php5-fpm.conf /etc/php5/fpm/php5-fpm.conf.orig
+cp /etc/php5/fpm/php-fpm.conf /etc/php5/fpm/php-fpm.conf.orig
 
-cat > /etc/php5/fpm/php5-fpm.conf << DELIM
+cat > /etc/php5/fpm/php-fpm.conf << DELIM
 ;;;;;;;;;;;;;;;;;;;;;
 ; FPM Configuration ;
 ;;;;;;;;;;;;;;;;;;;;;
@@ -686,40 +623,17 @@ chown -R www-data:www-data /var/www
 ##############################
 for i in nginx php5-fpm ;do service "${i}" restart > /dev/null 2>&1 ; done
 
-###############################
-# create fhs layout directories
-################################
-mkdir -p /etc/openrepeater/svxlink
-mkdir -p /usr/share/openrepeater/sounds
-mkdir -p /usr/share/examples/openrepeater/install
-mkdir -p /var/lib/openrepeater/db
-mkdir -p /var/lib/openrepeater/recordings
-mkdir -p /var/lib/openrepeater/macros
-mkdir -p /var/www/openrepeater
+#################################################
+# Fetch and Install open repeater project web ui
+# ################################################
+mkdir $WWW_PATH/$gui_name
 
-######################################################
-# Pull openrepeater from github and then cp into place
-######################################################
-git clone git://github.com/rneese45/webapp.git systemd-new /usr/src/openrepeater-gui
-cd /usr/src/openrepeater-gui || exit
-git pull git://github.com/rneese45/webapp.git beta3
-cd /usr/src/openrepeater-gui || exit
-
-##########################################
-#copy openrepeater into proper fhs layout
-##########################################
-cp -rp install/sql /usr/share/examples/openrepeater/install
-cp -rp install/svxlink-conf /usr/share/examples/openrepeater/install
-cp -rp install/courtesy_tones /usr/share/openrepeater/sounds
-cp -rp install/scripts/* /usr/local/bin
-cp -rp dev theme functions includes ./*.php /var/www/openrepeater
+apt-get install -y --force-yes openrepeater
 
 find "$WWW_PATH" -type d -exec chmod 775 {} +
 find "$WWW_PATH" -type f -exec chmod 664 {} +
 
 chown -R www-data:www-data $WWW_PATH
-
-chmod +x /usr/local/bin/openrepeater_*
 
 cp /etc/default/svxlink /etc/default/svxlink.orig
 cat > "/etc/default/svxlink" << DELIM
@@ -728,6 +642,12 @@ cat > "/etc/default/svxlink" << DELIM
 # Configuration file for the SvxLink startup script /etc/init.d/svxlink
 #
 #############################################################################
+
+# The log file to use
+LOGFILE=/var/log/svxlink
+
+# The PID file to use
+PIDFILE=/var/run/svxlink.pid
 
 # The user to run the SvxLink server as
 RUNASUSER=svxlink
@@ -753,6 +673,12 @@ cat > "/etc/default/remotetrx" << DELIM
 #
 #############################################################################
 
+# The log file to use
+LOGFILE=/var/log/remotetrx
+
+# The PID file to use
+PIDFILE=/var/run/remotetrx.pid
+
 # The user to run the SvxLink server as
 RUNASUSER=svxlink
 
@@ -764,7 +690,9 @@ ENV="ASYNC_AUDIO_NOTRIGGER=1"
 
 DELIM
 
-#making links...
+#############################################
+#making links to make svxlink work correctly
+#############################################
 ln -s /usr/share/openrepeater/sounds/courtesy_tones /var/www/openrepeater/courtesy_tones
 ln -s /etc/openrepeater/svxlink/local-events.d/ /usr/share/svxlink/events.d/local
 ln -s /var/log/svxlink /var/www/openrepeater/log
@@ -777,33 +705,83 @@ cp -rp /usr/share/examples/openrepeater/install/sql/database.php /etc/openrepeat
 
 chown -R www-data:www-data /var/lib/openrepeater /etc/openrepeater
 
-###################################
-# configure sudo for www-data
-###################################
-sudo chown root:www-data /usr/local/bin/openrepeater_svxlink_restart /usr/local/bin/openrepeater_svxlink_start /usr/local/bin/openrepeater_svxlink_stop /usr/local/bin/openrepeater_repeater_reboot /usr/local/bin/openrepeater_enable_svxlink_sevice /usr/local/bin/openrepeater_disable_svxlink_service
-sudo chmod 550 /usr/local/bin/openrepeater_svxlink_restart /usr/local/bin/openrepeater_svxlink_start /usr/local/bin/openrepeater_svxlink_stop /usr/local/bin/openrepeater_repeater_reboot /usr/local/bin/openrepeater_enable_svxlink_sevice /usr/local/bin/openrepeater_disable_svxlink_service
+#########################
+#restart svxlink service
+#########################
+service svxlink restart
+
+#####################################################################
+# Configure Sudo / scripts for the gui to start/stop/restart svxlink
+#####################################################################
+cat > "/usr/local/bin/svxlink_restart" << DELIM
+#!/bin/bash
+SERVICE=svxlink
+
+ps -u \$SERVICE | grep -v grep | grep \$SERVICE > /dev/null
+result=\$?
+echo "exit code: \${result}"
+if [ "\${result}" -eq "0" ] ; then
+    echo "\$(date): \$SERVICE service running"
+    echo "\$(date): Restarting svxlink service with updated configuration"
+    sudo service svxlink try-restart
+else
+    echo "\$(date): \$SERVICE is not running"
+    echo "\$(date): Starting svxlink up with first time new configuration"
+    sudo service svxlink start
+fi
+DELIM
+
+cat > "/usr/local/bin/svxlink_stop" << DELIM
+#!/bin/bash
+SERVICE=svxlink
+
+ps -u \$SERVICE | grep -v grep | grep \$SERVICE > /dev/null
+result=\$?
+echo "exit code: \${result}"
+if [ "\${result}" -eq "0" ] ; then
+    echo "\$(date): \$SERVICE service running, Stopping svxlink service"
+    sudo svxlink stop
+else
+    echo "\$(date): \$SERVICE is not running"
+fi
+DELIM
+
+cat > "/usr/local/bin/svxlink_start" << DELIM
+#!/bin/bash
+SERVICE=svxlink
+
+ps -u \$SERVICE | grep -v grep | grep \$SERVICE > /dev/null
+result=\$?
+echo "exit code: \${result}"
+if [ "\${result}" -eq "0" ] ; then
+    echo "\$(date): \$SERVICE service running, all is fine"
+else
+    echo "\$(date): \$SERVICE is not running"
+    echo "\$(date): Atempting to start svxlink"
+    sudo service svxlink start
+fi
+DELIM
+
+cat > "/usr/local/bin/repeater_reboot" << DELIM
+#!/bin/bash
+sudo -u www-data /sbin/reboot
+DELIM
+
+sudo chown root:www-data /usr/local/bin/svxlink_restart /usr/local/bin/svxlink_start /usr/local/bin/svxlink_stop /usr/local/bin/repeater_reboot
+sudo chmod 550 /usr/local/bin/svxlink_restart /usr/local/bin/svxlink_start /usr/local/bin/svxlink_stop /usr/local/bin/repeater_reboot
 
 cat >> /etc/sudoers << DELIM
 #allow www-data to access amixer and service
-www-data   ALL=(ALL) NOPASSWD: /usr/local/bin/openrepeater_svxlink_restart, NOPASSWD: /usr/local/bin/openrepeater_svxlink_start, NOPASSWD: /usr/local/bin/openrepeater_svxlink_stop, NOPASSWD: /usr/local/bin/openrepeater_svxlink_restart, NOPASSWD: /usr/local/bin/openrepeater_enable_svxlink_sevice, NOPASSWD: /usr/local/bin/openrepeater_disable_svxlink_service, NOPASSWD: /usr/bin/aplay, NOPASSWD: /usr/bin/arecord
+www-data   ALL=(ALL) NOPASSWD: /usr/local/bin/svxlink_restart, NOPASSWD: /usr/local/bin/svxlink_start, NOPASSWD: /usr/local/bin/svxlink_stop, NOPASSWD: /usr/local/bin/repeater_reboot, NOPASSWD: /usr/bin/aplay, NOPASSWD: /usr/bin/arecord
 DELIM
 
-#########################################################
-#-----Installing Fail2Ban/monit Protection services------
-#########################################################
-#for i in fail2ban ;do apt-get -y install "${i}" ; done
+echo " You will need to edit the php.ini file and add extensions=memcache.so " 
+echo " location : /etc/php5/fpm/php.ini and then restart web service "
 
 echo " ########################################################################################## "
-echo " #             The SVXLink Repeater / Echolink server Install is now complete             # "
+echo " #    The Open Repeater Project / SVXLink / Echolink server Install is now complete       # "
 echo " #                          and your system is ready for use..                            # "
 echo " #                                                                                        # "
-echo " #                This is a build from dev source install with systemd                    # "
-echo " #                                                                                        # "
-echo " #                   To Start the service fo svxlink on the cmd line                      # "
-echo " #                        run cmd: systemctl enable svxlink.service                       # "
-echo " #                                                                                        # "
-echo " #                   To Start the service fo remotetrx on the cmd line                    # "
-echo " #                        run cmd: systemctl enable remotetrx.service                     # "
-echo " #                                                                                        # "
+echo " #                   Please send any feed back to kb3vgw@gmail.com                        # "
 echo " ########################################################################################## "
 ) | tee /root/install.log
