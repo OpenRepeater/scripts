@@ -720,16 +720,15 @@ cd /usr/src/openrepeater-gui || exit
 cp -rp install/sql /usr/share/examples/openrepeater/install
 cp -rp install/svxlink-conf /usr/share/examples/openrepeater/install
 cp -rp install/courtesy_tones /usr/share/openrepeater/sounds
-cp -rp theme functions dev includes ./*.php /var/www/openrepeater
-
-#################################################
-# Fetch and Install open repeater project web ui
-# ################################################
+cp -rp install/scripts/* /usr/local/bin
+cp -rp theme functions includes ./*.php /var/www/openrepeater
 
 find "$WWW_PATH" -type d -exec chmod 775 {} +
 find "$WWW_PATH" -type f -exec chmod 664 {} +
 
 chown -R www-data:www-data $WWW_PATH
+
+chmod +x /usr/local/bin/openrepeater_*
 
 cp /etc/default/svxlink /etc/default/svxlink.orig
 cat > "/etc/default/svxlink" << DELIM
@@ -870,7 +869,7 @@ sudo systemctl disable svxlink.service
 
 DELIM
 
-sudo chown root:www-data /usr/local/bin/openrepeater_svxlink_restart /usr/local/bin/openrepeater_svxlink_start /usr/local/bin/svxlink_stop /usr/local/bin/openrepeater_repeater_reboot /usr/local/bin/openrepeater_enable_svxlink_sevice /usr/local/bin/openrepeater_disable_svxlink_service
+sudo chown root:www-data /usr/local/bin/openrepeater_svxlink_restart /usr/local/bin/openrepeater_svxlink_start /usr/local/bin/openrepeater_svxlink_stop /usr/local/bin/openrepeater_repeater_reboot /usr/local/bin/openrepeater_enable_svxlink_sevice /usr/local/bin/openrepeater_disable_svxlink_service
 sudo chmod 550 /usr/local/bin/openrepeater_svxlink_restart /usr/local/bin/openrepeater_svxlink_start /usr/local/bin/openrepeater_svxlink_stop /usr/local/bin/openrepeater_repeater_reboot /usr/local/bin/openrepeater_enable_svxlink_sevice /usr/local/bin/openrepeater_disable_svxlink_service
 
 cat >> /etc/sudoers << DELIM
