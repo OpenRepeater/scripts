@@ -721,7 +721,7 @@ cp -rp install/sql /usr/share/examples/openrepeater/install
 cp -rp install/svxlink-conf /usr/share/examples/openrepeater/install
 cp -rp install/courtesy_tones /usr/share/openrepeater/sounds
 cp -rp install/scripts/* /usr/local/bin
-cp -rp theme functions includes ./*.php /var/www/openrepeater
+cp -rp dev theme functions includes ./*.php /var/www/openrepeater
 
 find "$WWW_PATH" -type d -exec chmod 775 {} +
 find "$WWW_PATH" -type f -exec chmod 664 {} +
@@ -885,5 +885,12 @@ DELIM
 echo " ########################################################################################## "
 echo " #             The SVXLink Repeater / Echolink server Install is now complete             # "
 echo " #                          and your system is ready for use..                            # "
+echo " #                                                                                        # "
+echo " #                This is a build from dev source install with systemd                    # "
+echo " #                   To Start the service fo svxlink on the cmd line                      # "
+echo " #                        run cmd: systemctl enable svxlink.service                       # "
+echo " #                   To Start the service fo remotetrx on the cmd line                    # "
+echo " #                        run cmd: systemctl enable remotetrx.service                     # "
+echo " #                                                                                        # "
 echo " ########################################################################################## "
 ) | tee /root/install.log

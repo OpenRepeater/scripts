@@ -884,6 +884,13 @@ DELIM
 echo " ########################################################################################## "
 echo " #             The SVXLink Repeater / Echolink server Install is now complete             # "
 echo " #                          and your system is ready for use..                            # "
+echo " #                                                                                        # "
+echo " #                This is a build from dev source install with systemd                    # "
+echo " #                   To Start the service fo svxlink on the cmd line                      # "
+echo " #                        run cmd: systemctl enable svxlink.service                       # "
+echo " #                   To Start the service fo remotetrx on the cmd line                    # "
+echo " #                        run cmd: systemctl enable remotetrx.service                     # "
+echo " #                                                                                        # "
 echo " ########################################################################################## "
 ) | tee /root/install.log
 
