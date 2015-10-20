@@ -3,7 +3,9 @@ OpenRepeater Build Scripts
 
 Misc scripts live here like system build scripts and pkg based install scripts.
 
-There are 2 scripts per board. 
+There are 2 scripts per board. in the main dir's
+
+In the Dev Scripts dir 1 script per board.
 
 Script 1 is a install source. and it builds and installs svxlink/openrepeater. 
 
