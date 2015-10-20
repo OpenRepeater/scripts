@@ -40,6 +40,11 @@ cs="Set_This"
 ###################################################
 put_logs_tmpfs="n"
 
+###################################################
+# Install openrepeater gui dev dir
+###################################################
+install_php_dev="y"
+
 # ----- Stop Edit Here ------- #
 ########################################################
 # Set mp3/wav file upload/post size limit for php/nginx
@@ -720,9 +725,12 @@ cp -rp install/svxlink-conf /usr/share/examples/openrepeater/install
 cp -rp install/courtesy_tones /usr/share/openrepeater/sounds
 cp -rp theme functions dev includes ./*.php /var/www/openrepeater
 
-#################################################
-# Fetch and Install open repeater project web ui
-# ################################################
+##################
+# install dev dir
+##################
+if [[ $install_php_dev == "y"]]; then
+cp -rp install/dev /var/www/openrepeater
+fi
 
 find "$WWW_PATH" -type d -exec chmod 775 {} +
 find "$WWW_PATH" -type f -exec chmod 664 {} +
