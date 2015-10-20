@@ -330,14 +330,6 @@ deb http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
 
 DELIM
 
-#########################
-#c1 c1+ repo
-#########################
-cat > "/etc/apt/sources.list.d/odroid.list" << DELIM
-deb http://deb.odroid.in/c1/ trusty main
-deb http://deb.odroid.in/ trusty main
-DELIM
-
 ######################
 #Update base os
 ######################
