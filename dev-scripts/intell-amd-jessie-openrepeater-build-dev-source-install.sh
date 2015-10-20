@@ -131,11 +131,10 @@ esac
 #############
 # Intel/AMD
 #############
-case $(uname -m) in x86_64|i[4-6]86)
+case $(uname -m) in x86_64|i[3-6]86)
 echo
-echo " Intel / Amd boards currently UnSupported"
+echo " Intel / Amd boards currently Supported"
 echo
-exit
 esac
 
 ###################

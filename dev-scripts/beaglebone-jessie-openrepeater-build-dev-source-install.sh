@@ -821,89 +821,9 @@ cp -rp /usr/share/examples/openrepeater/install/sql/database.php /etc/openrepeat
 
 chown -R www-data:www-data /var/lib/openrepeater /etc/openrepeater
 
-#####################################################################
-# Configure Sudo / scripts for the gui to start/stop/restart svxlink
-#####################################################################
-cat > "/usr/local/bin/openrepeater_svxlink_restart" << DELIM
-#!/bin/bash
-SERVICE=svxlink
-
-ps -u \$SERVICE | grep -v grep | grep \$SERVICE > /dev/null
-result=\$?
-echo "exit code: \${result}"
-if [ "\${result}" -eq "0" ] ; then
-    echo "\$(date): \$SERVICE service running"
-    echo "\$(date): Restarting svxlink service with updated configuration"
-    sudo service svxlink restart
-else
-    echo "\$(date): \$SERVICE is not running"
-    echo "\$(date): Starting svxlink up with first time new configuration"
-    sudo service svxlink start
-fi
-DELIM
-
-cat > "/usr/local/bin/openrepeater_svxlink_stop" << DELIM
-#!/bin/bash
-SERVICE=svxlink
-
-ps -u \$SERVICE | grep -v grep | grep \$SERVICE > /dev/null
-result=\$?
-echo "exit code: \${result}"
-if [ "\${result}" -eq "0" ] ; then
-    echo "\$(date): \$SERVICE service running, Stopping svxlink service"
-    sudo svxlink stop
-else
-    echo "\$(date): \$SERVICE is not running"
-fi
-DELIM
-
-cat > "/usr/local/bin/openrepeater_svxlink_start" << DELIM
-#!/bin/bash
-SERVICE=svxlink
-
-ps -u \$SERVICE | grep -v grep | grep \$SERVICE > /dev/null
-result=\$?
-echo "exit code: \${result}"
-if [ "\${result}" -eq "0" ] ; then
-    echo "\$(date): \$SERVICE service running, all is fine"
-else
-    echo "\$(date): \$SERVICE is not running"
-    echo "\$(date): Atempting to start svxlink"
-    sudo service svxlink start
-fi
-DELIM
-
-cat > "/usr/local/bin/repeater_reboot" << DELIM
-#!/bin/bash
-sudo -u www-data /sbin/reboot
-DELIM
-
-cat > "/usr/local/bin/openrepeater_enable_svxlink_service" << DELIM
-#!/bin/bash
-SERVICE=svxlink
-
-ps -u $SERVICE | grep -v grep | grep $SERVICE > /dev/null
-result=$?
-echo "exit code: ${result}"
-if [ "${result}" -eq "0" ] ; then
-    echo "$(date): $SERVICE service running, all is fine"
-else
-    echo "$(date): $SERVICE is not running"
-    echo "$(date): Atempting to start svxlink"
-    sudo systemctl enable svxlink.service
-    sudo service svxlink start
-fi
-DELIM
-
-cat > "/usr/local/bin/openrepeater_disable_svxlink_service" << DELIM
-#!/bin/bash
-SERVICE=svxlink
-
-sudo service svxlink stop
-sudo systemctl disable svxlink.service
-
-DELIM
-
+###################################
+# configure sudo for www-data
+###################################
 sudo chown root:www-data /usr/local/bin/openrepeater_svxlink_restart /usr/local/bin/openrepeater_svxlink_start /usr/local/bin/openrepeater_svxlink_stop /usr/local/bin/openrepeater_repeater_reboot /usr/local/bin/openrepeater_enable_svxlink_sevice /usr/local/bin/openrepeater_disable_svxlink_service
 sudo chmod 550 /usr/local/bin/openrepeater_svxlink_restart /usr/local/bin/openrepeater_svxlink_start /usr/local/bin/openrepeater_svxlink_stop /usr/local/bin/openrepeater_repeater_reboot /usr/local/bin/openrepeater_enable_svxlink_sevice /usr/local/bin/openrepeater_disable_svxlink_service
 
