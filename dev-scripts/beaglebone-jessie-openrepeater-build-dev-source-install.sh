@@ -743,10 +743,9 @@ mkdir -p /var/www/openrepeater
 ######################################################
 # Pull openrepeater from github and then cp into place
 ######################################################
-cd /usr/src || exit
-git clone https://github.com/OpenRepeater/webapp.git openrepeater-gui
+git clone git://github.com/rneese45/webapp.git systemd-new /usr/src/openrepeater-gui
 cd /usr/src/openrepeater-gui || exit
-git pull https://github.com/OpenRepeater/webapp.git Beta-4
+git pull git://github.com/rneese45/webapp.git beta3
 cd /usr/src/openrepeater-gui || exit
 
 ##########################################
