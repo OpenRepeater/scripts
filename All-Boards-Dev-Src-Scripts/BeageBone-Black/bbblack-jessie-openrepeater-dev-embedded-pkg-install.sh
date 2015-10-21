@@ -309,7 +309,14 @@ DELIM
 # Adding OpenRepeater Repo
 ##########################
 cat > "/etc/apt/sources.list.d/openrepeater.list" <<DELIM
-deb http://repo.openrepeater.com/openrepeater/release/debian/ jessie main
+deb http://repo.openrepeater.com/openrepeater/devel/debian/ jessie main
+DELIM
+
+#########################
+# SVXLink Testing repo
+#########################
+cat > "/etc/apt/sources.list.d/svxlink.list" <<DELIM
+deb http://repo.openrepeater.com/svxlink-dev/devel/debian/ jessie main
 DELIM
 
 ######################
