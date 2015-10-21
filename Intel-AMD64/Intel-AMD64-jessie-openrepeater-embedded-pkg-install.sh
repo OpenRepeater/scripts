@@ -775,9 +775,11 @@ cat >> /etc/sudoers << DELIM
 www-data   ALL=(ALL) NOPASSWD: /usr/local/bin/svxlink_restart, NOPASSWD: /usr/local/bin/svxlink_start, NOPASSWD: /usr/local/bin/svxlink_stop, NOPASSWD: /usr/local/bin/repeater_reboot, NOPASSWD: /usr/bin/aplay, NOPASSWD: /usr/bin/arecord
 DELIM
 
-echo " You will need to edit the php.ini file and add extensions=memcache.so " 
-echo " location : /etc/php5/fpm/php.ini and then restart web service "
-
+echo " ########################################################################################## "
+echo " #            You will need to edit the php.ini file and add extensions=memcache.so       # " 
+echo " #               location : /etc/php5/fpm/php.ini and then restart web service            # "
+echo " ########################################################################################## "
+echo
 echo " ########################################################################################## "
 echo " #    The Open Repeater Project / SVXLink / Echolink server Install is now complete       # "
 echo " #                          and your system is ready for use..                            # "

@@ -1321,7 +1321,11 @@ if [ -f /usr/local/bin/odroid-openrepeater-conf ]; then
 fi
 
 DELIM
-
+echo " ########################################################################################## "
+echo " #            You will need to edit the php.ini file and add extensions=memcache.so       # " 
+echo " #               location : /etc/php5/fpm/php.ini and then restart web service            # "
+echo " ########################################################################################## "
+echo
 echo " ########################################################################################## "
 echo " #             The SVXLink Repeater / Echolink server Install is now complete             # "
 echo " #                          and your system is ready for use..                            # "
