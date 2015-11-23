@@ -207,8 +207,6 @@ tmpfs /var/tmp  tmpfs nodev,nosuid,mode=1777  0 0
 tmpfs /var/cache/apt/archives tmpfs   size=100M,defaults,noexec,nosuid,nodev,mode=0755 0 0
 DELIM
 
-
-
 ######################
 # Enable the spi & i2c
 ######################
@@ -328,13 +326,13 @@ DELIM
 #################################################################################################
 cat > "/etc/apt/sources.list" << DELIM
 deb http://httpredir.debian.org/debian/ jessie main contrib non-free
-#deb-src http://httpredir.debian.org/debian/ jessie main contrib non-free
+deb-src http://httpredir.debian.org/debian/ jessie main contrib non-free
 
 deb http://httpredir.debian.org/debian/ jessie-updates main contrib non-free
-#deb-src http://httpredir.debian.org/debian/ jessie-updates main contrib non-free
+deb-src http://httpredir.debian.org/debian/ jessie-updates main contrib non-free
 
 deb http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
-#deb-src http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
+deb-src http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
 
 DELIM
 
@@ -346,18 +344,18 @@ deb http://deb.odroid.in/c1/ trusty main
 deb http://deb.odroid.in/ trusty main
 DELIM
 
-##########################
-# Adding OpenRepeater Repo
-##########################
-cat > "/etc/apt/sources.list.d/openrepeater.list" <<DELIM
-deb http://repo.openrepeater.com/openrepeater/devel/debian/ jessie main
-DELIM
-
 #########################
 # SVXLink Testing repo
 #########################
 cat > "/etc/apt/sources.list.d/svxlink.list" <<DELIM
 deb http://repo.openrepeater.com/svxlink/devel/debian/ jessie main
+DELIM
+
+##########################
+# Adding OpenRepeater Repo
+##########################
+cat > "/etc/apt/sources.list.d/openrepeater.list" <<DELIM
+deb http://repo.openrepeater.com/openrepeater/devel/debian/ jessie main
 DELIM
 
 ######################
@@ -660,12 +658,6 @@ cat > "/etc/default/svxlink" << DELIM
 #
 #############################################################################
 
-# The log file to use
-LOGFILE=/var/log/svxlink
-
-# The PID file to use
-PIDFILE=/var/run/svxlink.pid
-
 # The user to run the SvxLink server as
 RUNASUSER=svxlink
 
@@ -689,13 +681,6 @@ cat > "/etc/default/remotetrx" << DELIM
 # Configuration file for the RemoteTrx startup script /etc/init.d/remotetrx
 #
 #############################################################################
-
-# The log file to use
-LOGFILE=/var/log/remotetrx
-
-# The PID file to use
-PIDFILE=/var/run/remotetrx.pid
-
 # The user to run the SvxLink server as
 RUNASUSER=svxlink
 
@@ -710,106 +695,13 @@ DELIM
 #############################################
 #making links to make svxlink work correctly
 #############################################
-ln -s /usr/share/openrepeater/sounds/courtesy_tones /var/www/openrepeater/courtesy_tones
+ln -s /usr/share/openrepeater/sounds /var/www/openrepeater/sounds
 ln -s /etc/openrepeater/svxlink/local-events.d/ /usr/share/svxlink/events.d/local
 ln -s /var/log/svxlink /var/www/openrepeater/log
 
-chown www-data:www-data /var/www/openrepeater/courtesy_tones
-
-cp -rp /usr/share/examples/openrepeater/install/svxlink/* /etc/openrepeater/svxlink
-cp -rp /usr/share/examples/openrepeater/install/sql/openrepeater.db /var/lib/openrepeater/db
-cp -rp /usr/share/examples/openrepeater/install/sql/database.php /etc/openrepeater
-
-chown -R www-data:www-data /var/lib/openrepeater /etc/openrepeater
-
-#########################
-#restart svxlink service
-#########################
-service svxlink restart
-
-#####################################################################
-# Configure Sudo / scripts for the gui to start/stop/restart svxlink
-#####################################################################
-cat > "/usr/local/bin/svxlink_restart" << DELIM
-#!/bin/bash
-SERVICE=svxlink
-
-ps -u \$SERVICE | grep -v grep | grep \$SERVICE > /dev/null
-result=\$?
-echo "exit code: \${result}"
-if [ "\${result}" -eq "0" ] ; then
-    echo "\$(date): \$SERVICE service running"
-    echo "\$(date): Restarting svxlink service with updated configuration"
-    sudo service svxlink try-restart
-else
-    echo "\$(date): \$SERVICE is not running"
-    echo "\$(date): Starting svxlink up with first time new configuration"
-    sudo service svxlink start
-fi
-DELIM
-
-cat > "/usr/local/bin/svxlink_stop" << DELIM
-#!/bin/bash
-SERVICE=svxlink
-
-ps -u \$SERVICE | grep -v grep | grep \$SERVICE > /dev/null
-result=\$?
-echo "exit code: \${result}"
-if [ "\${result}" -eq "0" ] ; then
-    echo "\$(date): \$SERVICE service running, Stopping svxlink service"
-    sudo svxlink stop
-else
-    echo "\$(date): \$SERVICE is not running"
-fi
-DELIM
-
-cat > "/usr/local/bin/svxlink_start" << DELIM
-#!/bin/bash
-SERVICE=svxlink
-
-ps -u \$SERVICE | grep -v grep | grep \$SERVICE > /dev/null
-result=\$?
-echo "exit code: \${result}"
-if [ "\${result}" -eq "0" ] ; then
-    echo "\$(date): \$SERVICE service running, all is fine"
-else
-    echo "\$(date): \$SERVICE is not running"
-    echo "\$(date): Atempting to start svxlink"
-    sudo service svxlink start
-fi
-DELIM
-
-cat > "/usr/local/bin/repeater_reboot" << DELIM
-#!/bin/bash
-sudo -u www-data /sbin/reboot
-DELIM
-
-sudo chown root:www-data /usr/local/bin/svxlink_restart /usr/local/bin/svxlink_start /usr/local/bin/svxlink_stop /usr/local/bin/repeater_reboot
-sudo chmod 550 /usr/local/bin/svxlink_restart /usr/local/bin/svxlink_start /usr/local/bin/svxlink_stop /usr/local/bin/repeater_reboot
-
 cat >> /etc/sudoers << DELIM
 #allow www-data to access amixer and service
-www-data   ALL=(ALL) NOPASSWD: /usr/local/bin/svxlink_restart, NOPASSWD: /usr/local/bin/svxlink_start, NOPASSWD: /usr/local/bin/svxlink_stop, NOPASSWD: /usr/local/bin/repeater_reboot, NOPASSWD: /usr/bin/aplay, NOPASSWD: /usr/bin/arecord
-DELIM
-
-
-
-########################################
-#Install raspi-openrepeater-config menu
-########################################
-#apt-get install openrepeater-menu
-
-##################################
-# Enable New shellmenu for logins
-# on enabled for root and only if 
-# the file exist
-##################################
-cat >> /root/.profile << DELIM
-
-if [ -f /usr/local/bin/odroid-openrepeater-conf ]; then
-        . /usr/local/bin/odroid-openrepeater-conf
-fi
-
+www-data   ALL=(ALL) NOPASSWD: /usr/local/bin/openrepeater_svxlink_restart, NOPASSWD: /usr/local/bin/openrepeater_svxlink_start, NOPASSWD: /usr/local/bin/openrepeater_svxlink_stop, NOPASSWD: /usr/bin/aplay, NOPASSWD: /usr/bin/arecord
 DELIM
 
 echo " ########################################################################################## "
