@@ -412,7 +412,7 @@ DELIM
 ######################
 #Update base os
 ######################
-for i in update upgrade clean ;do apt-get -y "${i}" ; done
+for i in update upgrade clean ;do apt-get -y --force-yes "${i}" ; done
 
 ##########################
 #Installing Deps
