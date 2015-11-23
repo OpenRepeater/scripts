@@ -743,6 +743,8 @@ rm /usr/share/svxlink/events.d/local
 ln -s /etc/openrepeater/svxlink/local-events.d/ /usr/share/svxlink/events.d/local
 ln -s /var/log/svxlink /var/www/openrepeater/log
 
+chown www-data:www-data /var/www/openrepeater /etc/openrepeater
+
 cat >> /etc/sudoers << DELIM
 #allow www-data to access amixer and service
 www-data   ALL=(ALL) NOPASSWD: /usr/local/bin/openrepeater_svxlink_restart, NOPASSWD: /usr/local/bin/openrepeater_svxlink_start, NOPASSWD: /usr/local/bin/openrepeater_svxlink_stop, NOPASSWD: /usr/bin/aplay, NOPASSWD: /usr/bin/arecord
