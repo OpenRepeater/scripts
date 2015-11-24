@@ -392,7 +392,6 @@ DELIM
 ###########################################################################
 cat > /etc/apt/sources.list.d/raspi.list << DELIM
 deb http://mirrordirector.raspbian.org/raspbian/ jessie main contrib firmware non-free rpi
-deb http://archive.rasberrypi.org/archive jessie main
 DELIM
 
 #########################
