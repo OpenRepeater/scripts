@@ -5,6 +5,7 @@
 #   Open Repeater Project
 #
 #    Copyright (C) <2015>  <Richard Neese> kb3vgw@gmail.com
+#    -- 2015-11-24:0100 added various fixes to GPG, repos, and error corrections (KK4CT)
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -32,13 +33,6 @@
 # Please change this to match the repeater call sign
 ####################################################
 cs="Set-This"
-
-###################################################
-# Put /var/log into a tmpfs to improve performance 
-# Super user option dont try this if you must keep 
-# logs after every reboot
-###################################################
-put_logs_tmpfs="n"
 
 ####################################################
 # Install vsftpd for devel (Optional) (Not Required)
@@ -80,8 +74,10 @@ php_ini="/etc/php5/fpm/php.ini"
 # check to see that the configuration portion of the script was edited
 ######################################################################
 if [[ $cs == "Set-This" ]]; then
-  echo
-  echo "Looks like you need to configure the scirpt before running"
+  echo ""
+echo "--------------------------------------------------------------"
+echo ""
+  echo "Looks like you need to configure the script before running"
   echo "Please configure the script and try again"
   exit 0
 fi
@@ -93,15 +89,23 @@ if [ "$(id -u)" -ne "0" ]; then
   sudo -p "$(basename "$0") must be run as root, please enter your sudo password : " "$0" "$@"
   exit 0
 fi
-echo
+echo ""
+echo "--------------------------------------------------------------"
+echo ""
 echo "Looks Like you are root.... continuing!"
-echo
+echo ""
+echo "--------------------------------------------------------------"
+echo ""
 
 ###############################################
 #if lsb_release is not installed it installs it
 ###############################################
 if [ ! -s /usr/bin/lsb_release ]; then
-	apt-get update && apt-get -y install lsb-release
+echo ""
+echo "--------------------------------------------------------------"
+echo "Installing lsb_release..."
+echo "--------------------------------------------------------------"
+apt-get update && apt-get -y install lsb-release
 fi
 
 #################
@@ -112,11 +116,14 @@ if [ $? -eq 0 ]; then
 	echo " OK you are running Debian 8 : Jessie "
 else
 	echo " This script was written for Debian 8 Jessie "
-	echo
 	echo " Your OS appears to be: " lsb_release -a
-	echo
+	echo ""
+echo "--------------------------------------------------------------"
+echo ""
 	echo " Your OS is not currently supported by this script ... "
-	echo
+	echo ""
+echo "--------------------------------------------------------------"
+echo ""
 	echo " Exiting the install. "
 	exit
 fi
@@ -128,9 +135,13 @@ fi
 # ARMEL
 ########
 case $(uname -m) in armv[4-5]l)
-echo
+echo ""
+echo "--------------------------------------------------------------"
+echo ""
 echo " ArmEL is currenty UnSupported "
-echo
+echo ""
+echo "--------------------------------------------------------------"
+echo ""
 exit
 esac
 
@@ -138,30 +149,53 @@ esac
 # ARMHF
 ########
 case $(uname -m) in armv[6-9]l)
-echo
+echo ""
+echo "--------------------------------------------------------------"
+echo ""
 echo " ArmHF arm v7 v8 v9 boards supported "
-echo
+echo ""
+echo "--------------------------------------------------------------"
+echo ""
 esac
 
 #############
 # Intel/AMD
 #############
 case $(uname -m) in x86_64|i[4-6]86)
-echo
+echo ""
+echo "--------------------------------------------------------------"
+echo ""
 echo " Intel / Amd boards currently UnSupported"
-echo
+echo ""
+echo "--------------------------------------------------------------"
+echo ""
 exit
 esac
 
 #####################################
 #Update base os with new repo in list
 #####################################
-apt-get update
+echo ""
+echo "--------------------------------------------------------------"
+echo "Updating Raspberry Pi repository keys..."
+echo "--------------------------------------------------------------"
+echo ""
+gpg --keyserver pgp.mit.edu --recv 8B48AD6246925553 
+gpg --export --armor 8B48AD6246925553 | apt-key add -
+gpg --keyserver pgp.mit.edu --recv  7638D0442B90D010
+gpg --export --armor  7638D0442B90D010 | apt-key add -
+gpg --keyserver pgp.mit.edu --recv CBF8D6FD518E17E1
+gpg --export --armor CBF8D6FD518E17E1 | apt-key add -
+wget https://www.raspberrypi.org/raspberrypi.gpg.key
+gpg --import raspberrypi.gpg.key | apt-key add -
+wget https://archive.raspbian.org/raspbian.public.key
+gpg --import raspbian.public.key | apt-key add -
+for i in update upgrade clean ;do apt-get -y --force-yes "${i}" ; done
 
 ###################
 # Notes / Warnings
 ###################
-echo
+echo ""
 cat << DELIM
                    Not Ment For L.a.m.p Installs
 
@@ -185,9 +219,13 @@ DELIM
 #Testing for internet connection. Pulled from and modified
 #http://www.linuxscrew.com/2009/04/02/tiny-bash-scripts-check-internet-connection-availability/
 ###############################################################################################
-echo
+echo ""
+echo "--------------------------------------------------------------"
+echo ""
 echo "This Script Currently Requires a internet connection "
-echo
+echo ""
+echo "--------------------------------------------------------------"
+echo ""
 wget -q --tries=10 --timeout=5 http://www.google.com -O /tmp/index.google &> /dev/null
 
 if [ ! -s /tmp/index.google ];then
@@ -198,8 +236,13 @@ else
 	echo "I Found the Internet ... continuing!!!!!"
 	/bin/rm /tmp/index.google
 fi
-echo
+echo ""
+echo "--------------------------------------------------------------"
+echo ""
 printf ' Current ip is : '; ip -f inet addr show dev eth0 | sed -n 's/^ *inet *\([.0-9]*\).*/\1/p'
+echo ""
+echo "--------------------------------------------------------------"
+echo ""
 echo
 
 ##############################
@@ -216,23 +259,6 @@ cat >> /etc/fstab << DELIM
 tmpfs /tmp  tmpfs nodev,nosuid,mode=1777  0 0
 tmpfs /var/tmp  tmpfs nodev,nosuid,mode=1777  0 0
 tmpfs /var/cache/apt/archives tmpfs   size=100M,defaults,noexec,nosuid,nodev,mode=0755 0 0
-DELIM
-
-########################
-# cnfigure tmpfs sizes
-########################
-cp /etc/default/tmpfs /etc/default/tmpfs.orig
-cat > /etc/default/tmpfs << DELIM
-RAMLOCK=yes
-RAMSHM=yes
-RAMTMP=yes
-
-TMPFS_SIZE=10%VM
-RUN_SIZE=10M
-LOCK_SIZE=5M
-SHM_SIZE=10M
-TMP_SIZE=25M
-
 DELIM
 
 ############################
@@ -257,6 +283,11 @@ DELIM
 # Disable the dphys swap file
 # Extend life of sd card
 ###############################
+echo ""
+echo "--------------------------------------------------------------"
+echo "Disabling swap..."
+echo "--------------------------------------------------------------"
+
 swapoff --all
 apt-get -y remove dphys-swapfile
 rm -rf /var/swap
@@ -276,73 +307,7 @@ cat > /etc/network/interfaces << DELIM
 auto lo eth0
 iface lo inet loopback
 iface eth0 inet dhcp
-
 DELIM
-
-##########################################
-# SETUP configuration for /tmpfs for logs
-##########################################
-if [[ $put_logs_tmpfs == "y" ]]; then
-#################
-#configure fstab
-#################
-cat >>/etc/fstab << DELIM
-tmpfs   /var/log  tmpfs   size=20M,defaults,noatime,mode=0755 0 0 
-DELIM
-
-#######################################
-# Configure /var/log dir's on reboots
-#######################################
-cat > /etc/init.d/preplog-dirs << DELIM
-#!/bin/bash
-#
-### BEGIN INIT INFO
-# Provides:          prepare-dirs
-# Default-Start:     2 3 4 5
-# Default-Stop:      0 1 6
-# Required-Start:
-# Required-Stop:
-# Short-Description: Create needed directories on /var/log/ for tmpfs at startup
-# Description:       Create needed directories on /var/log/ for tmpfs at startup
-### END INIT INFO
-# needed Dirs
-DIR[0]=/var/log/nginx
-DIR[1]=/var/log/apt
-DIR[2]=/var/log/ConsoleKit
-DIR[3]=/var/log/fsck
-DIR[4]=/var/log/news
-DIR[5]=/var/log/ntpstats
-DIR[6]=/var/log/samba
-DIR[7]=/var/log/lastlog
-DIR[8]=/var/log/exim
-DIR[9]=/var/log/watchdog
-case "${1:-''}" in
-  start)
-        typeset -i i=0 max=${#DIR[*]}
-        while (( i < max ))
-        do
-                mkdir  ${DIR[$i]}
-                chmod 755 ${DIR[$i]}
-                i=i+1
-        done
-        # set rights
-        chown www-data.adm ${DIR[0]}
-        chown root.adm ${DIR[6]}
-    ;;
-  stop)
-    ;;
-  restart)
-   ;;
-  reload|force-reload)
-   ;;
-  status)
-   ;;
-  *)
-DELIM
-
-chmod 755 /etc/init.d/preplog-dirs
-
-fi
 
 #############################
 #Setting Host/Domain name
@@ -375,14 +340,8 @@ DELIM
 #################################################################################################
 cat > "/etc/apt/sources.list" << DELIM
 deb http://httpredir.debian.org/debian/ jessie main contrib non-free
-#deb-src http://httpredir.debian.org/debian/ jessie main contrib non-free
-
 deb http://httpredir.debian.org/debian/ jessie-updates main contrib non-free
-#deb-src http://httpredir.debian.org/debian/ jessie-updates main contrib non-free
-
 deb http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
-#deb-src http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
-
 DELIM
 
 ############
@@ -411,12 +370,22 @@ DELIM
 ######################
 #Update base os
 ######################
+echo ""
+echo "--------------------------------------------------------------"
+echo "Performing Base OS Update..."
+echo "--------------------------------------------------------------"
+
 for i in update upgrade clean ;do apt-get -y --force-yes "${i}" ; done
 
 ##########################
 #Installing Deps
 ##########################
-apt-get install -y --force-yes memcached sqlite3 libopus0 alsa-utils vorbis-tools sox libsox-fmt-mp3 librtlsdr0 \
+echo ""
+echo "--------------------------------------------------------------"
+echo " Installing Dependencies..."
+echo "--------------------------------------------------------------"
+
+apt-get install -y --force-yes --fix-missing memcached sqlite3 libopus0 alsa-utils vorbis-tools sox libsox-fmt-mp3 librtlsdr0 \
 		ntp libasound2 libspeex1 libgcrypt20 libpopt0 libgsm1 tcl8.6 tk8.6 alsa-base bzip2 sudo gpsd gpsd-clients \
 		flite wvdial inetutils-syslogd screen time uuid vim install-info usbutils whiptail dialog logrotate cron \
 		gawk watchdog python3-serial
@@ -424,12 +393,19 @@ apt-get install -y --force-yes memcached sqlite3 libopus0 alsa-utils vorbis-tool
 ######################
 #Install svxlink
 #####################
+echo ""
+echo "--------------------------------------------------------------"
 echo " Installing install deps and svxlink + remotetrx"
+echo "--------------------------------------------------------------"
+echo ""
 apt-get -y --force-yes install svxlink-server remotetrx
 apt-get clean
 
 #making links...
 ln -s /etc/openrepeater/svxlink/local-events.d/ /usr/share/svxlink/events.d/local
+
+#add svxlinkuser to gpio group
+usermod -G gpio svxlink
 
 #Working on sounds pkgs for future release of svxlink
 cd /usr/share/svxlink/sounds
@@ -441,6 +417,10 @@ cd /root
 ##########################################
 #---Start of nginx / php5 install --------
 ##########################################
+echo ""
+echo "--------------------------------------------------------------"
+echo " Installing nginx and php5..."
+echo "--------------------------------------------------------------"
 apt-get -y install ssl-cert openssl-blacklist nginx memcached php5-cli php5-common \
 		php-apc php5-gd php-db php5-fpm php5-memcache php5-sqlite
 
@@ -689,7 +669,17 @@ for i in nginx php5-fpm ;do service "${i}" restart > /dev/null 2>&1 ; done
 # Fetch and Install open repeater project web ui
 # ################################################
 
+echo ""
+echo "--------------------------------------------------------------"
+echo " Installing openrepeater package..."
+echo "--------------------------------------------------------------"
+
 apt-get install -y --force-yes openrepeater
+
+echo ""
+echo "--------------------------------------------------------------"
+echo " Configuring openrepeater..."
+echo "--------------------------------------------------------------"
 
 find "$WWW_PATH" -type d -exec chmod 775 {} +
 find "$WWW_PATH" -type f -exec chmod 664 {} +
@@ -697,6 +687,12 @@ find "$WWW_PATH" -type f -exec chmod 664 {} +
 chown -R www-data:www-data $WWW_PATH
 
 cp /etc/default/svxlink /etc/default/svxlink.orig
+
+echo ""
+echo "--------------------------------------------------------------"
+echo " Generating openrepeater svxlink configuration...."
+echo "--------------------------------------------------------------"
+
 cat > "/etc/default/svxlink" << DELIM
 #############################################################################
 #
@@ -720,6 +716,12 @@ fi
 DELIM
 
 mv /etc/default/remotetrx /etc/default/remotetrx.orig
+
+echo ""
+echo "--------------------------------------------------------------"
+echo " Generating remotetrx configuration..."
+echo "--------------------------------------------------------------"
+
 cat > "/etc/default/remotetrx" << DELIM
 #############################################################################
 #
@@ -754,6 +756,11 @@ DELIM
 # INSTALL FTP SERVER / ADD USER FOR DEVELOPMENT
 ###############################################
 if [[ $install_vsftpd == "y" ]]; then
+echo ""
+echo "--------------------------------------------------------------"
+echo " Installing vsFTPd..."
+echo "--------------------------------------------------------------"
+
 	apt-get install vsftpd
 
 	edit_config $FTP_CONFIG_PATH anonymous_enable NO enabled
