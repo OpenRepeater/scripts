@@ -32,13 +32,6 @@
 ####################################################
 cs="Set-This"
 
-###################################################
-# Put /var/log into a tmpfs to improve performance 
-# Super user option dont try this if you must keep 
-# logs after every reboot
-###################################################
-put_logs_tmpfs="n"
-
 # ----- Stop Edit Here ------- #
 ########################################################
 # Set mp3/wav file upload/post size limit for php/nginx
@@ -644,8 +637,7 @@ ln -s /usr/share/openrepeater/sounds /var/www/openrepeater/sounds
 ln -s /etc/openrepeater/svxlink/local-events.d/ /usr/share/svxlink/events.d/local
 ln -s /var/log/svxlink /var/www/openrepeater/log
 
-chown www-data:www-data /var/www/openrepeater/sounds
-chown -R www-data:www-data /var/lib/openrepeater /etc/openrepeater
+chown -R www-data:www-data /var/www/openrepeater /etc/openrepeater
 chown root:www-data /usr/bin/openrepeater_*
 
 cat >> /etc/sudoers << DELIM
