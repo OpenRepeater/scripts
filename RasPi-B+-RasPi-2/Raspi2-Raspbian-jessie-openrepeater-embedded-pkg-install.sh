@@ -34,21 +34,6 @@
 ####################################################
 cs="Set-This"
 
-####################################################
-# Install vsftpd for devel (Optional) (Not Required)
-####################################################
-install_vsftpd="y" #y/n
-
-#####################
-# set vsftp user name
-#####################
-vsftpd_user=""
-
-########################
-# set vsftp config path
-########################
-FTP_CONFIG_PATH="/etc/vsftpd.conf"
-
 # ----- Stop Edit Here ------- #
 ########################################################
 # Set mp3/wav file upload/post size limit for php/nginx
@@ -740,7 +725,7 @@ ENV="ASYNC_AUDIO_NOTRIGGER=1"
 DELIM
 
 #FinalRequired Linking
-ln -s /var/www/openrepeater/sounds /usr/share/openrepeater/sounds
+ln -s  /usr/share/openrepeater/sounds /var/www/openrepeater/sounds
 rm /usr/share/svxlink/events.d/local
 ln -s /etc/openrepeater/svxlink/local-events.d/ /usr/share/svxlink/events.d/local
 ln -s /var/log/svxlink /var/www/openrepeater/log
@@ -755,31 +740,6 @@ www-data   ALL=(ALL) NOPASSWD: /usr/bin/openrepeater_svxlink_restart, NOPASSWD: 
 #NOPASSWD: /usr/bin/openrepeater_svxlink_start, NOPASSWD: /usr/bin/openrepeater_svxlink_stop, \
 #NOPASSWD: /usr/bin/openrepeater_enable_svxlink_service, NOPASSWD: /usr/bin/openrepeater_diable_svxlink_service
 DELIM
-###############################################
-# INSTALL FTP SERVER / ADD USER FOR DEVELOPMENT
-###############################################
-if [[ $install_vsftpd == "y" ]]; then
-echo ""
-echo "--------------------------------------------------------------"
-echo " Installing vsFTPd..."
-echo "--------------------------------------------------------------"
-
-	apt-get install vsftpd
-
-	edit_config $FTP_CONFIG_PATH anonymous_enable NO enabled
-	edit_config $FTP_CONFIG_PATH local_enable YES enabled
-	edit_config $FTP_CONFIG_PATH write_enable YES enabled
-	edit_config $FTP_CONFIG_PATH local_umask 022 enabled
-
-	cat "force_dot_files=YES" >> "$FTP_CONFIG_PATH"
-
-	system vsftpd restart
-
-	# ############################
-	# ADD FTP USER & SET PASSWORD
-	# ############################
-	adduser $vsftpd_user
-fi
 
 echo " ########################################################################################## "
 echo " #            You will need to edit the php.ini file and add extensions=memcache.so       # " 
