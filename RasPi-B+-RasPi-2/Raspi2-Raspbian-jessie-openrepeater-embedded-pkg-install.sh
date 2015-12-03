@@ -426,6 +426,33 @@ sed -i "$php_ini" -e "s#post_max_size = 8M#post_max_size = $upload_size#"
 #####################################################################################################
 cat > "/etc/nginx/sites-available/$gui_name"  << DELIM
 server{
+        listen 127.0.0.1:80;
+        server_name 127.0.0.1;
+        access_log /var/log/nginx/access.log;
+        error_log /var/log/nginx/error.log;
+
+        client_max_body_size 25M;
+        client_body_buffer_size 128k;
+
+        root /var/www/openrepeater;
+        index index.php;
+
+        location ~ \.php$ {
+           include snippets/fastcgi-php.conf;
+        }
+
+        # Disable viewing .htaccess & .htpassword & .db
+        location ~ .htaccess {
+              deny all;
+        }
+        location ~ .htpassword {
+              deny all;
+        }
+        location ~^.+.(db)$ {
+              deny all;
+        }
+} 
+server{
         listen 443;
         listen [::]:443 default_server ipv6only=on;
 
