@@ -634,7 +634,8 @@ DELIM
 #making links to make svxlink work correctly
 #############################################
 ln -s /usr/share/openrepeater/sounds /var/www/openrepeater/sounds
-ln -s /etc/openrepeater/svxlink/local-events.d/ /usr/share/svxlink/events.d/local
+mkdir /etc/openrepeater/svxlink/local-events.d
+ln -s /etc/openrepeater/svxlink/local-events.d /usr/share/svxlink/events.d/local
 ln -s /var/log/svxlink /var/www/openrepeater/log
 
 chown -R www-data:www-data /var/www/openrepeater /etc/openrepeater

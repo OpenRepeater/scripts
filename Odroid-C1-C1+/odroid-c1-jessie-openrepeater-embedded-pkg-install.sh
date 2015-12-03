@@ -606,7 +606,8 @@ DELIM
 #FinalRequired Linking
 ln -s /usr/share/openrepeater/sounds /var/www/openrepeater/sounds
 rm /usr/share/svxlink/events.d/local
-ln -s /etc/openrepeater/svxlink/local-events.d/ /usr/share/svxlink/events.d/local
+mkdir /etc/openrepeater/svxlink/local-events.d
+ln -s /etc/openrepeater/svxlink/local-events.d /usr/share/svxlink/events.d/local
 ln -s /var/log/svxlink /var/www/openrepeater/log
 
 chown www-data:www-data /var/www/openrepeater /etc/openrepeater
