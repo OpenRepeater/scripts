@@ -728,7 +728,7 @@ ENV="ASYNC_AUDIO_NOTRIGGER=1"
 DELIM
 
 #FinalRequired Linking
-ln -s  /usr/share/openrepeater/sounds /var/www/openrepeater/sounds
+ln -s  /var/lib/openrepeater/sounds /var/www/openrepeater/sounds
 rm /usr/share/svxlink/events.d/local
 mkdir /etc/openrepeater/svxlink/local-events.d
 ln -s /etc/openrepeater/svxlink/local-events.d /usr/share/svxlink/events.d/local
