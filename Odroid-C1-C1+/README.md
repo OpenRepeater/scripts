@@ -1,2 +1,2 @@
-Use this base Debian Jessie image:
+Use this base Debian Jessie image:http://repo.openrepeater.com/odroid-imgs/odroid-c1-jessie-minimal.img.xz
 ...
