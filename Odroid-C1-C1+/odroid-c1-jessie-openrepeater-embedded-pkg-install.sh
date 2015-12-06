@@ -612,7 +612,7 @@ mkdir /etc/openrepeater/svxlink/local-events.d
 ln -s /etc/openrepeater/svxlink/local-events.d /usr/share/svxlink/events.d/local
 ln -s /var/log/svxlink /var/www/openrepeater/log
 
-chown www-data:www-data /var/www/openrepeater /etc/openrepeater
+chown -R www-data:www-data /var/www/openrepeater /etc/openrepeater
 chown root:www-data /usr/bin/openrepeater_*
 
 cat >> /etc/sudoers << DELIM
