@@ -1,5 +1,10 @@
-Use this base Debian Jessie image:
+Use one of these base Debian Jessie image:
+
+UNOFFICIAL IMAGE (NO X)
 https://repo.xecdesign.com/tmp/2015-11-04-raspbian-jessie-noX.zip
+
+RASPBERRY PI - JESSIE LITE (NO X)
+https://downloads.raspberrypi.org/raspbian_lite_latest
 
 Procedure:
 
