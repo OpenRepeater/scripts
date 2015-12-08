@@ -320,7 +320,8 @@ DELIM
 #Disable onboard hdmi soundcard not used in openrepeater
 ###########################################################
 #/boot/config.txt
-sed -i /boot/config.txt -e"s#snd-bcm2835#\#snd-bcm2835#"
+# Enable audio (loads snd_bcm2835)
+sed -i /boot/config.txt -e"s#dtparam=audio=on#\#dtparam=audio=on#"
 #/etc/modules
 sed -i /etc/modules -e"s#snd-bcm2835#\#snd-bcm2835#"
 
