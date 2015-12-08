@@ -571,7 +571,7 @@ ln -s /etc/nginx/sites-available/"$gui_name" /etc/nginx/sites-enabled/"$gui_name
 rm -rf /etc/nginx/sites-enabled/default
 
 # Make sure the path /var/www/ is owned by your web server user:
-chown -R www-data:www-data /var/www
+chown -R www-data:www-data /var/www/openrepeater
 
 ##############################
 #Restarting Nginx and PHP FPM
