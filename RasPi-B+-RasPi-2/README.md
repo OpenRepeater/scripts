@@ -1,20 +1,16 @@
-Use one of these base Debian Jessie image:
+Use this base Debian Jessie image:
 
-UNOFFICIAL IMAGE (NO X)
-https://repo.xecdesign.com/tmp/2015-11-04-raspbian-jessie-noX.zip
-
-RASPBERRY PI - JESSIE LITE (NO X)
+OFFICIAL RASPBIAN JESSIE LITE (NO X)
 https://downloads.raspberrypi.org/raspbian_lite_latest
 
-Procedure:
-
-- Write raspbian-jessie-noX image to SD Card.
-- Connect Network, Video, and Power to Pi
-- Boot Pi.   
+####Procedure:
+- Download Raspbian Jessie Lite Image (link above).
+- Write Raspbian Jessie Lite image to SD Card.
+- Insert SD card into RPI, Connect Network, connect sound card, and Power to Pi
+- Obtain Dynamic IP Address
 - Connect to Pi using SSH.  Login as pi (password raspberry).
 - sudo su to root
 - Execute "apt-get update && apt-get dist-upgrade"
-- Execute "apt-get install apt-utils nano raspi-config" (shouldn't be needed for raspbian)
 - Use raspi-config to configure Timezone, Locale, Check GPU Mem(0), and Expand FS
 - Reboot Pi.
 - Connect to Pi using SSH.  Login as pi (password raspberry).
@@ -26,3 +22,4 @@ Procedure:
 - Perform final tasks.... (edit php ini file and stuff)
 - Reboot
 - Login to admin site:  https://ip_address/  user:admin password:openrepeater
+- Follow the wizard for you first time setup. You can log in afterwards to change more settings.
