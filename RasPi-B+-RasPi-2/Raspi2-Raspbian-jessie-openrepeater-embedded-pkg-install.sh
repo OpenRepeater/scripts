@@ -321,6 +321,9 @@ DELIM
 ###########################################################
 #/boot/config.txt
 sed -i /boot/config.txt -e"s#dtparam=audio=on#\#dtparam=audio=on#"
+
+# Enable audio (loads snd_bcm2835)
+# dtparam=audio=on
 #/etc/modules
 sed -i /etc/modules -e"s#snd-bcm2835#\#snd-bcm2835#"
 
@@ -394,9 +397,6 @@ echo "--------------------------------------------------------------"
 echo ""
 apt-get -y --force-yes install svxlink-server remotetrx
 apt-get clean
-
-#add svxlinkuser to gpio group
-usermod -a -G gpio svxlink
 
 #Working on sounds pkgs for future release of svxlink
 cd /usr/share/svxlink/sounds
@@ -742,6 +742,9 @@ ln -s /var/log/svxlink /var/www/openrepeater/log
 
 chown -R www-data:www-data /var/www/openrepeater /etc/openrepeater
 chown root:www-data /usr/bin/openrepeater_*
+
+# Add svxlink user to groups: gpio, audio, and daemon
+usermod -a -G daemon,gpio,audio svxlink
 
 cat >> /etc/sudoers << DELIM
 #allow www-data to access amixer and service
