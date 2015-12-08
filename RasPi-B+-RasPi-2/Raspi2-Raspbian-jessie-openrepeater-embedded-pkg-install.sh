@@ -315,6 +315,15 @@ ff02::2         ip6-allrouters
 127.0.0.1       $cs-repeater
 
 DELIM
+
+###########################################################
+#Disable onboard hdmi soundcard not used in openrepeater
+###########################################################
+#/boot/config.txt
+sed -i /boot/config.txt -e"s#snd-bcm2835#\#snd-bcm2835#"
+#/etc/modules
+sed -i /etc/modules -e"s#snd-bcm2835#\#snd-bcm2835#"
+
 #################################################################################################
 # Setting apt_get to use the httpredirecter to get
 # To have <APT> automatically select a mirror close to you, use the Geo-ip redirector in your
@@ -387,7 +396,7 @@ apt-get -y --force-yes install svxlink-server remotetrx
 apt-get clean
 
 #add svxlinkuser to gpio group
-usermod -G gpio svxlink
+usermod -a -G gpio svxlink
 
 #Working on sounds pkgs for future release of svxlink
 cd /usr/share/svxlink/sounds
