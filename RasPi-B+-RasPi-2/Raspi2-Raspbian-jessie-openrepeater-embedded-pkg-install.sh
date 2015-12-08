@@ -724,7 +724,7 @@ ENV="ASYNC_AUDIO_NOTRIGGER=1"
 
 DELIM
 
-#FinalRequired Linking
+# Final Required Linking and permissions
 ln -s  /var/lib/openrepeater/sounds /var/www/openrepeater/sounds
 rm /usr/share/svxlink/events.d/local
 mkdir /etc/openrepeater/svxlink/local-events.d
@@ -751,10 +751,10 @@ echo " #########################################################################
 echo " #             The SVXLink Repeater / Echolink server Install is now complete             # "
 echo " #                          and your system is ready for use..                            # "
 echo " #                                                                                        # "
-echo " #                   To Start the service fo svxlink on the cmd line                      # "
+echo " #                  To Start the service for svxlink on the cmd line                      # "
 echo " #                        run cmd: systemctl enable svxlink.service                       # "
 echo " #                                                                                        # "
-echo " #                   To Start the service fo remotetrx on the cmd line                    # "
+echo " #                  To Start the service for remotetrx on the cmd line                    # "
 echo " #                        run cmd: systemctl enable remotetrx.service                     # "
 echo " #                                                                                        # "
 echo " ########################################################################################## "
