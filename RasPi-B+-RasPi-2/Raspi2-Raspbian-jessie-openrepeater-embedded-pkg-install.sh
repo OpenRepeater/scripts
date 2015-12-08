@@ -386,9 +386,6 @@ echo ""
 apt-get -y --force-yes install svxlink-server remotetrx
 apt-get clean
 
-#making links...
-ln -s /etc/openrepeater/svxlink/local-events.d/ /usr/share/svxlink/events.d/local
-
 #add svxlinkuser to gpio group
 usermod -G gpio svxlink
 
@@ -734,7 +731,7 @@ mkdir /etc/openrepeater/svxlink/local-events.d
 ln -s /etc/openrepeater/svxlink/local-events.d /usr/share/svxlink/events.d/local
 ln -s /var/log/svxlink /var/www/openrepeater/log
 
-chown www-data:www-data /var/www/openrepeater /etc/openrepeater
+chown -R www-data:www-data /var/www/openrepeater /etc/openrepeater
 chown root:www-data /usr/bin/openrepeater_*
 
 cat >> /etc/sudoers << DELIM
