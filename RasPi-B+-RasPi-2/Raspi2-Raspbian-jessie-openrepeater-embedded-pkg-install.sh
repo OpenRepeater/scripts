@@ -457,7 +457,7 @@ server{
         location ~^.+.(db)$ {
               deny all;
         }
-} 
+}
 server{
         listen 443;
         listen [::]:443 default_server ipv6only=on;
@@ -483,7 +483,7 @@ server{
 
         location ~ \.(html|htm|ogg|ogv|svg|svgz|eot|otf|woff|mp4|ttf|css|rss|atom|js|jpg|jpeg|gif|png|ico|zip|tgz|gz|rar|bz2|doc|xls|exe|ppt|tar|mid|midi|wav|bmp|rtf)$ {
                 if (!-f \$request_filename) {
-                rewrite ^(.*)\.(html|htm|ogg|ogv|svg|svgz|eot|otf|woff|mp4|ttf|css|rss|atom|js|jpg|jpeg|gif|png|ico|zip|tgz|gz|rar|bz2|doc|xls|exe|ppt|tar|mid|midi|wav|bmp|rtf)$ \$1.php permanent;
+                    rewrite ^(.*)\.(html|htm|ogg|ogv|svg|svgz|eot|otf|woff|mp4|ttf|css|rss|atom|js|jpg|jpeg|gif|png|ico|zip|tgz|gz|rar|bz2|doc|xls|exe|ppt|tar|mid|midi|wav|bmp|rtf)$ \$1.php permanent;
                 }
         }
 
