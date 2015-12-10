@@ -255,16 +255,7 @@ cat >> /boot/config.txt << DELIM
 usb_max_current=1
 DELIM
 
-#####################################
-# Disable Kernel Modules for onboard 
-# sound interface card
-####################################
-cat >> /etc/modules << DELIM
-#disable onboard sound
-#snd-bcm2835
-DELIM
-
-###############################
+##############################
 # Disable the dphys swap file
 # Extend life of sd card
 ###############################
