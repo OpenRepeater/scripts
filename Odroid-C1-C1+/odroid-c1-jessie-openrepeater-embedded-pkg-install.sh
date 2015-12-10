@@ -370,10 +370,10 @@ server{
         error_log /var/log/nginx/error.log;
 
         location ~ \.(html|htm|ogg|ogv|svg|svgz|eot|otf|woff|mp4|ttf|css|rss|atom|js|jpg|jpeg|gif|png|ico|zip|tgz|gz|rar|bz2|doc|xls|exe|ppt|tar|mid|midi|wav|bmp|rtf)$ {
-			if (!-f \$request_filename) {
-				rewrite ^(.*)\.(html|htm|ogg|ogv|svg|svgz|eot|otf|woff|mp4|ttf|css|rss|atom|js|jpg|jpeg|gif|png|ico|zip|tgz|gz|rar|bz2|doc|xls|exe|ppt|tar|mid|midi|wav|bmp|rtf)$ \$1.php permanent;
-			}
-		}
+                if (!-f \$request_filename) {
+                    rewrite ^(.*)\.(html|htm|ogg|ogv|svg|svgz|eot|otf|woff|mp4|ttf|css|rss|atom|js|jpg|jpeg|gif|png|ico|zip|tgz|gz|rar|bz2|doc|xls|exe|ppt|tar|mid|midi|wav|bmp|rtf)$ \$1.php permanent;
+                }
+        }
 
         location ~ \.php$ {
             include snippets/fastcgi-php.conf;
