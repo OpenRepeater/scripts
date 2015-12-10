@@ -481,6 +481,12 @@ server{
         access_log /var/log/nginx/access.log;
         error_log /var/log/nginx/error.log;
 
+		location ~ \.html$ {
+    		if (!-f $request_filename) {
+        		rewrite ^(.*)\.html$ $1.php permanent;
+    		}
+		}
+		
         location ~ \.php$ {
             include snippets/fastcgi-php.conf;
             include fastcgi_params;

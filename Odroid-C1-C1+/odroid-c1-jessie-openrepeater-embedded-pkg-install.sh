@@ -237,13 +237,8 @@ DELIM
 #################################################################################################
 cat > "/etc/apt/sources.list" << DELIM
 deb http://httpredir.debian.org/debian/ jessie main contrib non-free
-deb-src http://httpredir.debian.org/debian/ jessie main contrib non-free
-
 deb http://httpredir.debian.org/debian/ jessie-updates main contrib non-free
-deb-src http://httpredir.debian.org/debian/ jessie-updates main contrib non-free
-
 deb http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
-deb-src http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
 
 DELIM
 
@@ -374,6 +369,12 @@ server{
         access_log /var/log/nginx/access.log;
         error_log /var/log/nginx/error.log;
 
+		location ~ \.html$ {
+    		if (!-f $request_filename) {
+        		rewrite ^(.*)\.html$ $1.php permanent;
+    		}
+		}
+		
         location ~ \.php$ {
             include snippets/fastcgi-php.conf;
             include fastcgi_params;
@@ -544,7 +545,7 @@ ln -s /etc/nginx/sites-available/"$gui_name" /etc/nginx/sites-enabled/"$gui_name
 rm -rf /etc/nginx/sites-enabled/default
 
 # Make sure the path /var/www/ is owned by your web server user:
-chown -R www-data:www-data /var/www
+chown -R www-data:www-data /var/www/openrepeare
 
 ##############################
 #Restarting Nginx and PHP FPM
