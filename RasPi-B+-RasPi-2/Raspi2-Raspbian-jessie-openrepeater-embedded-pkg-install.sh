@@ -318,6 +318,19 @@ sed -i /boot/config.txt -e"s#dtparam=audio=on#\#dtparam=audio=on#"
 #/etc/modules
 sed -i /etc/modules -e"s#snd-bcm2835#\#snd-bcm2835#"
 
+################################
+#Set up usb sound for alsa mixer
+################################
+if ( ! `grep "snd-usb-audio" /etc/modules >/dev/null`) ; then
+   echo "snd-usb-audio" >> /etc/modules
+fi
+FILE=/etc/modprobe.d/alsa-base.conf
+sed "s/options snd-usb-audio index=-2/options snd-usb-audio index=0/" $FILE > ${FILE}.tmp
+mv -f ${FILE}.tmp ${FILE}
+if ( ! `grep "options snd-usb-audio nrpacks=1" ${FILE} > /dev/null` ) ; then
+  echo "options snd-usb-audio nrpacks=1 index=0" >> ${FILE}
+fi
+
 #################################################################################################
 # Setting apt_get to use the httpredirecter to get
 # To have <APT> automatically select a mirror close to you, use the Geo-ip redirector in your
