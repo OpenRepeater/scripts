@@ -295,6 +295,9 @@ DELIM
 ######################
 for i in update upgrade ;do apt-get -y "${i}" ; done
 
+#update the kernal on the beaglebone black
+apt-get install linux-image-4.4.0-rc5-bone0 linux-firmware-image-4.4.0-rc5-bone0
+
 ######################
 #Install Dependancies
 #####################
