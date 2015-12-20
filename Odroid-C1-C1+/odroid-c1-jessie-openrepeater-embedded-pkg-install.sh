@@ -275,7 +275,7 @@ for i in update upgrade clean ;do apt-get -y "${i}" ; done
 apt-get install -y --force-yes memcached sqlite3 libopus0 alsa-utils vorbis-tools sox libsox-fmt-mp3 librtlsdr0 \
 		ntp libasound2 libspeex1 libgcrypt20 libpopt0 libgsm1 tcl8.6 tk8.6 alsa-base bzip2 sudo gpsd gpsd-clients \
 		flite wvdial inetutils-syslogd screen time uuid vim install-info usbutils whiptail dialog logrotate cron \
-		gawk watchdog python3-serial
+		gawk watchdog python3-serial wiringpi
 
 #####################
 # Install SvxLink
@@ -287,13 +287,14 @@ apt-get install -y --force-yes svxlink-server remotetrx
 ###########
 apt-get clean
 
+#####################################################
 #Working on sounds pkgs for future release of svxlink
-cd /usr/share/svxlink/sounds
+#####################################################
 wget https://github.com/sm0svx/svxlink-sounds-en_US-heather/releases/download/14.08/svxlink-sounds-en_US-heather-16k-13.12.tar.bz2
 tar xjvf svxlink-sounds-en_US-heather-16k-13.12.tar.bz2
 mv en_US-heather* en_US
+mv en_US /usr/share/svxlink/sounds
 rm svxlink-sounds-en_US-heather-16k-13.12.tar.bz2
-cd /root
 
 ##########################################
 #---Start of nginx / php5 install --------

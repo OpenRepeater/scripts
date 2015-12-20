@@ -321,13 +321,14 @@ apt-get install -y network-manager tcpd python-pysqlite2
 fi
 rm /var/cache/apt/archive/*
 
+#####################################################
 #Working on sounds pkgs for future release of svxlink
-cd /usr/share/svxlink/sounds
+#####################################################
 wget https://github.com/sm0svx/svxlink-sounds-en_US-heather/releases/download/14.08/svxlink-sounds-en_US-heather-16k-13.12.tar.bz2
 tar xjvf svxlink-sounds-en_US-heather-16k-13.12.tar.bz2
 mv en_US-heather* en_US
+mv en_US /usr/share/svxlink/sounds
 rm svxlink-sounds-en_US-heather-16k-13.12.tar.bz2
-cd /root
 
 ##########################################
 #---Start of nginx / php5 install --------
