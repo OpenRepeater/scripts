@@ -324,11 +324,11 @@ rm /var/cache/apt/archive/*
 #####################################################
 #Working on sounds pkgs for future release of svxlink
 #####################################################
-wget https://github.com/sm0svx/svxlink-sounds-en_US-heather/releases/download/14.08/svxlink-sounds-en_US-heather-16k-13.12.tar.bz2
-tar xjvf svxlink-sounds-en_US-heather-16k-13.12.tar.bz2
-mv en_US-heather* en_US
+wget https://github.com/kb3vgw/svxlink-sounds-en_US-heather/releases/download/15.11.2/svxlink-sounds-en_US-heather-16k-15.11.2.tar.bz2
+tar xjvf svxlink-sounds-en_US-heather-16k-15.11.2.tar.bz2
+mv en_US-heather-16k en_US
 mv en_US /usr/share/svxlink/sounds
-rm svxlink-sounds-en_US-heather-16k-13.12.tar.bz2
+rm svxlink-sounds-en_US-heather-16k-15.11.2.tar.bz2
 
 ##########################################
 #---Start of nginx / php5 install --------
