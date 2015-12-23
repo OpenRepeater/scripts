@@ -251,9 +251,9 @@ for i in update upgrade clean ;do apt-get -y "${i}" ; done
 ########################
 apt-get install -y g++ make cmake libsigc++-2.0-dev libgsm1-dev libpopt-dev libgcrypt11-dev \
 	libspeex-dev libspeexdsp-dev libasound2-dev alsa-utils vorbis-tools sox flac libsox-fmt-mp3 \
-	sqlite3 unzip opus-tools tcl8.6-dev tk8.6-dev alsa-base ntp groff doxygen libopus-dev librtlsdr-dev \
-	git-core uuid-dev git-core flite screen time inetutils-syslogd vim install-info whiptail dialog \
-	logrotate cron usbutils gawk groff watchdog python3-serial memcached
+	sqlite3 unzip opus-tools tcl8.6-dev tk8.6-dev alsa-base ntp groff doxygen libopus-dev \
+	librtlsdr-dev git-core uuid-dev flite screen time inetutils-syslogd vim install-info \
+	whiptail dialog logrotate cron usbutils gawk watchdog python3-serial memcached
 	
 ##################################
 # Add User and include in groupds
@@ -321,7 +321,7 @@ rm 15.11.2.tar.gz
 cd /usr/src/svxlink-15.11.1/src
 mkdir build
 cd build
-cmake -DCMAKE_INSTALL_PREFIX=/usr -DSYSCONF_INSTALL_DIR=/etc -DBUILD_STATIC_LIBS=YES -DWITH_SYSTEMD -DUSE_QT=NO..
+cmake -DCMAKE_INSTALL_PREFIX=/usr -DSYSCONF_INSTALL_DIR=/etc -DBUILD_STATIC_LIBS=YES -DWITH_SYSTEMD=YES -DUSE_QT=NO..
 make -j5
 make doc
 make install
@@ -332,7 +332,7 @@ systemctrl enable svxlink.serviceclear
 #####################################################
 #Working on sounds pkgs for future release of svxlink
 #####################################################
-wget https://github.com/kb3vgw/svxlink-sounds-en_US-heather/releases/tag/15.11.2/svxlink-sounds-en_US-heather-16k-15.11.2.tar.bz2
+wget https://github.com/kb3vgw/svxlink-sounds-en_US-heather/releases/download/15.11.2/svxlink-sounds-en_US-heather-16k-15.11.2.tar.bz2
 tar xjvf svxlink-sounds-en_US-heather-16k-15.11.2.tar.bz2
 mv en_US-heather-16k en_US
 mv en_US /usr/share/svxlink/sounds
