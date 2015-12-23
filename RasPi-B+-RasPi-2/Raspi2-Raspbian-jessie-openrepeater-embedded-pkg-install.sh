@@ -392,7 +392,7 @@ apt-get clean
 #####################################################
 #Working on sounds pkgs for future release of svxlink
 #####################################################
-wget https://github.com/kb3vgw/svxlink-sounds-en_US-heather/releases/download/15.11.2/svxlink-sounds-en_US-heather-16k-15.11.2.tar.bz2
+wget https://github.com/kb3vgw/svxlink-sounds-en_US-heather/releases/tag/15.11.2/svxlink-sounds-en_US-heather-16k-15.11.2.tar.bz2
 tar xjvf svxlink-sounds-en_US-heather-16k-15.11.2.tar.bz2
 mv en_US-heather-16k en_US
 mv en_US /usr/share/svxlink/sounds
