@@ -766,6 +766,18 @@ if ( ! `grep "options snd-usb-audio nrpacks=1" ${FILE} > /dev/null` ) ; then
   echo "options snd-usb-audio nrpacks=1 index=0" >> ${FILE}
 fi
 
+#######################
+#Enable Systemd Service
+####################### 
+echo " Enabling the Svxlink systemd Service Daemon "
+systemctl enable svxlink.service
+
+#######################
+#Enable Systemd Service
+####################### 
+echo " Enabling the Svxlink Remotetrx systemd Service Daemon "
+systemctl enable remotetrx.service
+
 echo " ########################################################################################## "
 echo " #            You will need to edit the php.ini file and add extensions=memcache.so       # " 
 echo " #               location : /etc/php5/fpm/php.ini and then restart web service            # "
@@ -774,12 +786,6 @@ echo
 echo " ########################################################################################## "
 echo " #             The SVXLink Repeater / Echolink server Install is now complete             # "
 echo " #                          and your system is ready for use..                            # "
-echo " #                                                                                        # "
-echo " #                  To Start the service for svxlink on the cmd line                      # "
-echo " #                        run cmd: systemctl enable svxlink.service                       # "
-echo " #                                                                                        # "
-echo " #                  To Start the service for remotetrx on the cmd line                    # "
-echo " #                        run cmd: systemctl enable remotetrx.service                     # "
 echo " #                                                                                        # "
 echo " ########################################################################################## "
 ) | tee /root/install.log
