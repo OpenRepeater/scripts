@@ -341,11 +341,11 @@ cat > /etc/apt/sources.list.d/raspi.list << DELIM
 deb http://mirrordirector.raspbian.org/raspbian/ jessie main contrib firmware non-free rpi
 DELIM
 
-#########################
-# SVXLink Testing repo
-#########################
+#############################
+# SvxLink Release Repo ArmHF
+#############################
 cat > "/etc/apt/sources.list.d/svxlink.list" <<DELIM
-deb http://repo.openrepeater.com/svxlink/release/debian/ jessie main
+deb http://104.131.9.52/svxlink/release/debian/ jessie main
 DELIM
 
 ##########################
@@ -392,11 +392,11 @@ apt-get clean
 #####################################################
 #Working on sounds pkgs for future release of svxlink
 #####################################################
-wget --no-check-certificate https://github.com/kb3vgw/svxlink-sounds-en_US-heather/releases/download/15.11.2/svxlink-sounds-en_US-heather-16k-15.11.2.tar.bz2
-tar xjvf svxlink-sounds-en_US-heather-16k-15.11.2.tar.bz2
-mv en_US-heather-16k en_US
+wget --no-check-certificate https://github.com/kb3vgw/svxlink-sounds-en_US-laura/releases/download/15.11.1/svxlink-sounds-en_US-laura-16k.tar.bz2
+tar xjvf svxlink-sounds-en_US-laura-16k.tar.bz2
+mv en_US-laura-16k en_US
 mv en_US /usr/share/svxlink/sounds
-rm svxlink-sounds-en_US-heather-16k-15.11.2.tar.bz2
+rm svxlink-sounds-en_US-laura-16k.tar.bz2
 
 ##########################################
 #---Start of nginx / php5 install --------
