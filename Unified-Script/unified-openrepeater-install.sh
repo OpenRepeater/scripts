@@ -34,52 +34,6 @@
 ####################################################
 cs="Set-This"
 
-echo "--------------------------------------------------------------"
-heading="WHAT DEVICE?"
-title="Please choose the device you are building on:"
-prompt="Pick an option:"
-options=("Raspberry Pi 2/3" "Beaglebone Black" "Odroid C1/C1+")
-
-echo "$heading"
-echo "$title"
-PS3="$prompt "
-select opt in "${options[@]}" "Quit"; do 
-
-    case "$REPLY" in
-
-    # RASPBERRY PI
-    1 ) echo "You picked $opt which is option $REPLY";default_hostname="orp-rpi";break;;
-
-    # BEAGLEBONE
-    2 ) echo "You picked $opt which is option $REPLY";default_hostname="orp-bbb";break;;
-
-    # ODROID
-    3 ) echo "You picked $opt which is option $REPLY";default_hostname="orp-odroid";break;;
-
-    $(( ${#options[@]}+1 )) ) echo "Goodbye!"; exit;;
-    *) echo "Invalid option. Try another one.";continue;;
-
-    esac
-
-done
-
-echo "--------------------------------------------------------------"
-heading="HOSTNAME"
-title="What would you like to set your hostname to? Valid characters are a-z, 0-9, and hyphen. Hit ENTER to use the default hostname ($default_hostname) for this device OR enter your own and hit ENTER:"
-
-echo "$heading"
-echo "$title"
-read orp_hostname
-
-if [[ $orp_hostname == "" ]]; then
-	orp_hostname="$default_hostname"
-fi
-
-echo "Hostname: $orp_hostname"
-
-
-# DON'T FORGET TO UNCOMMENT THE LOG AT THE BOTTOM
-
 # ----- Stop Edit Here ------- #
 ########################################################
 # Set mp3/wav file upload/post size limit for php/nginx
@@ -101,17 +55,6 @@ gui_name="openrepeater"
 #Php ini config file
 #####################
 php_ini="/etc/php5/fpm/php.ini"
-######################################################################
-# check to see that the configuration portion of the script was edited
-######################################################################
-#if [[ $cs == "Set-This" ]]; then
-#  echo ""
-#echo "--------------------------------------------------------------"
-#echo ""
-#  echo "Looks like you need to configure the script before running"
-#  echo "Please configure the script and try again"
-#  exit 0
-#fi
 
 ##################################################################
 # check to confirm running as root. # First, we need to be root...
@@ -125,11 +68,58 @@ echo "--------------------------------------------------------------"
 echo ""
 echo "Looks Like you are root.... continuing!"
 echo ""
+
+############################################
+# Request user input to ask for device type
+############################################
 echo "--------------------------------------------------------------"
 echo ""
+heading="WHAT DEVICE?"
+title="Please choose the device you are building on:"
+prompt="Pick an option:"
+options=("Raspberry Pi 2/3" "Beaglebone Black" "Odroid C1/C1+")
 
+echo "$heading"
+echo "$title"
+PS3="$prompt "
+select opt in "${options[@]}" "Quit"; do 
+    case "$REPLY" in
 
-  exit 0
+    # RASPBERRY PI
+    1 ) echo "";echo "Building for $opt";device_long_name="$opt";device_short_name="rpi";default_hostname="orp-rpi";break;;
+
+    # BEAGLEBONE
+    2 ) echo "";echo "Building for $opt";device_long_name="$opt";device_short_name="bbb";default_hostname="orp-bbb";break;;
+
+    # ODROID
+    3 ) echo "";echo "Building for $opt";device_long_name="$opt";device_short_name="odroid";default_hostname="orp-odroid";break;;
+
+    $(( ${#options[@]}+1 )) ) echo "Goodbye!"; exit;;
+    *) echo "Invalid option. Try another one.";continue;;
+
+    esac
+done
+echo ""
+
+#####################################
+# Request user input to set hostname
+#####################################
+echo "--------------------------------------------------------------"
+echo ""
+heading="HOSTNAME"
+title="What would you like to set your hostname to? Valid characters are a-z, 0-9, and hyphen. Hit ENTER to use the default hostname ($default_hostname) for this device OR enter your own and hit ENTER:"
+
+echo "$heading"
+echo "$title"
+read orp_hostname
+
+if [[ $orp_hostname == "" ]]; then
+	orp_hostname="$default_hostname"
+fi
+
+echo ""
+echo "Using $orp_hostname as hostname."
+echo ""
 
 ###############################################
 #if lsb_release is not installed it installs it
@@ -163,7 +153,7 @@ echo ""
 fi
 
 ###########################################
-# Run a OS and Platform compatabilty Check
+# Run a OS and Platform compatibility Check
 ###########################################
 ########
 # ARMEL
@@ -338,7 +328,7 @@ DELIM
 #Setting Host/Domain name
 #############################
 cat > /etc/hostname << DELIM
-$cs-repeater
+$orp_hostname
 DELIM
 
 #################
@@ -352,7 +342,7 @@ ff00::0         ip6-mcastprefix
 ff02::1         ip6-allnodes
 ff02::2         ip6-allrouters
 
-127.0.0.1       $cs-repeater
+127.0.0.1       $orp_hostname
 
 DELIM
 
@@ -837,4 +827,4 @@ echo " #             The SVXLink Repeater / Echolink server Install is now compl
 echo " #                          and your system is ready for use..                            # "
 echo " #                                                                                        # "
 echo " ########################################################################################## "
-) #| tee /root/install.log
+) | tee /root/install.log
