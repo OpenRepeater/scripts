@@ -268,7 +268,7 @@ echo
 ##############################
 # Set a reboot if Kernel Panic
 ##############################
-cat > /etc/sysctl.conf << DELIM
+cat >> /etc/sysctl.conf << DELIM
 kernel.panic = 10
 DELIM
 
@@ -316,11 +316,11 @@ fi
 # set usb power level
 #####################
 if [ $device_short_name == "rpi" ] ; then
-	cat >> /boot/config.txt << DELIM
-	
-	#usb max current
-	usb_max_current=1
-	DELIM
+cat >> /boot/config.txt << DELIM
+
+#usb max current
+usb_max_current=1
+DELIM
 fi
 
 ##############################
@@ -358,24 +358,24 @@ fi
 # Fix usb sound/nic issue so network interface gets IP
 ######################################################
 if [ $device_short_name == "rpi" ] ; then
-	cat > /etc/network/interfaces << DELIM
-	auto lo eth0
-	iface lo inet loopback
-	iface eth0 inet dhcp
-	DELIM
+cat >> /etc/network/interfaces << DELIM
+auto lo eth0
+iface lo inet loopback
+iface eth0 inet dhcp
+DELIM
 fi
 
 #############################
 # Setting Host/Domain name
 #############################
-cat > /etc/hostname << DELIM
+cat >> /etc/hostname << DELIM
 $orp_hostname
 DELIM
 
 ##################
 # Setup /etc/hosts
 ##################
-cat > /etc/hosts << DELIM
+cat >> /etc/hosts << DELIM
 127.0.0.1       localhost 
 ::1             localhost ip6-localhost ip6-loopback
 fe00::0         ip6-localnet
@@ -408,9 +408,9 @@ fi
 # Disable HDMI sound
 #####################
 if [ $device_short_name == "bbb" ] ; then
-	cat >> /boot/uEnv.txt << DELIM
-	optargs=capemgr.disable_partno=BB-BONELT-HDMI
-	DELIM
+cat >> /boot/uEnv.txt << DELIM
+optargs=capemgr.disable_partno=BB-BONELT-HDMI
+DELIM
 fi
 
 #################################################################################################
@@ -424,11 +424,11 @@ fi
 # See also <which httpredir.debian.org>.  This service is identical to http.debian.net.
 #################################################################################################
 if [ $device_short_name == "rpi" ] ; then
-	cat > "/etc/apt/sources.list" << DELIM
-	deb http://httpredir.debian.org/debian/ jessie main contrib non-free
-	deb http://httpredir.debian.org/debian/ jessie-updates main contrib non-free
-	deb http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
-	DELIM
+cat >> /etc/apt/sources.list << DELIM
+deb http://httpredir.debian.org/debian/ jessie main contrib non-free
+deb http://httpredir.debian.org/debian/ jessie-updates main contrib non-free
+deb http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
+DELIM
 fi
 
 ###########################################################################
@@ -438,9 +438,9 @@ fi
 # Put in Proper Location. All addon repos should be source.list.d sub dir
 ###########################################################################
 if [ $device_short_name == "rpi" ] ; then
-	cat > /etc/apt/sources.list.d/raspi.list << DELIM
-	deb http://mirrordirector.raspbian.org/raspbian/ jessie main contrib firmware non-free rpi
-	DELIM
+cat >> /etc/apt/sources.list.d/raspi.list << DELIM
+deb http://mirrordirector.raspbian.org/raspbian/ jessie main contrib firmware non-free rpi
+DELIM
 fi
 
 ##########################
@@ -449,22 +449,22 @@ fi
 # Adding bbblack Repo
 ##########################
 if [ $device_short_name == "bbb" ] ; then
-	cat >> "/etc/apt/sources.list.d/beaglebone.list" << DELIM
-	deb [arch=armhf] http://repos.rcn-ee.net/debian/ jessie main
-	DELIM
+cat >> /etc/apt/sources.list.d/beaglebone.list << DELIM
+deb [arch=armhf] http://repos.rcn-ee.net/debian/ jessie main
+DELIM
 fi
 
 #############################
 # SvxLink Release Repo ArmHF
 #############################
-cat > "/etc/apt/sources.list.d/svxlink.list" <<DELIM
+cat >> /etc/apt/sources.list.d/svxlink.list << DELIM
 deb http://repo.openrepeater.com/svxlink/release/debian/ jessie main
 DELIM
 
 ##########################
 # Adding OpenRepeater Repo
 ##########################
-cat > "/etc/apt/sources.list.d/openrepeater.list" <<DELIM
+cat >> "/etc/apt/sources.list.d/openrepeater.list" << DELIM
 deb http://repo.openrepeater.com/openrepeater/release/debian/ jessie main
 DELIM
 
@@ -546,7 +546,7 @@ sed -i "$php_ini" -e "s#post_max_size = 8M#post_max_size = $upload_size#"
 ######################################################################################################
 # Nginx config Copied from Debian nginx pkg (nginx on debian wheezy uses sockets by default not ports)
 ######################################################################################################
-cat > "/etc/nginx/sites-available/$gui_name"  << DELIM
+cat >> "/etc/nginx/sites-available/$gui_name"  << DELIM
 server{
         listen 127.0.0.1:80;
         server_name 127.0.0.1;
@@ -630,7 +630,7 @@ DELIM
 ###############################################
 # Set nginx worker level limit for performance
 ###############################################
-cat > "/etc/nginx/nginx.conf"  << DELIM
+cat >> "/etc/nginx/nginx.conf"  << DELIM
 user www-data;
 worker_processes 4;
 pid /run/nginx.pid;
@@ -696,7 +696,7 @@ DELIM
 #################################
 cp /etc/php5/fpm/pool.d/www.conf /etc/php5/fpm/pool.d/www.conf.orig
 
-cat >  /etc/php5/fpm/pool.d/www.conf << DELIM
+cat >> /etc/php5/fpm/pool.d/www.conf << DELIM
 [www]
 
 user = www-data
@@ -723,7 +723,7 @@ DELIM
 ##################################
 cp /etc/php5/fpm/php-fpm.conf /etc/php5/fpm/php-fpm.conf.orig
 
-cat > /etc/php5/fpm/php-fpm.conf << DELIM
+cat >> /etc/php5/fpm/php-fpm.conf << DELIM
 ;;;;;;;;;;;;;;;;;;;;;
 ; FPM Configuration ;
 ;;;;;;;;;;;;;;;;;;;;;
@@ -808,7 +808,7 @@ echo "--------------------------------------------------------------"
 echo " Generating openrepeater svxlink configuration...."
 echo "--------------------------------------------------------------"
 
-cat > "/etc/default/svxlink" << DELIM
+cat >> "/etc/default/svxlink" << DELIM
 
 #############################################################################
 # Configuration file for the SvxLink startup script /etc/init.d/svxlink
@@ -836,7 +836,7 @@ echo "--------------------------------------------------------------"
 echo " Generating remotetrx configuration..."
 echo "--------------------------------------------------------------"
 
-cat > "/etc/default/remotetrx" << DELIM
+cat >> "/etc/default/remotetrx" << DELIM
 
 #############################################################################
 # Configuration file for the RemoteTrx startup script /etc/init.d/remotetrx

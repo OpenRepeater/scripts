@@ -1,14 +1,22 @@
-Use this base Debian Jessie image:
+####Debian Jessie Base Images:
+Use the appropriate base Debian Jessie image for your device:
 
-OFFICIAL RASPBIAN JESSIE LITE (NO X)
+RASPBERRY PI (Official Raspbian Jesse Lite)
 https://downloads.raspberrypi.org/raspbian_lite_latest
 
+BEAGLEBONE BLACK
+https://rcn-ee.com/rootfs/bb.org/testing/2016-01-10/console/bone-debian-8.2-console-armhf-2016-01-10-2gb.img.xz
+
+ODROID C1/C1+
+http://repo.openrepeater.com/odroid-imgs/odroid-c1-jessie-minimal.img.xz
+
+
 ####Procedure:
-- Download Raspbian Jessie Lite Image (link above).
-- Write Raspbian Jessie Lite image to SD Card.
-- Insert SD card into RPI, Connect Network, connect sound card, and Power to Pi
+- Download the appropriate Base Debian/Raspbian Jessie Image (links above).
+- Write OS Image to SD Card.
+- Insert SD card into RPI, Connect Network, connect sound card, and Power to your device
 - Obtain Dynamic IP Address
-- Connect to Pi using SSH.  Login as pi (password raspberry).
+- Connect to your board using SSH.  Login as pi (password raspberry).
 - sudo su to root
 - Execute "apt-get update && apt-get dist-upgrade"
 - Use raspi-config to configure Timezone, Locale, Check GPU Mem(0), and Expand FS
