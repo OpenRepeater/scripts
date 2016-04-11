@@ -162,7 +162,7 @@ case $(uname -m) in armv[4-5]l)
 echo ""
 echo "--------------------------------------------------------------"
 echo ""
-echo " ArmEL is currenty UnSupported "
+echo " ArmEL is currently UnSupported "
 echo ""
 echo "--------------------------------------------------------------"
 echo ""
@@ -189,32 +189,34 @@ case $(uname -m) in x86_64|i[4-6]86)
 echo ""
 echo "--------------------------------------------------------------"
 echo ""
-echo " Intel / Amd boards currently UnSupported"
+echo " Intel / AMD boards currently UnSupported"
 echo ""
 echo "--------------------------------------------------------------"
 echo ""
 exit
 esac
 
-#####################################
-#Update base os with new repo in list
-#####################################
-echo ""
-echo "--------------------------------------------------------------"
-echo "Updating Raspberry Pi repository keys..."
-echo "--------------------------------------------------------------"
-echo ""
-gpg --keyserver pgp.mit.edu --recv 8B48AD6246925553 
-gpg --export --armor 8B48AD6246925553 | apt-key add -
-gpg --keyserver pgp.mit.edu --recv  7638D0442B90D010
-gpg --export --armor  7638D0442B90D010 | apt-key add -
-gpg --keyserver pgp.mit.edu --recv CBF8D6FD518E17E1
-gpg --export --armor CBF8D6FD518E17E1 | apt-key add -
-wget https://www.raspberrypi.org/raspberrypi.gpg.key
-gpg --import raspberrypi.gpg.key | apt-key add -
-wget https://archive.raspbian.org/raspbian.public.key
-gpg --import raspbian.public.key | apt-key add -
-for i in update upgrade clean ;do apt-get -y --force-yes "${i}" ; done
+#########################################################
+# RASPBERRY PI ONLY: Update base os with new repo in list
+#########################################################
+if [[ $device_short_name == "rpi" ]]; then
+	echo ""
+	echo "--------------------------------------------------------------"
+	echo "Updating Raspberry Pi repository keys..."
+	echo "--------------------------------------------------------------"
+	echo ""
+	gpg --keyserver pgp.mit.edu --recv 8B48AD6246925553 
+	gpg --export --armor 8B48AD6246925553 | apt-key add -
+	gpg --keyserver pgp.mit.edu --recv  7638D0442B90D010
+	gpg --export --armor  7638D0442B90D010 | apt-key add -
+	gpg --keyserver pgp.mit.edu --recv CBF8D6FD518E17E1
+	gpg --export --armor CBF8D6FD518E17E1 | apt-key add -
+	wget https://www.raspberrypi.org/raspberrypi.gpg.key
+	gpg --import raspberrypi.gpg.key | apt-key add -
+	wget https://archive.raspbian.org/raspbian.public.key
+	gpg --import raspbian.public.key | apt-key add -
+	for i in update upgrade clean ;do apt-get -y --force-yes "${i}" ; done
+fi
 
 ###################
 # Notes / Warnings
@@ -285,55 +287,67 @@ tmpfs /var/tmp  tmpfs nodev,nosuid,mode=1777  0 0
 tmpfs /var/cache/apt/archives tmpfs   size=100M,defaults,noexec,nosuid,nodev,mode=0755 0 0
 DELIM
 
-############################
+#####################
+# RASPBERRY PI ONLY:
 # set usb power level
-############################
-cat >> /boot/config.txt << DELIM
-
-#usb max current
-usb_max_current=1
-DELIM
+#####################
+if [[ $device_short_name == "rpi" ]]; then
+	cat >> /boot/config.txt << DELIM
+	
+	#usb max current
+	usb_max_current=1
+	DELIM
+fi
 
 ##############################
+# RASPBERRY PI ONLY:
 # Disable the dphys swap file
 # Extend life of sd card
 ###############################
-echo ""
-echo "--------------------------------------------------------------"
-echo "Disabling swap..."
-echo "--------------------------------------------------------------"
+if [[ $device_short_name == "rpi" ]]; then
+	echo ""
+	echo "--------------------------------------------------------------"
+	echo "Disabling swap..."
+	echo "--------------------------------------------------------------"
+	
+	swapoff --all
+	apt-get -y remove dphys-swapfile
+	rm -rf /var/swap
+fi
 
-swapoff --all
-apt-get -y remove dphys-swapfile
-rm -rf /var/swap
+############################################
+# RASPBERRY PI ONLY:
+# Add-on extra scripts for cloning the drive
+############################################
+if [[ $device_short_name == "rpi" ]]; then
+	cd /usr/local/bin
+	wget https://raw.githubusercontent.com/billw2/rpi-clone/master/rpi-clone
+	chmod +x rpi-clone
+	cd /root 
+fi
 
-##########################################
-#addon extra scripts for cloning the drive
-##########################################
-cd /usr/local/bin
-wget https://raw.githubusercontent.com/billw2/rpi-clone/master/rpi-clone
-chmod +x rpi-clone
-cd /root 
-
-#####################################################
-#fix usb sound/nic issue so network interface gets IP
-#####################################################
-cat > /etc/network/interfaces << DELIM
-auto lo eth0
-iface lo inet loopback
-iface eth0 inet dhcp
-DELIM
+######################################################
+# RASPBERRY PI ONLY:
+# Fix usb sound/nic issue so network interface gets IP
+######################################################
+if [[ $device_short_name == "rpi" ]]; then
+	cat > /etc/network/interfaces << DELIM
+	auto lo eth0
+	iface lo inet loopback
+	iface eth0 inet dhcp
+	DELIM
+fi
 
 #############################
-#Setting Host/Domain name
+# Setting Host/Domain name
 #############################
 cat > /etc/hostname << DELIM
 $orp_hostname
 DELIM
 
-#################
-#Setup /etc/hosts
-#################
+##################
+# Setup /etc/hosts
+##################
 cat > /etc/hosts << DELIM
 127.0.0.1       localhost 
 ::1             localhost ip6-localhost ip6-loopback
@@ -347,17 +361,23 @@ ff02::2         ip6-allrouters
 DELIM
 
 ###########################################################
-#Disable onboard hdmi soundcard not used in openrepeater
+# RASPBERRY PI ONLY:
+#
+# Disable onboard HDMI sound card not used in openrepeater
 ###########################################################
-#/boot/config.txt
-sed -i /boot/config.txt -e"s#dtparam=audio=on#\#dtparam=audio=on#"
-
-# Enable audio (loads snd_bcm2835)
-# dtparam=audio=on
-#/etc/modules
-sed -i /etc/modules -e"s#snd-bcm2835#\#snd-bcm2835#"
+if [[ $device_short_name == "rpi" ]]; then
+	#/boot/config.txt
+	sed -i /boot/config.txt -e"s#dtparam=audio=on#\#dtparam=audio=on#"
+	
+	# Enable audio (loads snd_bcm2835)
+	# dtparam=audio=on
+	#/etc/modules
+	sed -i /etc/modules -e"s#snd-bcm2835#\#snd-bcm2835#"
+fi
 
 #################################################################################################
+# RASPBERRY PI ONLY:
+#
 # Setting apt_get to use the httpredirecter to get
 # To have <APT> automatically select a mirror close to you, use the Geo-ip redirector in your
 # sources.list "deb http://httpredir.debian.org/debian/ jessie main".
@@ -365,20 +385,25 @@ sed -i /etc/modules -e"s#snd-bcm2835#\#snd-bcm2835#"
 # not dnS to serve content so is safe to use with Google dnS.
 # See also <which httpredir.debian.org>.  This service is identical to http.debian.net.
 #################################################################################################
-cat > "/etc/apt/sources.list" << DELIM
-deb http://httpredir.debian.org/debian/ jessie main contrib non-free
-deb http://httpredir.debian.org/debian/ jessie-updates main contrib non-free
-deb http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
-DELIM
+if [[ $device_short_name == "rpi" ]]; then
+	cat > "/etc/apt/sources.list" << DELIM
+	deb http://httpredir.debian.org/debian/ jessie main contrib non-free
+	deb http://httpredir.debian.org/debian/ jessie-updates main contrib non-free
+	deb http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
+	DELIM
+fi
 
-############
-# Raspi Repo
 ###########################################################################
+# RASPBERRY PI ONLY:
+#
+# Raspi Repo
 # Put in Proper Location. All addon repos should be source.list.d sub dir
 ###########################################################################
-cat > /etc/apt/sources.list.d/raspi.list << DELIM
-deb http://mirrordirector.raspbian.org/raspbian/ jessie main contrib firmware non-free rpi
-DELIM
+if [[ $device_short_name == "rpi" ]]; then
+	cat > /etc/apt/sources.list.d/raspi.list << DELIM
+	deb http://mirrordirector.raspbian.org/raspbian/ jessie main contrib firmware non-free rpi
+	DELIM
+fi
 
 #############################
 # SvxLink Release Repo ArmHF
@@ -524,7 +549,7 @@ server{
             include fastcgi_params;
             fastcgi_pass unix:/var/run/php5-fpm.sock;
             fastcgi_param   SCRIPT_FILENAME /var/www/openrepeater/\$fastcgi_script_name;
-            error_page  404   404.php;
+            error_page 404 404.php;
             fastcgi_intercept_errors on;
 
         }
@@ -781,8 +806,10 @@ ln -s /var/log/svxlink /var/www/openrepeater/log
 chown -R www-data:www-data /var/www/openrepeater /etc/openrepeater
 chown root:www-data /usr/bin/openrepeater_*
 
-# Add svxlink user to groups: gpio, audio, and daemon
-usermod -a -G daemon,gpio,audio svxlink
+# RASPBERRY PI ONLY: Add svxlink user to groups: gpio, audio, and daemon
+if [[ $device_short_name == "rpi" ]]; then
+	usermod -a -G daemon,gpio,audio svxlink
+fi
 
 cat >> /etc/sudoers << DELIM
 #allow www-data to access amixer and service
@@ -792,28 +819,31 @@ www-data   ALL=(ALL) NOPASSWD: /usr/bin/openrepeater_svxlink_restart, NOPASSWD: 
 #NOPASSWD: /usr/bin/openrepeater_enable_svxlink_service, NOPASSWD: /usr/bin/openrepeater_diable_svxlink_service
 DELIM
 
-################################
-#Set up usb sound for alsa mixer
-################################
-if ( ! `grep "snd-usb-audio" /etc/modules >/dev/null`) ; then
-   echo "snd-usb-audio" >> /etc/modules
-fi
-FILE=/etc/modprobe.d/alsa-base.conf
-sed "s/options snd-usb-audio index=-2/options snd-usb-audio index=0/" $FILE > ${FILE}.tmp
-mv -f ${FILE}.tmp ${FILE}
-if ( ! `grep "options snd-usb-audio nrpacks=1" ${FILE} > /dev/null` ) ; then
-  echo "options snd-usb-audio nrpacks=1 index=0" >> ${FILE}
+#################################
+# RASPBERRY PI ONLY:
+# Set up usb sound for alsa mixer
+#################################
+if [[ $device_short_name == "rpi" ]]; then
+	if ( ! `grep "snd-usb-audio" /etc/modules >/dev/null`) ; then
+	   echo "snd-usb-audio" >> /etc/modules
+	fi
+	FILE=/etc/modprobe.d/alsa-base.conf
+	sed "s/options snd-usb-audio index=-2/options snd-usb-audio index=0/" $FILE > ${FILE}.tmp
+	mv -f ${FILE}.tmp ${FILE}
+	if ( ! `grep "options snd-usb-audio nrpacks=1" ${FILE} > /dev/null` ) ; then
+	  echo "options snd-usb-audio nrpacks=1 index=0" >> ${FILE}
+	fi
 fi
 
-#######################
-#Enable Systemd Service
-####################### 
+########################
+# Enable Systemd Service
+########################
 echo " Enabling the Svxlink systemd Service Daemon "
 systemctl enable svxlink.service
 
-#######################
-#Enable Systemd Service
-####################### 
+########################
+# Enable Systemd Service
+########################
 echo " Enabling the Svxlink Remotetrx systemd Service Daemon "
 systemctl enable remotetrx.service
 
