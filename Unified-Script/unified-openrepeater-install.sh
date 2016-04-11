@@ -5,7 +5,9 @@
 #   Open Repeater Project
 #
 #    Copyright (C) <2015>  <Richard Neese> kb3vgw@gmail.com
-#    -- 2015-11-24:0100 added various fixes to GPG, repos, and error corrections (KK4CT)
+#    -- 2015-11-24:0100 added various fixes to GPG, repos, and error corrections (Chris Tripp, KK4CT)
+#	 -- 2016 (April) Created Unified install script with conditional logic, 
+#       fix typos and other corrections. (Aaron Crawford, N3MBH) 
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -22,19 +24,9 @@
 #
 #    If not, see <http://www.gnu.org/licenses/gpl-3.0.en.html>
 #
-#######################################
-# Auto Install Configuration options
-# (set it, forget it, run it)
-#######################################
+####################################################################
 
-# ----- Start Edit Here ----- #
-####################################################
-# Repeater call sign
-# Please change this to match the repeater call sign
-####################################################
-cs="Set-This"
 
-# ----- Stop Edit Here ------- #
 ########################################################
 # Set mp3/wav file upload/post size limit for php/nginx
 # ( Must Have the M on the end )
@@ -47,17 +39,17 @@ upload_size="25M"
 WWW_PATH="/var/www"
 
 #################################
-#set Web User Interface Dir Name
+# Set Web User Interface Dir Name
 #################################
 gui_name="openrepeater"
 
 #####################
-#Php ini config file
+# PHP ini config file
 #####################
 php_ini="/etc/php5/fpm/php.ini"
 
 ##################################################################
-# check to confirm running as root. # First, we need to be root...
+# Check to confirm running as root. # First, we need to be root...
 ##################################################################
 if [ "$(id -u)" -ne "0" ]; then
   sudo -p "$(basename "$0") must be run as root, please enter your sudo password : " "$0" "$@"
@@ -121,19 +113,19 @@ echo ""
 echo "Using $orp_hostname as hostname."
 echo ""
 
-###############################################
-#if lsb_release is not installed it installs it
-###############################################
+################################################
+# If lsb_release is not installed it installs it
+################################################
 if [ ! -s /usr/bin/lsb_release ]; then
-echo ""
-echo "--------------------------------------------------------------"
-echo "Installing lsb_release..."
-echo "--------------------------------------------------------------"
-apt-get update && apt-get -y install lsb-release
+	echo ""
+	echo "--------------------------------------------------------------"
+	echo "Installing lsb_release..."
+	echo "--------------------------------------------------------------"
+	apt-get update && apt-get -y install lsb-release
 fi
 
 #################
-# Os/Distro Check
+# OS/Distro Check
 #################
 lsb_release -c |grep -i jessie &> /dev/null 2>&1
 if [ $? -eq 0 ]; then
@@ -153,7 +145,7 @@ echo ""
 fi
 
 ###########################################
-# Run a OS and Platform compatibility Check
+# Run Platform compatibility Check
 ###########################################
 ########
 # ARMEL
@@ -196,10 +188,12 @@ echo ""
 exit
 esac
 
-#########################################################
-# RASPBERRY PI ONLY: Update base os with new repo in list
-#########################################################
-if [[ $device_short_name == "rpi" ]]; then
+#######################################
+# RASPBERRY PI ONLY:
+#
+# Update base os with new repo in list
+#######################################
+if [ $device_short_name == "rpi" ] ; then
 	echo ""
 	echo "--------------------------------------------------------------"
 	echo "Updating Raspberry Pi repository keys..."
@@ -223,7 +217,7 @@ fi
 ###################
 echo ""
 cat << DELIM
-                   Not Ment For L.a.m.p Installs
+                   Not Ment For L.A.M.P Installs
 
                   L.A.M.P = Linux Apache Mysql PHP
 
@@ -231,7 +225,7 @@ cat << DELIM
 
              IT IS NOT INTENDED TO BE RUN MULTIPLE TIMES
 
-         This Script Is Ment To Be Run On A Fresh Install Of
+         This Script Is Meant To Be Run On A Fresh Install Of
 
                          Debian 8 (Jessie)
 
@@ -241,10 +235,10 @@ cat << DELIM
 
 DELIM
 
-###############################################################################################
-#Testing for internet connection. Pulled from and modified
-#http://www.linuxscrew.com/2009/04/02/tiny-bash-scripts-check-internet-connection-availability/
-###############################################################################################
+################################################################################################
+# Testing for internet connection. Pulled from and modified
+# http://www.linuxscrew.com/2009/04/02/tiny-bash-scripts-check-internet-connection-availability/
+################################################################################################
 echo ""
 echo "--------------------------------------------------------------"
 echo ""
@@ -272,7 +266,7 @@ echo ""
 echo
 
 ##############################
-#Set a reboot if Kernel Panic
+# Set a reboot if Kernel Panic
 ##############################
 cat > /etc/sysctl.conf << DELIM
 kernel.panic = 10
@@ -287,11 +281,41 @@ tmpfs /var/tmp  tmpfs nodev,nosuid,mode=1777  0 0
 tmpfs /var/cache/apt/archives tmpfs   size=100M,defaults,noexec,nosuid,nodev,mode=0755 0 0
 DELIM
 
+######################################
+# BEAGLEBONE ONLY:
+#
+# Disable Beaglebone 101 Web Services
+######################################
+if [ $device_short_name == "bbb" ] ; then
+	echo " Disabling The Beaglebone 101 web services "
+	systemctl disable cloud9.service
+	systemctl disable gateone.service
+	systemctl disable bonescript.service
+	systemctl disable bonescript.socket
+	systemctl disable bonescript-autorun.service
+	systemctl disable avahi-daemon.service
+	systemctl disable gdm.service
+	systemctl disable mpd.service
+	
+	echo " Stoping The Beaglebone 101 web services "
+	systemctl stop cloud9.service
+	systemctl stop gateone.service
+	systemctl stop bonescript.service
+	systemctl stop bonescript.socket
+	systemctl stop bonescript-autorun.service
+	systemctl stop avahi-daemon.service
+	systemctl stop gdm.service
+	systemctl stop mpd.service
+	
+	apt-get -y autoremove apache2*
+fi
+
 #####################
 # RASPBERRY PI ONLY:
+#
 # set usb power level
 #####################
-if [[ $device_short_name == "rpi" ]]; then
+if [ $device_short_name == "rpi" ] ; then
 	cat >> /boot/config.txt << DELIM
 	
 	#usb max current
@@ -301,10 +325,11 @@ fi
 
 ##############################
 # RASPBERRY PI ONLY:
+#
 # Disable the dphys swap file
 # Extend life of sd card
 ###############################
-if [[ $device_short_name == "rpi" ]]; then
+if [ $device_short_name == "rpi" ] ; then
 	echo ""
 	echo "--------------------------------------------------------------"
 	echo "Disabling swap..."
@@ -317,9 +342,10 @@ fi
 
 ############################################
 # RASPBERRY PI ONLY:
+#
 # Add-on extra scripts for cloning the drive
 ############################################
-if [[ $device_short_name == "rpi" ]]; then
+if [ $device_short_name == "rpi" ] ; then
 	cd /usr/local/bin
 	wget https://raw.githubusercontent.com/billw2/rpi-clone/master/rpi-clone
 	chmod +x rpi-clone
@@ -328,9 +354,10 @@ fi
 
 ######################################################
 # RASPBERRY PI ONLY:
+#
 # Fix usb sound/nic issue so network interface gets IP
 ######################################################
-if [[ $device_short_name == "rpi" ]]; then
+if [ $device_short_name == "rpi" ] ; then
 	cat > /etc/network/interfaces << DELIM
 	auto lo eth0
 	iface lo inet loopback
@@ -365,7 +392,7 @@ DELIM
 #
 # Disable onboard HDMI sound card not used in openrepeater
 ###########################################################
-if [[ $device_short_name == "rpi" ]]; then
+if [ $device_short_name == "rpi" ] ; then
 	#/boot/config.txt
 	sed -i /boot/config.txt -e"s#dtparam=audio=on#\#dtparam=audio=on#"
 	
@@ -373,6 +400,17 @@ if [[ $device_short_name == "rpi" ]]; then
 	# dtparam=audio=on
 	#/etc/modules
 	sed -i /etc/modules -e"s#snd-bcm2835#\#snd-bcm2835#"
+fi
+
+#####################
+# BEAGLEBONE ONLY:
+#
+# Disable HDMI sound
+#####################
+if [ $device_short_name == "bbb" ] ; then
+	cat >> /boot/uEnv.txt << DELIM
+	optargs=capemgr.disable_partno=BB-BONELT-HDMI
+	DELIM
 fi
 
 #################################################################################################
@@ -385,7 +423,7 @@ fi
 # not dnS to serve content so is safe to use with Google dnS.
 # See also <which httpredir.debian.org>.  This service is identical to http.debian.net.
 #################################################################################################
-if [[ $device_short_name == "rpi" ]]; then
+if [ $device_short_name == "rpi" ] ; then
 	cat > "/etc/apt/sources.list" << DELIM
 	deb http://httpredir.debian.org/debian/ jessie main contrib non-free
 	deb http://httpredir.debian.org/debian/ jessie-updates main contrib non-free
@@ -399,9 +437,20 @@ fi
 # Raspi Repo
 # Put in Proper Location. All addon repos should be source.list.d sub dir
 ###########################################################################
-if [[ $device_short_name == "rpi" ]]; then
+if [ $device_short_name == "rpi" ] ; then
 	cat > /etc/apt/sources.list.d/raspi.list << DELIM
 	deb http://mirrordirector.raspbian.org/raspbian/ jessie main contrib firmware non-free rpi
+	DELIM
+fi
+
+##########################
+# BEAGLEBONE ONLY:
+#
+# Adding bbblack Repo
+##########################
+if [ $device_short_name == "bbb" ] ; then
+	cat >> "/etc/apt/sources.list.d/beaglebone.list" << DELIM
+	deb [arch=armhf] http://repos.rcn-ee.net/debian/ jessie main
 	DELIM
 fi
 
@@ -409,7 +458,7 @@ fi
 # SvxLink Release Repo ArmHF
 #############################
 cat > "/etc/apt/sources.list.d/svxlink.list" <<DELIM
-deb http://104.131.9.52/svxlink/release/debian/ jessie main
+deb http://repo.openrepeater.com/svxlink/release/debian/ jessie main
 DELIM
 
 ##########################
@@ -420,7 +469,7 @@ deb http://repo.openrepeater.com/openrepeater/release/debian/ jessie main
 DELIM
 
 ######################
-#Update base os
+# Update base OS
 ######################
 echo ""
 echo "--------------------------------------------------------------"
@@ -429,8 +478,18 @@ echo "--------------------------------------------------------------"
 
 for i in update upgrade clean ;do apt-get -y --force-yes "${i}" ; done
 
+######################
+# BEAGLEBONE ONLY:
+#
+# Update base OS
+######################
+if [ $device_short_name == "bbb" ] ; then
+	#update the kernal on the beaglebone black
+	apt-get install linux-image-4.4.0-rc5-bone0 linux-firmware-image-4.4.0-rc5-bone0
+fi
+
 ##########################
-#Installing Deps
+# Installing Dependencies
 ##########################
 echo ""
 echo "--------------------------------------------------------------"
@@ -443,19 +502,19 @@ apt-get install -y --force-yes --fix-missing memcached sqlite3 libopus0 alsa-uti
 		gawk watchdog python3-serial wiringpi
 
 ######################
-#Install svxlink
+# Install svxlink
 #####################
 echo ""
 echo "--------------------------------------------------------------"
-echo " Installing install deps and svxlink + remotetrx"
+echo " Installing svxlink + remotetrx"
 echo "--------------------------------------------------------------"
 echo ""
 apt-get -y --force-yes install svxlink-server remotetrx
 apt-get clean
 
-#####################################################
-#Working on sounds pkgs for future release of svxlink
-#####################################################
+######################################################
+# Working on sounds pkgs for future release of svxlink
+######################################################
 wget --no-check-certificate https://github.com/kb3vgw/svxlink-sounds-en_US-laura/releases/download/15.11.1/svxlink-sounds-en_US-laura-16k.tar.bz2
 tar xjvf svxlink-sounds-en_US-laura-16k.tar.bz2
 mv en_US-laura-16k en_US
@@ -463,7 +522,7 @@ mv en_US /usr/share/svxlink/sounds
 rm svxlink-sounds-en_US-laura-16k.tar.bz2
 
 ##########################################
-#---Start of nginx / php5 install --------
+# Start of nginx / php5 install
 ##########################################
 echo ""
 echo "--------------------------------------------------------------"
@@ -484,9 +543,9 @@ sed -i "$php_ini" -e "s#upload_max_filesize = 2M#upload_max_filesize = $upload_s
 ######################################################
 sed -i "$php_ini" -e "s#post_max_size = 8M#post_max_size = $upload_size#"
 
-#####################################################################################################
-#Nginx config Copied from Debian nginx pkg (nginx on debian wheezy uses sockets by default not ports)
-#####################################################################################################
+######################################################################################################
+# Nginx config Copied from Debian nginx pkg (nginx on debian wheezy uses sockets by default not ports)
+######################################################################################################
 cat > "/etc/nginx/sites-available/$gui_name"  << DELIM
 server{
         listen 127.0.0.1:80;
@@ -569,7 +628,7 @@ server{
 DELIM
 
 ###############################################
-# set nginx worker level limit for performance
+# Set nginx worker level limit for performance
 ###############################################
 cat > "/etc/nginx/nginx.conf"  << DELIM
 user www-data;
@@ -659,9 +718,9 @@ pm.max_requests = 100
 chdir = /
 DELIM
 
-#################################
+##################################
 # Backup and replace php5-fpm.conf
-#################################
+##################################
 cp /etc/php5/fpm/php-fpm.conf /etc/php5/fpm/php-fpm.conf.orig
 
 cat > /etc/php5/fpm/php-fpm.conf << DELIM
@@ -704,13 +763,13 @@ systemd_interval = 60
 include=/etc/php5/fpm/pool.d/*.conf
 DELIM
 
-##############################################################
-# linking openrepeater nginx config from avaible to enabled sites
-##############################################################
+###################################################################
+# Linking openrepeater nginx config from available to enabled sites
+###################################################################
 ln -s /etc/nginx/sites-available/"$gui_name" /etc/nginx/sites-enabled/"$gui_name"
 
 ######################
-#disable default site
+# Disable default site
 ######################
 rm -rf /etc/nginx/sites-enabled/default
 
@@ -718,14 +777,13 @@ rm -rf /etc/nginx/sites-enabled/default
 chown -R www-data:www-data /var/www
 
 ##############################
-#Restarting Nginx and PHP FPM
+# Restarting Nginx and PHP FPM
 ##############################
 for i in nginx php5-fpm ;do service "${i}" restart > /dev/null 2>&1 ; done
 
 #################################################
 # Fetch and Install open repeater project web ui
-# ################################################
-
+#################################################
 echo ""
 echo "--------------------------------------------------------------"
 echo " Installing openrepeater package..."
@@ -751,10 +809,9 @@ echo " Generating openrepeater svxlink configuration...."
 echo "--------------------------------------------------------------"
 
 cat > "/etc/default/svxlink" << DELIM
+
 #############################################################################
-#
 # Configuration file for the SvxLink startup script /etc/init.d/svxlink
-#
 #############################################################################
 # The user to run the SvxLink server as
 RUNASUSER=svxlink
@@ -780,10 +837,9 @@ echo " Generating remotetrx configuration..."
 echo "--------------------------------------------------------------"
 
 cat > "/etc/default/remotetrx" << DELIM
+
 #############################################################################
-#
 # Configuration file for the RemoteTrx startup script /etc/init.d/remotetrx
-#
 #############################################################################
 # The user to run the SvxLink server as
 RUNASUSER=svxlink
@@ -807,7 +863,7 @@ chown -R www-data:www-data /var/www/openrepeater /etc/openrepeater
 chown root:www-data /usr/bin/openrepeater_*
 
 # RASPBERRY PI ONLY: Add svxlink user to groups: gpio, audio, and daemon
-if [[ $device_short_name == "rpi" ]]; then
+if [ $device_short_name == "rpi" ] ; then
 	usermod -a -G daemon,gpio,audio svxlink
 fi
 
@@ -820,10 +876,11 @@ www-data   ALL=(ALL) NOPASSWD: /usr/bin/openrepeater_svxlink_restart, NOPASSWD: 
 DELIM
 
 #################################
-# RASPBERRY PI ONLY:
+# RASPBERRY PI & BEAGLEBONE:
+#
 # Set up usb sound for alsa mixer
 #################################
-if [[ $device_short_name == "rpi" ]]; then
+if [ $device_short_name == "rpi" ] || [ $device_short_name == "bbb" ] ; then
 	if ( ! `grep "snd-usb-audio" /etc/modules >/dev/null`) ; then
 	   echo "snd-usb-audio" >> /etc/modules
 	fi
