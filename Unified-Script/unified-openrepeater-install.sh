@@ -1,5 +1,5 @@
 #!/bin/bash
-(
+#(
 ####################################################################
 #
 #   Open Repeater Project
@@ -103,7 +103,7 @@ title="What would you like to set your hostname to? Valid characters are a-z, 0-
 
 echo "$heading"
 echo "$title"
-read orp_hostname
+read -r orp_hostname
 
 if [[ $orp_hostname == "" ]]; then
 	orp_hostname="$default_hostname"
@@ -151,41 +151,41 @@ fi
 # ARMEL
 ########
 case $(uname -m) in armv[4-5]l)
-echo ""
-echo "--------------------------------------------------------------"
-echo ""
-echo " ArmEL is currently UnSupported "
-echo ""
-echo "--------------------------------------------------------------"
-echo ""
-exit
+	echo ""
+	echo "--------------------------------------------------------------"
+	echo ""
+	echo " ArmEL is currently UnSupported "
+	echo ""
+	echo "--------------------------------------------------------------"
+	echo ""
+	exit
 esac
 
 ########
 # ARMHF
 ########
 case $(uname -m) in armv[6-9]l)
-echo ""
-echo "--------------------------------------------------------------"
-echo ""
-echo " ArmHF arm v7 v8 v9 boards supported "
-echo ""
-echo "--------------------------------------------------------------"
-echo ""
+	echo ""
+	echo "--------------------------------------------------------------"
+	echo ""
+	echo " ArmHF arm v7 v8 v9 boards supported "
+	echo ""
+	echo "--------------------------------------------------------------"
+	echo ""
 esac
 
 #############
 # Intel/AMD
 #############
 case $(uname -m) in x86_64|i[4-6]86)
-echo ""
-echo "--------------------------------------------------------------"
-echo ""
-echo " Intel / AMD boards currently UnSupported"
-echo ""
-echo "--------------------------------------------------------------"
-echo ""
-exit
+	echo ""
+	echo "--------------------------------------------------------------"
+	echo ""
+	echo " Intel / AMD boards currently UnSupported"
+	echo ""
+	echo "--------------------------------------------------------------"
+	echo ""
+	exit
 esac
 
 #######################################
@@ -914,4 +914,4 @@ echo " #             The SVXLink Repeater / Echolink server Install is now compl
 echo " #                          and your system is ready for use..                            # "
 echo " #                                                                                        # "
 echo " ########################################################################################## "
-) | tee /root/install.log
+#) | tee /root/install.log
