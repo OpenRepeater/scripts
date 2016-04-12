@@ -341,11 +341,11 @@ cat > /etc/apt/sources.list.d/raspi.list << DELIM
 deb http://mirrordirector.raspbian.org/raspbian/ jessie main contrib firmware non-free rpi
 DELIM
 
-#############################
-# SvxLink Release Repo ArmHF
-#############################
+#########################
+# SVXLink Testing repo
+#########################
 cat > "/etc/apt/sources.list.d/svxlink.list" <<DELIM
-deb http://104.131.9.52/svxlink/release/debian/ jessie main
+deb http://repo.openrepeater.com/svxlink/release/debian/ jessie main
 DELIM
 
 ##########################

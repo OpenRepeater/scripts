@@ -227,11 +227,11 @@ ff02::2         ip6-allrouters
 127.0.0.1       $cs-repeater
 DELIM
 
-#############################
-# SvxLink Release Repo ArmHF
-#############################
+#########################
+# SVXLink Testing repo
+#########################
 cat > "/etc/apt/sources.list.d/svxlink.list" <<DELIM
-deb http://104.131.9.52/svxlink/release/debian/ jessie main
+deb http://repo.openrepeater.com/svxlink/release/debian/ jessie main
 DELIM
 
 ##########################
