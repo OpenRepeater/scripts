@@ -513,13 +513,13 @@ apt-get -y --force-yes install svxlink-server remotetrx
 apt-get clean
 
 ######################################################
-# Working on sounds pkgs for future release of svxlink
+# Get SVXLink Sound Package (English)
 ######################################################
-wget --no-check-certificate https://github.com/kb3vgw/svxlink-sounds-en_US-laura/releases/download/15.11.1/svxlink-sounds-en_US-laura-16k.tar.bz2
-tar xjvf svxlink-sounds-en_US-laura-16k.tar.bz2
-mv en_US-laura-16k en_US
+wget --no-check-certificate https://github.com/OpenRepeater/svxlink-sounds-en_US-laura/archive/15.11.1.tar.gz
+tar -zxvf 15.11.1.tar.gz
+mv svxlink-sounds-en_US-laura-15.11.1 en_US
 mv en_US /usr/share/svxlink/sounds
-rm svxlink-sounds-en_US-laura-16k.tar.bz2
+rm 15.11.1.tar.gz
 
 ##########################################
 # Start of nginx / php5 install
