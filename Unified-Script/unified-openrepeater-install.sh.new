@@ -333,7 +333,7 @@ fi
 #############################
 # WiringPi Release Repo Arm64
 #############################
-if [ $device_short_name == "pine64" ] || [ $device_short_name == "rpi3" ] || [ $device_short_name == "oc2" ] ; then
+if [ $device_short_name == "rpi3" ] ; then
 cat >> /etc/apt/sources.list.d/svxlink.list << DELIM
 deb http://repo.openrepeater.com/wiringpi/devel/debian/ jessie main
 DELIM
@@ -372,7 +372,11 @@ apt-get install -y --force-yes sqlite3 libopus0 alsa-utils vorbis-tools sox libs
 		libsigc++-2.0-0c2a libhamlib2 libhamlib2++c2 libhamlib2-perl libhamlib-utils libhamlib-doc \
 		libhamlib2-tcl python-libhamlib2 fail2ban hostapd resolvconf libasound2-plugin-equal watchdog \
 		i2c-tools python-configobj python-cheetah python-imaging python-serial python-usb python-dev \
-		python-pip fswebcam wiringpi
+		python-pip fswebcam 
+
+if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ] ; then
+apt-get install -y --force-yes wiringpi
+fi
 
 pip install spidev
 
@@ -419,195 +423,15 @@ sed -i "$php_ini" -e "s#upload_max_filesize = 2M#upload_max_filesize = $upload_s
 ######################################################
 sed -i "$php_ini" -e "s#post_max_size = 8M#post_max_size = $upload_size#"
 
-###################
-# Nginx Config File
-###################
-cat >> "/etc/nginx/sites-available/$gui_name"  << DELIM
-server {
-	listen  80;
-	listen [::]:80 default_server ipv6only=on;
-	if ($ssl_protocol = "") {
-		rewrite     ^   https://$server_addr$request_uri? permanent;
-	}
-}
-
-server {
-	listen 443;
-	listen [::]:443 default_server ipv6only=on;
-
-	include snippets/snakeoil.conf;
-	ssl  on;
-
-	root /var/www/openrepeater;
-	index index.php;
-
-	error_page 404 /404.php;
-
-	client_max_body_size 25M;
-	client_body_buffer_size 128k;
-
-	access_log /var/log/nginx/access.log;
-	error_log /var/log/nginx/error.log;
-
-	location ~ \.php$ {
-		include snippets/fastcgi-php.conf;
-		include fastcgi_params;
-		fastcgi_pass unix:/var/run/php5-fpm.sock;
-		fastcgi_param   SCRIPT_FILENAME /var/www/openrepeater/$fastcgi_script_name;
-		error_page  404   404.php;
-		fastcgi_intercept_errors on;
-	}
-
-	# Disable viewing .htaccess & .htpassword & .db
-	location ~ .htaccess {
-		deny all;
-	}
-
-	location ~ .htpassword {
-		deny all;
-	}
-
-	location ~^.+.(db)$ {
-		deny all;
-	}
-}
-DELIM
-
-###############################################
-# Set nginx worker level limit for performance
-###############################################
-cat >> "/etc/nginx/nginx.conf"  << DELIM
-user www-data;
-worker_processes 4;
-pid /run/nginx.pid;
-
-events {
-	worker_connections 768;
-	# multi_accept on;
-}
-
-http {
-
-	##
-	# Basic Settings
-	##
-
-	sendfile on;
-	tcp_nopush on;
-	tcp_nodelay on;
-	keepalive_timeout 65;
-	types_hash_max_size 2048;
-	# server_tokens off;
-
-	include /etc/nginx/mime.types;
-	default_type application/octet-stream;
-
-	##
-	# SSL Settings
-	##
-
-	ssl_protocols TLSv1 TLSv1.1 TLSv1.2; # Dropping SSLv3, ref: POODLE
-	ssl_prefer_server_ciphers on;
-
-	##
-	# Logging Settings
-	##
-
-	open_file_cache max=1000 inactive=20s;
-	open_file_cache_valid 30s;
-	open_file_cache_min_uses 2;
-	open_file_cache_errors off;
-
-	fastcgi_cache_path /var/cache/nginx levels=1:2 keys_zone=microcache:15M max_size=1000m inactive=60m;
-
-	access_log /var/log/nginx/access.log;
-	error_log /var/log/nginx/error.log;
-
-	##
-	# Gzip Settings
-	##
-
-	gzip on;
-	gzip_static on;
-	gzip_disable "msie6";
-
-	include /etc/nginx/conf.d/*.conf;
-	include /etc/nginx/sites-enabled/*;
-}
-
-DELIM
-
 #################################
 # Backup and replace www.conf
 #################################
 cp /etc/php5/fpm/pool.d/www.conf /etc/php5/fpm/pool.d/www.conf.orig
 
-cat >> /etc/php5/fpm/pool.d/www.conf << DELIM
-[www]
-
-user = www-data
-group = www-data
-
-listen = /var/run/php5-fpm.sock
-
-listen.owner = www-data
-listen.group = www-data
-
-pm = static
-
-pm.max_children = 5
-
-pm.start_servers = 2
-
-pm.max_requests = 100
-
-chdir = /
-DELIM
-
 ##################################
 # Backup and replace php5-fpm.conf
 ##################################
 cp /etc/php5/fpm/php-fpm.conf /etc/php5/fpm/php-fpm.conf.orig
-
-cat >> /etc/php5/fpm/php-fpm.conf << DELIM
-;;;;;;;;;;;;;;;;;;;;;
-; FPM Configuration ;
-;;;;;;;;;;;;;;;;;;;;;
-
-;include=/etc/php5/fpm/*.conf
-
-;;;;;;;;;;;;;;;;;;
-; Global Options ;
-;;;;;;;;;;;;;;;;;;
-
-[global]
-
-pid = /run/php5-fpm.pid
-
-; Error log file
-error_log = /var/log/php5-fpm.log
-
-; syslog_facility is used to specify what type of program is logging the
-; message. This lets syslogd specify that messages from different facilities
-; will be handled differently.
-; See syslog(3) for possible values (ex daemon equiv LOG_DAEMON)
-; Default Value: daemon
-;syslog.facility = daemon
-
-syslog.ident = php-fpm
-
-emergency_restart_threshold = 10
-
-emergency_restart_interval = 1m
-
-process_control_timeout = 10
-
-process.max = 12
-
-systemd_interval = 60
-
-include=/etc/php5/fpm/pool.d/*.conf
-DELIM
 
 ###################################################################
 # Linking openrepeater nginx config from available to enabled sites
@@ -730,6 +554,23 @@ mv -f ${FILE}.tmp ${FILE}
 if ( ! `grep "options snd-usb-audio nrpacks=1" ${FILE} > /dev/null` ) ; then
   echo "options snd-usb-audio nrpacks=1 index=0" >> ${FILE}
 fi
+
+###########################################################
+#Fix Audio jack on pine64
+###########################################################
+if [ $device_short_name == "pine64" ] ; then
+cat > "/etc/modules-load.d/pine64-audiojack.conf" << DELIM
+sunxi_codec
+sunxi_i2s
+sunxi_sndcodec
+DELIM
+
+wget https://raw.githubusercontent.com/longsleep/build-pine64-image/master/blobs/asound.state
+mv asound.state /var/lib/alsa/asound.state
+sudo usermod -a -G audio www-data svxlink
+
+fi
+
 
 #################################
 # RASPBERRY PI ,ODROID,& Pine64 :
