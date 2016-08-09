@@ -552,19 +552,20 @@ www-data   ALL=(ALL) NOPASSWD: /usr/bin/openrepeater_svxlink_restart, NOPASSWD: 
 DELIM
 
 #################################
-# RASPBERRY PI ,ODROID, Pine64 :
+# RASPBERRY PI ,ODROID :
 # Set up usb sound for alsa mixer
 #################################
-if ( ! `grep "snd-usb-audio" /etc/modules >/dev/null`) ; then
-   echo "snd-usb-audio" >> /etc/modules
+if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ] || [ $device_short_name == "oc1" ] || [ $device_short_name == "oc2" ] ; then
+	if ( ! `grep "snd-usb-audio" /etc/modules >/dev/null`) ; then
+		echo "snd-usb-audio" >> /etc/modules
+	fi
+	FILE=/etc/modprobe.d/alsa-base.conf
+	sed "s/options snd-usb-audio index=-2/options snd-usb-audio index=0/" $FILE > ${FILE}.tmp
+	mv -f ${FILE}.tmp ${FILE}
+	if ( ! `grep "options snd-usb-audio nrpacks=1" ${FILE} > /dev/null` ) ; then
+		echo "options snd-usb-audio nrpacks=1 index=0" >> ${FILE}
+	fi
 fi
-FILE=/etc/modprobe.d/alsa-base.conf
-sed "s/options snd-usb-audio index=-2/options snd-usb-audio index=0/" $FILE > ${FILE}.tmp
-mv -f ${FILE}.tmp ${FILE}
-if ( ! `grep "options snd-usb-audio nrpacks=1" ${FILE} > /dev/null` ) ; then
-  echo "options snd-usb-audio nrpacks=1 index=0" >> ${FILE}
-fi
-
 ###########################################################
 #Fix Audio jack on pine64
 ###########################################################
@@ -581,7 +582,7 @@ sudo usermod -a -G audio www-data svxlink
 fi
 
 #################################
-# RASPBERRY PI ,ODROID,& Pine64 :
+# RASPBERRY PI ,ODROID:
 # 1 wire Interface 
 #################################
 if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ] || [ $device_short_name == "oc1" ] || [ $device_short_name == "oc2" ] ; then
