@@ -437,6 +437,12 @@ sed -i "$php_ini" -e "s#upload_max_filesize = 2M#upload_max_filesize = $upload_s
 ######################################################
 sed -i "$php_ini" -e "s#post_max_size = 8M#post_max_size = $upload_size#"
 
+##################################
+# Enable Memcache module for php
+##################################
+cat >> $php_ini" << DELIM 
+extensions=memcache.so 
+DELIM
 
 #####################################################
 # Remove / Copy / Link  Nginx & php files into place
@@ -572,14 +578,13 @@ DELIM
 wget https://raw.githubusercontent.com/longsleep/build-pine64-image/master/blobs/asound.state
 mv asound.state /var/lib/alsa/asound.state
 sudo usermod -a -G audio www-data svxlink
-
 fi
 
 #################################
 # RASPBERRY PI ,ODROID,& Pine64 :
 # 1 wire Interface 
 #################################
-if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ] || [ $device_short_name == "oc1" ] || [ $device_short_name == "oc2" ] || [ $device_short_name == "pine64" ]; then
+if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ] || [ $device_short_name == "oc1" ] || [ $device_short_name == "oc2" ] ; then
 #ModProbe moules
 modprobe w1-gpio
 modprobe w1-therm
@@ -588,6 +593,7 @@ modprobe w1-therm
 echo "i2c-dev" >> /etc/modules
 echo "w1-gpio" >> /etc/modules
 echo "w1-therm" >> /etc/modules
+fi
 
 #################################
 # RASPBERRY PI 2/3
@@ -649,11 +655,6 @@ tmpfs /var/tmp  tmpfs nodev,nosuid,mode=1777  0 0
 tmpfs /var/cache/apt/archives tmpfs   size=100M,defaults,noexec,nosuid,nodev,mode=0755 0 0
 DELIM
 
-echo " ########################################################################################## "
-echo " #            You will need to edit the php.ini file and add extensions=memcache.so       # " 
-echo " #               location : /etc/php5/fpm/php.ini and then restart web service            # "
-echo " ########################################################################################## "
-echo
 echo " ########################################################################################## "
 echo " #             The SVXLink Repeater / Echolink server Install is now complete             # "
 echo " #                          and your system is ready for use..                            # "
