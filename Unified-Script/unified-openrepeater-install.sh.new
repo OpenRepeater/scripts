@@ -413,6 +413,20 @@ apt-get install nginx-extras; apt-get install nginx memcached ssl-cert openssl-b
 
 apt-get clean
 
+#############################
+#Backup Orig php configs
+#############################
+cp /etc/nginf/nginx.conf /etc/nginf/nginx.conf.orig
+cp /etc/php5/fpm/php-fpm.conf /etc/php5/fpm/php-fpm.conf.orig
+cp /etc/php5/fpm/php.ini /etc/php5/fpm/php.ini.orig
+cp /etc/php5/fpm/pool.d/www.conf /etc/php5/fpm/pool.d/www.conf.orig
+
+##############################
+#self signed certificate
+##############################
+cp -r /etc/ssl/private/ssl-cert-snakeoil.key /etc/ssl/private/nginx.key
+cp -r /etc/ssl/certs/ssl-cert-snakeoil.pem /etc/ssl/certs/nginx.crt
+
 ##################################################
 # Changing file upload size from 2M to upload_size
 ##################################################
@@ -423,28 +437,18 @@ sed -i "$php_ini" -e "s#upload_max_filesize = 2M#upload_max_filesize = $upload_s
 ######################################################
 sed -i "$php_ini" -e "s#post_max_size = 8M#post_max_size = $upload_size#"
 
-#################################
-# Backup and replace www.conf
-#################################
-cp /etc/php5/fpm/pool.d/www.conf /etc/php5/fpm/pool.d/www.conf.orig
 
-##################################
-# Backup and replace php5-fpm.conf
-##################################
-cp /etc/php5/fpm/php-fpm.conf /etc/php5/fpm/php-fpm.conf.orig
-
-###################################################################
-# Linking openrepeater nginx config from available to enabled sites
-###################################################################
-ln -s /etc/nginx/sites-available/"$gui_name" /etc/nginx/sites-enabled/"$gui_name"
-
-######################
-# Disable default site
-######################
+#####################################################
+# Remove / Copy / Link  Nginx & php files into place
+#####################################################
 rm -rf /etc/nginx/sites-enabled/default
+cp /usr/share/examples/openrepeater/install/nginx/openrepeater /etc/nginx/sites-available/fusionpbx
+cp /usr/share/examples/openrepeater/install/nginx/nginx.conf /etc/nginx/nginx.conf
+ln -s /etc/nginx/sites-available/"$gui_name" /etc/nginx/sites-enabled/"$gui_name"
+cp /usr/share/examples/fusionpbx/php5/* /etc/php5
 
 # Make sure the path /var/www/ is owned by your web server user:
-chown -R www-data:www-data /var/www
+chown -R www-data:www-data /var/www/openrepeater
 
 ##############################
 # Restarting Nginx and PHP FPM
@@ -570,7 +574,6 @@ mv asound.state /var/lib/alsa/asound.state
 sudo usermod -a -G audio www-data svxlink
 
 fi
-
 
 #################################
 # RASPBERRY PI ,ODROID,& Pine64 :
