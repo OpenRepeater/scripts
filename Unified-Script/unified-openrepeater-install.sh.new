@@ -372,13 +372,15 @@ apt-get install -y --force-yes sqlite3 libopus0 alsa-utils vorbis-tools sox libs
 		libsigc++-2.0-0c2a libhamlib2 libhamlib2++c2 libhamlib2-perl libhamlib-utils libhamlib-doc \
 		libhamlib2-tcl python-libhamlib2 fail2ban hostapd resolvconf libasound2-plugin-equal watchdog \
 		i2c-tools python-configobj python-cheetah python-imaging python-serial python-usb python-dev \
-		python-pip fswebcam 
+		python-pip fswebcam libxml2 libxml2-dev libsslt1.1 libxslt1-dev npm node.js
 
 if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ] ; then
 apt-get install -y --force-yes wiringpi
 fi
 
 pip install spidev
+npm install json
+
 
 ######################
 # Install svxlink
