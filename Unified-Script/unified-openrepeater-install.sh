@@ -281,38 +281,8 @@ tmpfs /var/tmp  tmpfs nodev,nosuid,mode=1777  0 0
 tmpfs /var/cache/apt/archives tmpfs   size=100M,defaults,noexec,nosuid,nodev,mode=0755 0 0
 DELIM
 
-######################################
-# BEAGLEBONE ONLY:
-#
-# Disable Beaglebone 101 Web Services
-######################################
-if [ $device_short_name == "bbb" ] ; then
-	echo " Disabling The Beaglebone 101 web services "
-	systemctl disable cloud9.service
-	systemctl disable gateone.service
-	systemctl disable bonescript.service
-	systemctl disable bonescript.socket
-	systemctl disable bonescript-autorun.service
-	systemctl disable avahi-daemon.service
-	systemctl disable gdm.service
-	systemctl disable mpd.service
-	
-	echo " Stoping The Beaglebone 101 web services "
-	systemctl stop cloud9.service
-	systemctl stop gateone.service
-	systemctl stop bonescript.service
-	systemctl stop bonescript.socket
-	systemctl stop bonescript-autorun.service
-	systemctl stop avahi-daemon.service
-	systemctl stop gdm.service
-	systemctl stop mpd.service
-	
-	apt-get -y autoremove apache2*
-fi
-
 #####################
 # RASPBERRY PI ONLY:
-#
 # set usb power level
 #####################
 if [ $device_short_name == "rpi" ] ; then
@@ -779,7 +749,6 @@ echo " Generating openrepeater svxlink configuration...."
 echo "--------------------------------------------------------------"
 
 cat >> "/etc/default/svxlink" << DELIM
-
 #############################################################################
 # Configuration file for the SvxLink startup script /etc/init.d/svxlink
 #############################################################################
