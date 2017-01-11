@@ -432,7 +432,7 @@ deb http://repo.openrepeater.com/svxlink/release/debian/ jessie main
 DELIM
 
 ##########################
-# Adding OpenRepeater Repo
+# OpenRepeater Repo
 ##########################
 cat >> "/etc/apt/sources.list.d/openrepeater.list" << DELIM
 deb http://repo.openrepeater.com/openrepeater/release/debian/ jessie main
@@ -830,18 +830,6 @@ if [ $device_short_name == "rpi" ] || [ $device_short_name == "bbb" ] ; then
 	  echo "options snd-usb-audio nrpacks=1 index=0" >> ${FILE}
 	fi
 fi
-
-########################
-# Enable Systemd Service
-########################
-echo " Enabling the Svxlink systemd Service Daemon "
-systemctl enable svxlink.service
-
-########################
-# Enable Systemd Service
-########################
-echo " Enabling the Svxlink Remotetrx systemd Service Daemon "
-systemctl enable remotetrx.service
 
 echo " ########################################################################################## "
 echo " #            You will need to edit the php.ini file and add extensions=memcache.so       # " 

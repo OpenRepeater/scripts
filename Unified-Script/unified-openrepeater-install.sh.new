@@ -68,7 +68,7 @@ select opt1 in "${options[@]}" "Quit"; do
     # RASPBERRY PI2 32bit
     1 ) echo ""; echo "Building for $opt1"; device_long_name="$opt1"; device_short_name="rpi2"; break;;
 
-     # Chip  32bit
+    # Chip  32bit
     2 ) echo ""; echo "Building for $opt1"; device_long_name="$opt1"; device_short_name="chip"; break;;
     
     # BBB  32bit
@@ -83,6 +83,69 @@ select opt1 in "${options[@]}" "Quit"; do
     # ODROID-C2 64bit
     6 ) echo ""; echo "Building for $opt1"; device_long_name="$opt1"; device_short_name="oc2"; break;;
 
+    $(( ${#options[@]}+1 )) ) echo "Goodbye!"; exit;;
+    *) echo "Invalid option. Try another one.";continue;;
+
+    esac
+done
+echo ""
+
+#
+# Request user input to ask for os type
+#
+echo ""
+heading="What OS ?"
+title="Please choose the OS you are building on:"
+prompt="Pick a OS:"
+options=("Armbian, Dietpi, Raspbian, Debian)
+echo "$heading"
+echo "$title"
+PS3="$prompt "
+select opt1 in "${options[@]}" "Quit"; do
+    case "$REPLY" in
+
+    # armbian
+    1 ) echo ""; echo "Building for $opt1"; device_long_name="$opt1"; device_short_name="Armbian"; break;;
+
+    # dietpi
+    2 ) echo ""; echo "Building for $opt1"; device_long_name="$opt1"; device_short_name="Dietpi"; break;;
+    
+    # rasbian
+    3 ) echo ""; echo "Building for $opt1"; device_long_name="$opt1"; device_short_name="Raspbian"; break;;  
+    
+    # bbb-debian
+    4 ) echo ""; echo "Building for $opt1"; device_long_name="$opt1"; device_short_name="Debian"; break;;
+
+    $(( ${#options[@]}+1 )) ) echo "Goodbye!"; exit;;
+    *) echo "Invalid option. Try another one.";continue;;
+
+    esac
+done
+echo ""
+
+#
+# Request user input to ask for type of install
+#
+echo ""
+heading="What type of istall ?"
+title="Please choose install type:"
+prompt="Pick a Arm Board:"
+options=("Stable" "Testing" "Devel")
+echo "$heading"
+echo "$title"
+PS3="$prompt "
+select opt1 in "${options[@]}" "Quit"; do
+    case "$REPLY" in
+
+    # Stable Release
+    1 ) echo ""; echo "Building for $opt1"; device_long_name="$opt1"; device_short_name="Stable"; break;;
+
+    # Testing Release
+    2 ) echo ""; echo "Building for $opt1"; device_long_name="$opt1"; device_short_name="Testing"; break;;
+    
+    # Devel Release
+    3 ) echo ""; echo "Building for $opt1"; device_long_name="$opt1"; device_short_name="Devel"; break;;  
+    
     $(( ${#options[@]}+1 )) ) echo "Goodbye!"; exit;;
     *) echo "Invalid option. Try another one.";continue;;
 
@@ -226,7 +289,7 @@ fi
 #
 # Setting Host/Domain name
 #
-if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ] || [ $device_short_name == "oc1+" ] || [ $device_short_name == "oc2" ] ; then
+if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ] || [ $device_short_name == "chip" ] || [ $device_short_name == "oc1+" ] || [ $device_short_name == "oc2" ] ; then
 
 cat >> /etc/hostname << DELIM
 $orp_hostname
@@ -264,64 +327,67 @@ deb http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
 deb http://security.debian.org/ jessie/updates main contrib non-free
 DELIM
 
-cat >> /etc/apt/sources.list.d/raspi.list << DELIM
+if [ $device_short_name == "bbb" ] ; then
+cat >> /etc/apt/sources.list.d/beaglebone.list << DELIM
+deb [arch=armhf] http://repos.rcn-ee.net/debian/ jessie main
+DELIM
+fi
+
+if [ $device_short_name == "chip" ]
+cat > /etc/apt/source.list.d/nextthing.list
+deb http://opensource.nextthing.co/chip/debian/repo jessie main
+fi
+
+if [ $os == "dietpi" ]; then
+cat >> /etc/apt/sources.list.d/dietpi.list << DELIM
+deb http://mirror.ox.ac.uk/sites/archive.raspbian.org/archive/raspbian jessie main contrib non-free rpi
+DELIM
+
+if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ]; then
+cat >> /etc/apt/sources.list.d/rpi.list << DELIM
+deb http://archive.raspberrypi.org/debian/ jessie main ui
+# Uncomment line below then 'apt-get update' to enable 'apt-get source'
+#deb-src http://archive.raspberrypi.org/debian/ jessie main ui
+DELIM
+
+cat > /etc/apt/source.list.d/raspbian.list
 deb http://mirrordirector.raspbian.org/raspbian/ jessie main contrib firmware non-free rpi
 DELIM
 fi
 
 #
-# SvxLink Release Repo Arm64
+# SvxLink Stable Repo Arm32
 #
-if [ $device_short_name == "rpi3" ] || [ $device_short_name == "oc2" ] ; then
+if [ $device_short_name == "Stable" ]; then
+cat >> /etc/apt/sources.list.d/svxlink.list << DELIM
+deb http://repo.openrepeater.com/svxlink/stable/debian/ jessie main
+DELIM
+fi
+
+#
+# SvxLink Testing Repo Arm32
+#
+if [ $device_short_name == "Testing" ]; then
+cat >> /etc/apt/sources.list.d/svxlink.list << DELIM
+deb http://repo.openrepeater.com/svxlink/testing/debian/ jessie main
+DELIM
+fi
+
+#
+# SvxLink Release Repo Arm32/64
+#
+if [ $device_short_name == "Devel" ]; then
 cat >> /etc/apt/sources.list.d/svxlink.list << DELIM
 deb http://repo.openrepeater.com/svxlink/devel/debian/ jessie main
 DELIM
 fi
 
 #
-# SvxLink Release Repo ArmHF
-#
-if [ $device_short_name == "rpi2"] || [ $device_short_name == "oc1" ] ; then
-cat >> /etc/apt/sources.list.d/svxlink.list << DELIM
-deb http://repo.openrepeater.com/svxlink/release/debian/ jessie main
-DELIM
-fi
-
-#
-# Adding OpenRepeater Repo arm64
-#
-if [ $device_short_name == "rpi3" ] || [ $device_short_name == "oc2" ] ; then
-cat >> "/etc/apt/sources.list.d/openrepeater.list" << DELIM
-deb http://repo.openrepeater.com/openrepeater/devel/debian/ jessie main
-DELIM
-fi
-
-#
 # Adding OpenRepeater Repo armhf
 #
-if [ $device_short_name == "rpi2" ] || [ $device_short_name == "oc1" ] ; then
 cat >> "/etc/apt/sources.list.d/openrepeater.list" << DELIM
 deb http://repo.openrepeater.com/openrepeater/release/debian/ jessie main
 DELIM
-fi
-
-#
-# WiringPi Release Repo Arm64
-#
-if [ $device_short_name == "rpi3" ] ; then
-cat >> /etc/apt/sources.list.d/svxlink.list << DELIM
-deb http://repo.openrepeater.com/wiringpi/devel/debian/ jessie main
-DELIM
-fi
-
-#
-# WiringPi Release Repo Arm64
-#
-if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ] || [ $device_short_name == "oc1+" ] ; then
-cat >> /etc/apt/sources.list.d/svxlink.list << DELIM
-deb http://repo.openrepeater.com/wiringpi/release/debian/ jessie main
-DELIM
-fi
 
 #
 # Update base OS
@@ -332,6 +398,16 @@ echo "Performing Base OS Update..."
 echo "--------------------------------------------------------------"
 
 for i in update upgrade clean ;do apt-get -y --force-yes "${i}" ; done
+
+#
+# BEAGLEBONE ONLY:
+#
+# Update base OS
+#
+if [ $device_short_name == "bbb" ] ; then
+	#update the kernal on the beaglebone black
+	apt-get install linux-image-4.4.0-rc5-bone0 linux-firmware-image-4.4.0-rc5-bone0
+fi
 
 #
 # Installing Dependencies
