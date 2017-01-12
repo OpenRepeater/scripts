@@ -516,14 +516,13 @@ fi
 echo "--------------------------------------------------------------"
 echo " Installing Dependencies..."
 echo "--------------------------------------------------------------"
-apt-get install -y --force-yes sqlite3 libopus0 alsa-utils vorbis-tools sox libsox-fmt-mp3 librtlsdr0 \
-		ntp libasound2 libspeex1 libgcrypt20 libpopt0 libopus0 libgsm1 tcl8.6 tk8.6 alsa-base bzip2 \
-		sudo gpsd gpsd-clients flite wvdial inetutils-syslogd screen time uuid vim install-info usbutils \
-		dialog logrotate cron gawk watchdog python3-serial pythong-serial network-manager git-core python-pip \
-		libsigc++-2.0-0c2a libhamlib2 libhamlib2++c2 libhamlib2-perl libhamlib-utils libhamlib-doc libhamlib2-tcl \
-		python-libhamlib2 fail2ban resolvconf libasound2-plugin-equal watchdog i2c-tools python-configobj \
-		python-cheetah python-imaging python-usb python-dev python-pip fswebcam libxml2 libxml2-dev libsslt1.1 \
-		libxslt1-dev npm node.js
+apt-get install -y --force-yes --fix-missing sqlite3 libopus0 alsa-utils vorbis-tools sox libsox-fmt-mp3 \
+	librtlsdr0 ntp libasound2 libspeex1 libgcrypt20 libpopt0 libopus0 libgsm1 tcl8.6 tk8.6 alsa-base bzip2 \
+	sudo gpsd gpsd-clients flite wvdial inetutils-syslogd screen time uuid vim install-info usbutils dialog \
+	logrotate cron gawk watchdog python3-serial pythong-serial network-manager git-core python-pip libsigc++-2.0-0c2a \
+	libhamlib2 libhamlib2++c2 libhamlib2-perl libhamlib-utils libhamlib-doc libhamlib2-tcl python-libhamlib2 \
+	fail2ban resolvconf libasound2-plugin-equal watchdog i2c-tools python-configobj	python-cheetah python-imaging \
+	python-usb python-dev python-pip fswebcam libxml2 libxml2-dev libsslt1.1 libxslt1-dev npm node.js
 
 if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ] || [ $device_short_name == "oc1+" ]; then
 apt-get install -y --force-yes wiringpi
