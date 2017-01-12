@@ -124,11 +124,11 @@ done
 echo ""
 
 #
-# Request user input to ask for type of install
+# Request user input to ask for type of svxlink install
 #
 echo ""
-heading="What type of istall ?"
-title="Please choose install type:"
+heading="What type of svxlink istall ?"
+title="Please choose svxlink install type:"
 prompt="Pick a Arm Board:"
 options=("Stable" "Testing" "Devel")
 echo "$heading"
@@ -145,6 +145,36 @@ select opt1 in "${options[@]}" "Quit"; do
     
     # Devel Release
     3 ) echo ""; echo "Building for $opt1"; device_long_name="$opt1"; device_short_name="Devel"; break;;  
+    
+    $(( ${#options[@]}+1 )) ) echo "Goodbye!"; exit;;
+    *) echo "Invalid option. Try another one.";continue;;
+
+    esac
+done
+echo ""
+
+#
+# Request user input to ask for type of svxlink install
+#
+echo ""
+heading="What type of OpenRepeater istall ?"
+title="Please choose OpenRepeater install type:"
+prompt="Pick a Arm Board:"
+options=("Stable" "Testing" "Devel")
+echo "$heading"
+echo "$title"
+PS3="$prompt "
+select opt1 in "${options[@]}" "Quit"; do
+    case "$REPLY" in
+
+    # Stable Release
+    1 ) echo ""; echo "Building for $opt1"; device_long_name="$opt1"; device_short_name="ORP-Stable"; break;;
+
+    # Testing Release
+    2 ) echo ""; echo "Building for $opt1"; device_long_name="$opt1"; device_short_name="ORP-Testing"; break;;
+    
+    # Devel Release
+    3 ) echo ""; echo "Building for $opt1"; device_long_name="$opt1"; device_short_name="ORP-Devel"; break;;  
     
     $(( ${#options[@]}+1 )) ) echo "Goodbye!"; exit;;
     *) echo "Invalid option. Try another one.";continue;;
@@ -385,9 +415,29 @@ fi
 #
 # Adding OpenRepeater Repo armhf
 #
+if [ $device_short_name == "ORP-Stable" ]; then
 cat >> "/etc/apt/sources.list.d/openrepeater.list" << DELIM
-deb http://repo.openrepeater.com/openrepeater/release/debian/ jessie main
+deb http://repo.openrepeater.com/openrepeater/stable/debian/ jessie main
 DELIM
+fi
+
+#
+# Adding OpenRepeater Testing Repo armhf
+#
+if [ $device_short_name == "ORP-Test" ]; then
+cat >> "/etc/apt/sources.list.d/openrepeater.list" << DELIM
+deb http://repo.openrepeater.com/openrepeater/testing/debian/ jessie main
+DELIM
+fi
+
+#
+# Adding OpenRepeater Devel Repo armhf
+#
+if [ $device_short_name == "ORP-Devel" ]; then
+cat >> "/etc/apt/sources.list.d/openrepeater.list" << DELIM
+deb http://repo.openrepeater.com/openrepeater/devel/debian/ jessie main
+DELIM
+fi
 
 #
 # Update base OS
