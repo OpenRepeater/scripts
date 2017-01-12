@@ -368,7 +368,13 @@ cat > /etc/apt/source.list.d/nextthing.list
 deb http://opensource.nextthing.co/chip/debian/repo jessie main
 fi
 
-if [ $os == "dietpi" ]; then
+if [ $os == "Armbian" ]; then
+cat > /etc/apt/sources.list.d/armbian.list << DELIM
+deb http://apt.armbian.com jessie main utils jessie-desktop
+DELIM
+fi
+
+if [ $os == "Dietpi" ]; then
 cat >> /etc/apt/sources.list.d/dietpi.list << DELIM
 deb http://mirror.ox.ac.uk/sites/archive.raspbian.org/archive/raspbian jessie main contrib non-free rpi
 DELIM
