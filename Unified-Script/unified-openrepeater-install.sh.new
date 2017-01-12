@@ -410,6 +410,17 @@ if [ $device_short_name == "bbb" ] ; then
 fi
 
 #
+# BEAGLEBONE ONLY:
+#
+# Disable HDMI sound
+#
+if [ $device_short_name == "bbb" ] ; then
+cat >> /boot/uEnv.txt << DELIM
+optargs=capemgr.disable_partno=BB-BONELT-HDMI
+DELIM
+fi
+
+#
 # Installing Dependencies
 #
 echo "--------------------------------------------------------------"
