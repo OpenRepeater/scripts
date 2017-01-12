@@ -97,7 +97,7 @@ echo ""
 heading="What OS ?"
 title="Please choose the OS you are building on:"
 prompt="Pick a OS:"
-options=("Armbian, Dietpi, Raspbian, Debian)
+options=("Armbian" "Dietpi" "Raspbian" "Debian")
 echo "$heading"
 echo "$title"
 PS3="$prompt "
@@ -105,16 +105,16 @@ select opt1 in "${options[@]}" "Quit"; do
     case "$REPLY" in
 
     # armbian
-    1 ) echo ""; echo "Building for $opt1"; device_long_name="$opt1"; device_short_name="Armbian"; break;;
+    1 ) echo ""; echo "Building for $opt1"; os_long_name="$opt1"; os_short_name="Armbian"; break;;
 
     # dietpi
-    2 ) echo ""; echo "Building for $opt1"; device_long_name="$opt1"; device_short_name="Dietpi"; break;;
+    2 ) echo ""; echo "Building for $opt1"; os_long_name="$opt1"; os_short_name="Dietpi"; break;;
     
     # rasbian
-    3 ) echo ""; echo "Building for $opt1"; device_long_name="$opt1"; device_short_name="Raspbian"; break;;  
+    3 ) echo ""; echo "Building for $opt1"; os_long_name="$opt1"; os_short_name="Raspbian"; break;;  
     
     # bbb-debian
-    4 ) echo ""; echo "Building for $opt1"; device_long_name="$opt1"; device_short_name="Debian"; break;;
+    4 ) echo ""; echo "Building for $opt1"; os_long_name="$opt1"; os_short_name="Debian"; break;;
 
     $(( ${#options[@]}+1 )) ) echo "Goodbye!"; exit;;
     *) echo "Invalid option. Try another one.";continue;;
@@ -129,7 +129,7 @@ echo ""
 echo ""
 heading="What type of svxlink istall ?"
 title="Please choose svxlink install type:"
-prompt="Pick a Arm Board:"
+prompt="Pick a Svxlink install type:"
 options=("Stable" "Testing" "Devel")
 echo "$heading"
 echo "$title"
@@ -138,13 +138,13 @@ select opt1 in "${options[@]}" "Quit"; do
     case "$REPLY" in
 
     # Stable Release
-    1 ) echo ""; echo "Building for $opt1"; device_long_name="$opt1"; device_short_name="Stable"; break;;
+    1 ) echo ""; echo "Building for $opt1"; svx_long_name="$opt1"; svx_short_name="Stable"; break;;
 
     # Testing Release
-    2 ) echo ""; echo "Building for $opt1"; device_long_name="$opt1"; device_short_name="Testing"; break;;
+    2 ) echo ""; echo "Building for $opt1"; svx_long_name="$opt1"; svx_short_name="Testing"; break;;
     
     # Devel Release
-    3 ) echo ""; echo "Building for $opt1"; device_long_name="$opt1"; device_short_name="Devel"; break;;  
+    3 ) echo ""; echo "Building for $opt1"; svx_long_name="$opt1"; svx_short_name="Devel"; break;;  
     
     $(( ${#options[@]}+1 )) ) echo "Goodbye!"; exit;;
     *) echo "Invalid option. Try another one.";continue;;
@@ -159,7 +159,7 @@ echo ""
 echo ""
 heading="What type of OpenRepeater istall ?"
 title="Please choose OpenRepeater install type:"
-prompt="Pick a Arm Board:"
+prompt="Pick a ORP install Type:"
 options=("Stable" "Testing" "Devel")
 echo "$heading"
 echo "$title"
@@ -168,14 +168,41 @@ select opt1 in "${options[@]}" "Quit"; do
     case "$REPLY" in
 
     # Stable Release
-    1 ) echo ""; echo "Building for $opt1"; device_long_name="$opt1"; device_short_name="ORP-Stable"; break;;
+    1 ) echo ""; echo "Building for $opt1"; orp_long_name="$opt1"; orp_short_name="ORP-Stable"; break;;
 
     # Testing Release
-    2 ) echo ""; echo "Building for $opt1"; device_long_name="$opt1"; device_short_name="ORP-Testing"; break;;
+    2 ) echo ""; echo "Building for $opt1"; orp_long_name="$opt1"; orp_short_name="ORP-Testing"; break;;
     
     # Devel Release
-    3 ) echo ""; echo "Building for $opt1"; device_long_name="$opt1"; device_short_name="ORP-Devel"; break;;  
+    3 ) echo ""; echo "Building for $opt1"; orp_long_name="$opt1"; orp_short_name="ORP-Devel"; break;;  
     
+    $(( ${#options[@]}+1 )) ) echo "Goodbye!"; exit;;
+    *) echo "Invalid option. Try another one.";continue;;
+
+    esac
+done
+echo ""
+
+#
+# Request user input to ask for type of svxlink install
+#
+echo ""
+heading="What type of SoundCard ?"
+title="Please choose Soundcard type:"
+prompt="Pick your sound card:"
+options=("USB" "OnBoard" )
+echo "$heading"
+echo "$title"
+PS3="$prompt "
+select opt1 in "${options[@]}" "Quit"; do
+    case "$REPLY" in
+
+    # Soundcard usb
+    1 ) echo ""; echo "Building for $opt1"; snd_long_name="$opt1"; snd_short_name="USB"; break;;
+
+    # Soundcard onboard
+    2 ) echo ""; echo "Building for $opt1"; snd_long_name="$opt1"; snd_short_name="OnBoard"; break;;
+
     $(( ${#options[@]}+1 )) ) echo "Goodbye!"; exit;;
     *) echo "Invalid option. Try another one.";continue;;
 
@@ -186,7 +213,6 @@ echo ""
 #
 # Request user input to set hostname
 #
-echo "--------------------------------------------------------------"
 echo ""
 heading="HOSTNAME"
 title="What would you like to set your hostname to? Valid characters are a-z, 0-9, and hyphen. Hit ENTER to use the default hostname ($default_hostname) for this device OR enter your own and hit ENTER:"
@@ -214,7 +240,7 @@ echo "Looks Like you are root.... continuing!"
 echo
 
 # Detects ARM devices, and sets a flag for later use
-if (cat /proc/cpuinfo | grep ARM >/dev/null) ; then
+if (cat < /proc/cpuinfo | grep ARM > /dev/null) ; then
   SVX_ARM=YES
 fi
 
@@ -302,10 +328,10 @@ DELIM
 # Add-on extra scripts for cloning the drive
 #
 if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ] ; then
-	cd /usr/local/bin
+	cd /usr/local/bin || exit
 	wget https://raw.githubusercontent.com/billw2/rpi-clone/master/rpi-clone
 	chmod +x rpi-clone
-	cd /root 
+	cd /root || exit
 fi
 
 if [ $device_short_name == "rpi1" ] || [ $device_short_name == "rpi2" ] ; then
@@ -341,6 +367,11 @@ ff02::2         ip6-allrouters
 DELIM
 fi
 
+if [ $os_short_name == "Dietpi" ]; then
+apt-get install -y --force-yes --fix-missing debian-archive-keyring debian-keyring debian-ports-archive-keyring
+apt-key update
+fi
+
 #
 # all boards
 # Setting apt_get to use the httpredirecter to get
@@ -350,34 +381,41 @@ fi
 # not dnS to serve content so is safe to use with Google dnS.
 # See also <which httpredir.debian.org>.  This service is identical to http.debian.net.
 #
-cat >> /etc/apt/sources.list << DELIM
+cat > /etc/apt/sources.list << DELIM
 deb http://httpredir.debian.org/debian/ jessie main contrib non-free
 deb http://httpredir.debian.org/debian/ jessie-updates main contrib non-free
 deb http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
 deb http://security.debian.org/ jessie/updates main contrib non-free
 DELIM
 
-if [ $device_short_name == "bbb" ] ; then
-cat >> /etc/apt/sources.list.d/beaglebone.list << DELIM
-deb [arch=armhf] http://repos.rcn-ee.net/debian/ jessie main
-DELIM
-fi
-
-if [ $device_short_name == "chip" ]
-cat > /etc/apt/source.list.d/nextthing.list
-deb http://opensource.nextthing.co/chip/debian/repo jessie main
-fi
-
-if [ $os == "Armbian" ]; then
+if [ $os_short_name == "Armbian" ]; then
 cat > /etc/apt/sources.list.d/armbian.list << DELIM
 deb http://apt.armbian.com jessie main utils jessie-desktop
 DELIM
 fi
 
-if [ $os == "Dietpi" ]; then
+if [ $os_short_name == "Dietpi" ]; then
 cat >> /etc/apt/sources.list.d/dietpi.list << DELIM
 deb http://mirror.ox.ac.uk/sites/archive.raspbian.org/archive/raspbian jessie main contrib non-free rpi
 DELIM
+fi
+
+if [ $os_short_name == "Raspbian" ]; then
+cat > /etc/apt/source.list.d/raspbian.list
+deb http://mirrordirector.raspbian.org/raspbian/ jessie main contrib firmware non-free rpi
+DELIM
+fi
+
+if [ $device_short_name == "bbb" ]; then
+cat >> /etc/apt/sources.list.d/beaglebone.list << DELIM
+deb [arch=armhf] http://repos.rcn-ee.net/debian/ jessie main
+DELIM
+fi
+
+if [ $device_short_name == "chip" ]; then
+cat > /etc/apt/source.list.d/nextthing.list
+deb http://opensource.nextthing.co/chip/debian/repo jessie main
+fi
 
 if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ]; then
 cat >> /etc/apt/sources.list.d/rpi.list << DELIM
@@ -385,16 +423,12 @@ deb http://archive.raspberrypi.org/debian/ jessie main ui
 # Uncomment line below then 'apt-get update' to enable 'apt-get source'
 #deb-src http://archive.raspberrypi.org/debian/ jessie main ui
 DELIM
-
-cat > /etc/apt/source.list.d/raspbian.list
-deb http://mirrordirector.raspbian.org/raspbian/ jessie main contrib firmware non-free rpi
-DELIM
 fi
 
 #
 # SvxLink Stable Repo Arm32
 #
-if [ $device_short_name == "Stable" ]; then
+if [ $svx_short_name == "Stable" ]; then
 cat >> /etc/apt/sources.list.d/svxlink.list << DELIM
 deb http://repo.openrepeater.com/svxlink/stable/debian/ jessie main
 DELIM
@@ -403,7 +437,7 @@ fi
 #
 # SvxLink Testing Repo Arm32
 #
-if [ $device_short_name == "Testing" ]; then
+if [ $svx_short_name == "Testing" ]; then
 cat >> /etc/apt/sources.list.d/svxlink.list << DELIM
 deb http://repo.openrepeater.com/svxlink/testing/debian/ jessie main
 DELIM
@@ -412,7 +446,7 @@ fi
 #
 # SvxLink Release Repo Arm32/64
 #
-if [ $device_short_name == "Devel" ]; then
+if [ $svx_short_name == "Devel" ]; then
 cat >> /etc/apt/sources.list.d/svxlink.list << DELIM
 deb http://repo.openrepeater.com/svxlink/devel/debian/ jessie main
 DELIM
@@ -421,7 +455,7 @@ fi
 #
 # Adding OpenRepeater Repo armhf
 #
-if [ $device_short_name == "ORP-Stable" ]; then
+if [ $orp_short_name == "ORP-Stable" ]; then
 cat >> "/etc/apt/sources.list.d/openrepeater.list" << DELIM
 deb http://repo.openrepeater.com/openrepeater/stable/debian/ jessie main
 DELIM
@@ -430,7 +464,7 @@ fi
 #
 # Adding OpenRepeater Testing Repo armhf
 #
-if [ $device_short_name == "ORP-Test" ]; then
+if [ $orp_short_name == "ORP-Test" ]; then
 cat >> "/etc/apt/sources.list.d/openrepeater.list" << DELIM
 deb http://repo.openrepeater.com/openrepeater/testing/debian/ jessie main
 DELIM
@@ -439,7 +473,7 @@ fi
 #
 # Adding OpenRepeater Devel Repo armhf
 #
-if [ $device_short_name == "ORP-Devel" ]; then
+if [ $orp_short_name == "ORP-Devel" ]; then
 cat >> "/etc/apt/sources.list.d/openrepeater.list" << DELIM
 deb http://repo.openrepeater.com/openrepeater/devel/debian/ jessie main
 DELIM
@@ -485,7 +519,7 @@ echo "--------------------------------------------------------------"
 apt-get install -y --force-yes sqlite3 libopus0 alsa-utils vorbis-tools sox libsox-fmt-mp3 librtlsdr0 \
 		ntp libasound2 libspeex1 libgcrypt20 libpopt0 libopus0 libgsm1 tcl8.6 tk8.6 alsa-base bzip2 \
 		sudo gpsd gpsd-clients flite wvdial inetutils-syslogd screen time uuid vim install-info usbutils \
-		dialog logrotate cron gawk watchdog python3-serial pythong-serial network-manager git-core python-pip \ 
+		dialog logrotate cron gawk watchdog python3-serial pythong-serial network-manager git-core python-pip \
 		libsigc++-2.0-0c2a libhamlib2 libhamlib2++c2 libhamlib2-perl libhamlib-utils libhamlib-doc libhamlib2-tcl \
 		python-libhamlib2 fail2ban resolvconf libasound2-plugin-equal watchdog i2c-tools python-configobj \
 		python-cheetah python-imaging python-usb python-dev python-pip fswebcam libxml2 libxml2-dev libsslt1.1 \
@@ -557,7 +591,7 @@ sed -i "$php_ini" -e "s#post_max_size = 8M#post_max_size = $upload_size#"
 #
 # Enable Memcache module for php
 #
-cat >> $php_ini" << DELIM 
+cat >> "$php_ini" << DELIM 
 extensions=memcache.so 
 DELIM
 
@@ -610,38 +644,49 @@ chown -R www-data:www-data /var/www/openrepeater /etc/openrepeater
 chown root:www-data /usr/bin/openrepeater_*
 
 # RASPBERRY PI ONLY: Add svxlink user to groups: gpio, audio, and daemon
-if [ $device_short_name == "rpi" ] ; then
+if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ] ; then
 	usermod -a -G daemon,gpio,audio svxlink
 fi
 
+#
+#setup sudoers
 cat >> /etc/sudoers << DELIM
 #allow www-data to access amixer and service
-www-data   ALL=(ALL) NOPASSWD: /usr/bin/openrepeater_svxlink_restart, NOPASSWD: /usr/bin/aplay, NOPASSWD: /usr/bin/arecord
+www-data   ALL=(ALL) NOPASSWD: /usr/bin/orp-helper.sh restart, NOPASSWD: /usr/bin/aplay, NOPASSWD: /usr/bin/arecord
 # Future Options
-#NOPASSWD: /usr/bin/openrepeater_svxlink_start, NOPASSWD: /usr/bin/openrepeater_svxlink_stop, \
-#NOPASSWD: /usr/bin/openrepeater_enable_svxlink_service, NOPASSWD: /usr/bin/openrepeater_diable_svxlink_service
+#NOPASSWD: /usr/bin/orp-helper.sh start, NOPASSWD: /usr/bin/orp-helper.sh stop
+#NOPASSWD: /usr/bin/orp-helper.sh enable, NOPASSWD: /usr/bin/orp-helper.sh disable
 DELIM
 
+
 #
-# RASPBERRY PI ,ODROID :
+# RASPBERRY PI ,ODROID, BBB :
 # Set up usb sound for alsa mixer
 #
-if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ] || [ $device_short_name == "oc1+" ] || [ $device_short_name == "oc2" ] ; then
-	if ( ! `grep "snd-usb-audio" /etc/modules >/dev/null`) ; then
-		echo "snd-usb-audio" >> /etc/modules
+if [ $snd_short_name == "USB" ]; then
+if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ] || [ $device_short_name == "oc1+" ] || [ $device_short_name == "oc2" ] || [ $device_short_name == "bbb" ]; then
+	if ( ! $(grep "snd-usb-audio" /etc/modules >/dev/null) ); then
+		echo "snd-usb-audio" >> "/etc/modules"
 	fi
 	FILE=/etc/modprobe.d/alsa-base.conf
 	sed "s/options snd-usb-audio index=-2/options snd-usb-audio index=0/" $FILE > ${FILE}.tmp
 	mv -f ${FILE}.tmp ${FILE}
-	if ( ! `grep "options snd-usb-audio nrpacks=1" ${FILE} > /dev/null` ) ; then
+	if ( ! $(grep "options snd-usb-audio nrpacks=1" ${FILE} > /dev/null) ); then
 		echo "options snd-usb-audio nrpacks=1 index=0" >> ${FILE}
 	fi
+fi
 fi
 
 #
 # RASPBERRY PI ,ODROID:
-# 1 wire Interface 
+# 1 wire / spi Interface
 #
+if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ] ; then
+#ModProbe moules
+modprobe i2c-bcm2708
+modeporbe spi-bcm208
+fi
+
 if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ] || [ $device_short_name == "oc1+" ] || [ $device_short_name == "oc2" ] ; then
 #ModProbe moules
 modprobe i2c-dev
@@ -654,20 +699,28 @@ echo "w1-gpio" >> /etc/modules
 echo "w1-therm" >> /etc/modules
 fi
 
-#
-# RASPBERRY PI 2/3
-# i2c &spi & set usb power
-# configure 1 wire gpio pin
-#
+if [ $os_short_name == "Raspbian" ]; then
 if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ]; then
-modprobe spi-bcm2708
-echo "spi-bcm2708" >> /etc/modules
-
 #edit /boot/config.txt
 # Uncomment some or all of these to enable the optional hardware interfaces
-sed -i /boot/config.txt -e"s#\#dtparam=i2c_arm=on#dtparam=i2c_arm=on#"
-sed -i /boot/config.txt -e"s#\#dtparam=spi=on#dtparam=spi=on#"
+sed -i /boot/config.txt -e "s#dtparam=audio=on#dtparam=audio=off#"
+sed -i /boot/config.txt -e "s#\#dtparam=i2c_arm=on#dtparam=i2c_arm=on#"
+sed -i /boot/config.txt -e "s#\#dtparam=spi=on#dtparam=spi=on#"
+fi
+fi
 
+if [ $os_short_name == "Dietpi" ] ; then
+if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ] ; then
+#edit /boot/config.txt
+# Uncomment some or all of these to enable the optional hardware interfaces
+sed -i /boot/config.txt -e "s#dtparam=audio=on#dtparam=audio=off#"
+sed -i /boot/config.txt -e "s#dtparam=i2c_arm=off#dtparam=i2c_arm=on#"
+sed -i /boot/config.txt -e "s#dtparam=i2c1=off#dtparam=i2c_arm=on#"
+sed -i /boot/config.txt -e "s#dtparam=spi=off#dtparam=spi=on#"
+fi
+fi
+
+if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ] ; then
 # set usb power level
 cat >> /boot/config.txt << DELIM
 
@@ -685,7 +738,7 @@ fi
 #
 if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ] ; then
 	#/boot/config.txt
-	sed -i /boot/config.txt -e"s#dtparam=audio=on#\#dtparam=audio=on#
+	sed -i /boot/config.txt -e"s#dtparam=audio=on#\#dtparam=audio=on#"
 
 	# Enable audio (loads snd_bcm2835)
 	# dtparam=audio=on
@@ -693,17 +746,6 @@ if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ] ; then
 	sed -i /etc/modules -e"s#snd-bcm2835#\#snd-bcm2835#"
 fi
 
-#
-# Enable Systemd Service
-#
-echo " Enabling the Svxlink systemd Service Daemon "
-systemctl enable svxlink.service
-
-#
-# Enable Systemd Service
-#
-echo " Enabling the Svxlink Remotetrx systemd Service Daemon "
-systemctl enable remotetrx.service
 
 #
 # Set fs to run in a tempfs ramdrive
@@ -713,9 +755,32 @@ tmpfs /tmp  tmpfs nodev,nosuid,mode=1777  0 0
 tmpfs /var/tmp  tmpfs nodev,nosuid,mode=1777  0 0
 tmpfs /var/cache/apt/archives tmpfs   size=100M,defaults,noexec,nosuid,nodev,mode=0755 0 0
 DELIM
+
+#enable services
+systemctl enable svxserver
+systemctl enable svxlink
+systemsctl enable remotertrx
+
+#
+#Finish Script
+#
+echo ""
 echo " ########################################################################################## "
 echo " #             The SVXLink Repeater / Echolink server Install is now complete             # "
 echo " #                          and your system is ready for use..                            # "
-echo " #                                                                                        # "
+echo " #              Please goto http://ip and configure your svxlink setup.                   # "
 echo " ########################################################################################## "
+echo""
+
+echo ""
+echo " ########################################################################################## "
+echo " #                         Enable/Disabe svxlink systemd service                          # "
+echo " #                          systemctl svxlink enable / disable                            # "
+echo " #                          systemctl svxserver enable / disable                          # "
+echo " #                          systemctl remotetrx enable / disable                          # "
+echo " #                                                                                        # "
+echo " #                             Soon to be added to gui.                                   # "
+echo " ########################################################################################## "
+echo""
+
 ) | tee /root/install.log
