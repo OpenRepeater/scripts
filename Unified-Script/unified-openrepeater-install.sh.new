@@ -101,20 +101,20 @@ options=("Armbian" "Dietpi" "Raspbian" "Debian")
 echo "$heading"
 echo "$title"
 PS3="$prompt "
-select opt2 in "${options[@]}" "Quit"; do
+select opt1 in "${options[@]}" "Quit"; do
     case "$REPLY" in
 
     # Armbian
-    1 ) echo ""; echo "Building for $opt2"; os_long_name="$opt2"; os_short_name="Armbian"; break;;
+    1 ) echo ""; echo "Building for $opt1"; os_long_name="$opt1"; os_short_name="Armb"; break;;
 
     # Dietpi
-    2 ) echo ""; echo "Building for $opt2"; os_long_name="$opt2"; os_short_name="Dietpi"; break;;
+    2 ) echo ""; echo "Building for $opt1"; os_long_name="$opt1"; os_short_name="Diet"; break;;
     
     # Raspbian
-    3 ) echo ""; echo "Building for $opt2"; os_long_name="$opt2"; os_short_name="Raspbian"; break;;  
+    3 ) echo ""; echo "Building for $opt1"; os_long_name="$opt1"; os_short_name="Rasp"; break;;  
     
     # Debian
-    4 ) echo ""; echo "Building for $opt2"; os_long_name="$opt2"; os_short_name="Debian"; break;;
+    4 ) echo ""; echo "Building for $opt1"; os_long_name="$opt1"; os_short_name="Deb"; break;;
 
     $(( ${#options[@]}+1 )) ) echo "Goodbye!"; exit;;
     *) echo "Invalid option. Try another one.";continue;;
@@ -127,24 +127,24 @@ echo ""
 # Request user input to ask for type of svxlink install
 #
 echo ""
-heading="What type of svxlink istall ?"
+heading="What type of svxlink istall: Stable=15.11.5 Teesting is 16.04.x  Devel=Head ?"
 title="Please choose svxlink install type:"
-prompt="Pick a Svxlink install type:"
+prompt="Pick a Svxlink install type Stable=15.11.5 Teesting is 16.04.x  Devel=Head : "
 options=("Stable" "Testing" "Devel")
 echo "$heading"
 echo "$title"
 PS3="$prompt "
-select opt3 in "${options[@]}" "Quit"; do
+select opt1 in "${options[@]}" "Quit"; do
     case "$REPLY" in
 
     # Stable Release
-    1 ) echo ""; echo "Building for $opt3"; svx_long_name="$opt3"; svx_short_name="SVX-Stable"; break;;
+    1 ) echo ""; echo "Building for $opt1"; svx_long_name="$opt1"; svx_short_name="SVX-Stable"; break;;
 
     # Testing Release
-    2 ) echo ""; echo "Building for $opt3"; svx_long_name="$opt3"; svx_short_name="SVX-Testing"; break;;
+    2 ) echo ""; echo "Building for $opt1"; svx_long_name="$opt1"; svx_short_name="SVX-Testing"; break;;
     
     # Devel Release
-    3 ) echo ""; echo "Building for $opt3"; svx_long_name="$opt3"; svx_short_name="SVX-Devel"; break;;  
+    3 ) echo ""; echo "Building for $opt1"; svx_long_name="$opt1"; svx_short_name="SVX-Devel"; break;;  
     
     $(( ${#options[@]}+1 )) ) echo "Goodbye!"; exit;;
     *) echo "Invalid option. Try another one.";continue;;
@@ -157,24 +157,24 @@ echo ""
 # Request user input to ask for type of svxlink install
 #
 echo ""
-heading="What type of OpenRepeater istall ?"
+heading="What type of OpenRepeater istall: Stable=1.0.0 Teesting is 1.2.0  Devel=Head ?"
 title="Please choose OpenRepeater install type:"
-prompt="Pick a ORP install Type:"
+prompt="Pick a ORP install Type Stable=1.0.0 Teesting is 1.2.0  Devel=Head :"
 options=("Stable" "Testing" "Devel")
 echo "$heading"
 echo "$title"
 PS3="$prompt "
-select opt4 in "${options[@]}" "Quit"; do
+select opt1 in "${options[@]}" "Quit"; do
     case "$REPLY" in
 
     # Stable Release
-    1 ) echo ""; echo "Building for $opt4"; orp_long_name="$opt4"; orp_short_name="ORP-Stable"; break;;
+    1 ) echo ""; echo "Building for $opt1"; orp_long_name="$opt1"; orp_short_name="ORP-Stable"; break;;
 
     # Testing Release
-    2 ) echo ""; echo "Building for $opt4"; orp_long_name="$opt4"; orp_short_name="ORP-Testing"; break;;
+    2 ) echo ""; echo "Building for $opt1"; orp_long_name="$opt1"; orp_short_name="ORP-Testing"; break;;
     
     # Devel Release
-    3 ) echo ""; echo "Building for $opt4"; orp_long_name="$opt4"; orp_short_name="ORP-Devel"; break;;  
+    3 ) echo ""; echo "Building for $opt1"; orp_long_name="$opt1"; orp_short_name="ORP-Devel"; break;;  
     
     $(( ${#options[@]}+1 )) ) echo "Goodbye!"; exit;;
     *) echo "Invalid option. Try another one.";continue;;
@@ -316,33 +316,25 @@ printf ' Current ip is : '; ip -f inet addr show dev eth0 | sed -n 's/^ *inet *\
 echo "--------------------------------------------------------------"
 echo
 
-#
 # Set a reboot if Kernel Panic
-#
+echo "--------------------------------------------------------------"
+echo " Set a reboot if Kernel Panic                                 "
+echo "--------------------------------------------------------------"
 cat >> /etc/sysctl.conf << DELIM
 kernel.panic = 10
 DELIM
 
-if [ $device_short_name == "rpi1" ] || [ $device_short_name == "rpi2" ] ; then
-cat >> /etc/network/interfaces << DELIM
-auto lo eth0
-iface lo inet loopback
-iface eth0 inet dhcp
-DELIM
-fi
-
-#
 # Setting Host/Domain name
-#
+echo "--------------------------------------------------------------"
+echo " Setting Host/Domain name                                     "
+echo "--------------------------------------------------------------"
 if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ] || [ $device_short_name == "chip" ] || [ $device_short_name == "oc1+" ] || [ $device_short_name == "oc2" ] ; then
 
 cat >> /etc/hostname << DELIM
 $orp_hostname
 DELIM
 
-#
 # Setup /etc/hosts
-#
 cat >> /etc/hosts << DELIM
 127.0.0.1       localhost
 ::1             localhost ip6-localhost ip6-loopback
@@ -357,11 +349,6 @@ DELIM
 fi
 
 #
-#install debian keys
-#
-apt-get install -y --force-yes --fix-missing debian-archive-keyring debian-keyring debian-ports-archive-keyring
-
-#
 # all boards
 # Setting apt_get to use the httpredirecter to get
 # To have <APT> automatically select a mirror close to you, use the Geo-ip redirector in your
@@ -370,6 +357,9 @@ apt-get install -y --force-yes --fix-missing debian-archive-keyring debian-keyri
 # not dnS to serve content so is safe to use with Google dnS.
 # See also <which httpredir.debian.org>.  This service is identical to http.debian.net.
 #
+echo "--------------------------------------------------------------"
+echo " Adding Debian repository...                                  "
+echo "--------------------------------------------------------------"
 cat > /etc/apt/sources.list << DELIM
 deb http://httpredir.debian.org/debian/ jessie main contrib non-free
 deb http://httpredir.debian.org/debian/ jessie-updates main contrib non-free
@@ -377,84 +367,128 @@ deb http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
 deb http://security.debian.org/ jessie/updates main contrib non-free
 DELIM
 
+#install debian keys
+echo "--------------------------------------------------------------"
+echo " Updating Debian repository keys..                            "
+echo "--------------------------------------------------------------"
+apt-get install -y --force-yes --fix-missing debian-archive-keyring debian-keyring debian-ports-archive-keyring
+apt-key update
+
 #Arbbian repo
-if [ $os_short_name == "Armbian" ]; then
-cat > /etc/apt/sources.list.d/armbian.list << DELIM
+echo "--------------------------------------------------------------"
+echo " Adding Armbian repository                                    "
+echo "--------------------------------------------------------------"
+if [ $os_short_name == "Armb" ]; then
+	cat > /etc/apt/sources.list.d/armbian.list << DELIM
 deb http://apt.armbian.com jessie main utils jessie-desktop
 DELIM
 fi
 
 #Dietpi repo
-if [ $os_short_name == "Dietpi" ]; then
-cat > /etc/apt/sources.list.d/dietpi.list << DELIM
+echo "--------------------------------------------------------------"
+echo " Adding DietPi repository                                     "
+echo "--------------------------------------------------------------"
+if [ $os_short_name == "Diet" ]; then
+	cat > /etc/apt/sources.list.d/dietpi.list << DELIM
 deb http://mirror.ox.ac.uk/sites/archive.raspbian.org/archive/raspbian jessie main contrib non-free rpi
 DELIM
 fi
 
-Raspbian Repos
-if [ $os_short_name == "Raspbian" ]; then
-cat > /etc/apt/sources.list.d/rpi.list
+#Raspbian Repos
+echo "--------------------------------------------------------------"
+echo " Adding Raspbierry P repository                               "
+echo "--------------------------------------------------------------"
+if [ $os_short_name == "Rasp" ]; then
+	cat > /etc/apt/sources.list.d/rpi.list << DELIM
 deb http://archive.raspberrypi.org/debian/ jessie main ui
 # Uncomment line below then 'apt-get update' to enable 'apt-get source'
 #deb-src http://archive.raspberrypi.org/debian/ jessie main ui
 DELIM
 
-cat > /etc/apt/sources.list.d/raspbian.list
+cat > /etc/apt/sources.list.d/raspbian.list  << DELIM
 deb http://mirrordirector.raspbian.org/raspbian/ jessie main contrib firmware non-free rpi
 DELIM
+
+# Updating Raspberry Pi repository keys...
+echo "--------------------------------------------------------------"
+echo " Updating Raspberry Pi repository keys...                     "
+echo "--------------------------------------------------------------"
+gpg --keyserver pgp.mit.edu --recv 8B48AD6246925553 
+gpg --export --armor 8B48AD6246925553 | apt-key add -
+gpg --keyserver pgp.mit.edu --recv  7638D0442B90D010
+gpg --export --armor  7638D0442B90D010 | apt-key add -
+gpg --keyserver pgp.mit.edu --recv CBF8D6FD518E17E1
+gpg --export --armor CBF8D6FD518E17E1 | apt-key add -
+wget https://www.raspberrypi.org/raspberrypi.gpg.key
+gpg --import raspberrypi.gpg.key | apt-key add -
+wget https://archive.raspbian.org/raspbian.public.key
+gpg --import raspbian.public.key | apt-key add -
 fi
 
 #BBB Repo
-if [ $os_short_name == "Debian" ]; then
+echo "--------------------------------------------------------------"
+echo " Adding BBBlack repository                                    "
+echo "--------------------------------------------------------------"
+if [ $os_short_name == "Deb" ]; then
 cat > /etc/apt/sources.list.d/beaglebone.list << DELIM
 deb [arch=armhf] http://repos.rcn-ee.net/debian/ jessie main
 DELIM
 fi
 
 #Chip repo
+echo "--------------------------------------------------------------"
+echo " Adding C.H.I.P repository                                    "
+echo "--------------------------------------------------------------"
 if [ $device_short_name == "chip" ]; then
-cat > /etc/apt/source.list.d/nextthing.list
+	cat > /etc/apt/source.list.d/nextthing.list  << DELIM
 deb http://opensource.nextthing.co/chip/debian/repo jessie main
+DELIM
 fi
 
+echo "--------------------------------------------------------------"
+echo " Adding SvxLink repository                                    "
+echo "--------------------------------------------------------------"
 # SvxLink Stable Repo Arm32
 if [ $svx_short_name == "SVX-Stable" ]; then
-cat > /etc/apt/sources.list.d/svxlink.list << DELIM
+	cat > /etc/apt/sources.list.d/svxlink.list << DELIM
 deb http://repo.openrepeater.com/svxlink/stable/debian/ jessie main
 DELIM
 fi
 
 # SvxLink Testing Repo Arm32
 if [ $svx_short_name == "SVX-Testing" ]; then
-cat > /etc/apt/sources.list.d/svxlink.list << DELIM
+	cat > /etc/apt/sources.list.d/svxlink.list << DELIM
 deb http://repo.openrepeater.com/svxlink/testing/debian/ jessie main
 DELIM
 fi
 
 # SvxLink Release Repo Arm32/64
 if [ $svx_short_name == "SVX-Devel" ]; then
-cat > /etc/apt/sources.list.d/svxlink.list << DELIM
+	cat > /etc/apt/sources.list.d/svxlink.list << DELIM
 deb http://repo.openrepeater.com/svxlink/devel/debian/ jessie main
 DELIM
 fi
 
+echo "--------------------------------------------------------------"
+echo " Adding OpenRepeater repository                               "
+echo "--------------------------------------------------------------"
 # Adding OpenRepeater Repo armhf
 if [ $orp_short_name == "ORP-Stable" ]; then
-cat > "/etc/apt/sources.list.d/openrepeater.list" << DELIM
+	cat > "/etc/apt/sources.list.d/openrepeater.list" << DELIM
 deb http://repo.openrepeater.com/openrepeater/stable/debian/ jessie main
 DELIM
 fi
 
 # Adding OpenRepeater Testing Repo armhf
-if [ $orp_short_name == "ORP-Test" ]; then
-cat > "/etc/apt/sources.list.d/openrepeater.list" << DELIM
+if [ $orp_short_name == "ORP-Testing" ]; then
+	cat > "/etc/apt/sources.list.d/openrepeater.list" << DELIM
 deb http://repo.openrepeater.com/openrepeater/testing/debian/ jessie main
 DELIM
 fi
 
 # Adding OpenRepeater Devel Repo armhf
 if [ $orp_short_name == "ORP-Devel" ]; then
-cat > "/etc/apt/sources.list.d/openrepeater.list" << DELIM
+	cat > "/etc/apt/sources.list.d/openrepeater.list" << DELIM
 deb http://repo.openrepeater.com/openrepeater/devel/debian/ jessie main
 DELIM
 fi
@@ -497,7 +531,7 @@ npm install json
 echo "--------------------------------------------------------------"
 echo " Installing svxlink + remotetrx"
 echo "--------------------------------------------------------------"
-apt-get -y --force-yes install svxlink-server remotetrx
+apt-get -y --force-yes install svxserver svxlink-server remotetrx
 apt-get clean
 
 #adding user svxlink to gpio user group
@@ -520,44 +554,66 @@ apt-get install -y --force-yes --fix-missing nginx-extras; apt-get install nginx
 apt-get clean
 
 #Backup Orig php configs
+echo "--------------------------------------------------------------"
+echo " Backup Orig php configs...                                   "
+echo "--------------------------------------------------------------"
 cp /etc/nginf/nginx.conf /etc/nginf/nginx.conf.orig
 cp /etc/php5/fpm/php-fpm.conf /etc/php5/fpm/php-fpm.conf.orig
 cp /etc/php5/fpm/php.ini /etc/php5/fpm/php.ini.orig
 cp /etc/php5/fpm/pool.d/www.conf /etc/php5/fpm/pool.d/www.conf.orig
 
+
 #self signed certificate
+echo "--------------------------------------------------------------"
+echo " Installing self signed certificate                           "
+echo "--------------------------------------------------------------"
 cp -r /etc/ssl/private/ssl-cert-snakeoil.key /etc/ssl/private/nginx.key
 cp -r /etc/ssl/certs/ssl-cert-snakeoil.pem /etc/ssl/certs/nginx.crt
 
 # Changing file upload size from 2M to upload_size
+echo "--------------------------------------------------------------"
+echo " Backup Orig php configs                                      "
+echo "--------------------------------------------------------------"
 sed -i "$php_ini" -e "s#upload_max_filesize = 2M#upload_max_filesize = $upload_size#"
 
 # Changing post_max_size limit from 8M to upload_size
 sed -i "$php_ini" -e "s#post_max_size = 8M#post_max_size = $upload_size#"
 
 # Enable Memcache module for php
+echo "--------------------------------------------------------------"
+echo " Enabling memcache in php.ini                                 "
+echo "--------------------------------------------------------------"
 cat >> "$php_ini" << DELIM 
 extensions=memcache.so 
 DELIM
 
 # Remove / Copy / Link  Nginx & php files into place
+echo "--------------------------------------------------------------"
+echo " Remove / Copy / Link  Nginx & php files into place                                   "
+echo "--------------------------------------------------------------"
 rm -rf /etc/nginx/sites-enabled/default
-cp /usr/share/examples/openrepeater/install/nginx/openrepeater /etc/nginx/sites-available/fusionpbx
-cp /usr/share/examples/openrepeater/install/nginx/nginx.conf /etc/nginx/nginx.conf
+
+echo "--------------------------------------------------------------"
+echo " Linking the nginx config to run                              "
+echo "--------------------------------------------------------------"
 ln -s /etc/nginx/sites-available/"$gui_name" /etc/nginx/sites-enabled/"$gui_name"
-cp /usr/share/examples/fusionpbx/php5/* /etc/php5
 
 # Make sure the path /var/www/ is owned by your web server user:
+echo "--------------------------------------------------------------"
+echo " Make sure the path /var/www/ is owned by your web server user"
+echo "--------------------------------------------------------------"
 chown -R www-data:www-data /var/www/openrepeater
 
 # Restarting Nginx and PHP FPM
+echo "--------------------------------------------------------------"
+echo " Restarting Nginx and PHP FPM...                              "
+echo "--------------------------------------------------------------"
 for i in nginx php5-fpm ;do service "${i}" restart > /dev/null 2>&1 ; done
 
 # Fetch and Install open repeater project web ui
 echo "--------------------------------------------------------------"
-echo " Installing openrepeater package..."
+echo " Fetch and Install open repeater project web ui..."
 echo "--------------------------------------------------------------"
-
 apt-get install -y --force-yes openrepeater
 
 echo "--------------------------------------------------------------"
@@ -579,15 +635,21 @@ mkdir /etc/openrepeater/svxlink/local-events.d
 ln -s /etc/openrepeater/svxlink/local-events.d /usr/share/svxlink/events.d/local
 ln -s /var/log/svxlink /var/www/openrepeater/log
 
-chown -R www-data:www-data /var/www/openrepeater /etc/openrepeater
-chown root:www-data /usr/bin/openrepeater_*
+chown -R www:www-data /var/www/openrepeater 
+chown -R root:www-data /etc/openrepeater
 
 # RASPBERRY PI ONLY: Add svxlink user to groups: gpio, audio, and daemon
 if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ] ; then
+	echo "--------------------------------------------------------------"
+	echo " Add svxlink user to groups: gpio, audio, and daemon"
+	echo "--------------------------------------------------------------"
 	usermod -a -G daemon,gpio,audio svxlink
 fi
 
 #setup sudoers
+echo "--------------------------------------------------------------"
+echo " Setting up sudoers permissions for openrepeater              "
+echo "--------------------------------------------------------------"
 cat >> /etc/sudoers << DELIM
 #allow www-data to access amixer and service
 www-data   ALL=(ALL) NOPASSWD: /usr/bin/orp-helper.sh restart, NOPASSWD: /usr/bin/aplay, NOPASSWD: /usr/bin/arecord
@@ -600,6 +662,9 @@ DELIM
 # Set up usb sound for alsa mixer
 if [ $snd_short_name == "USB" ]; then
 if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ] || [ $device_short_name == "oc1+" ] || [ $device_short_name == "oc2" ] || [ $device_short_name == "bbb" ]; then
+	echo "--------------------------------------------------------------"
+	echo " Set up usb sound for alsa mixer"
+	echo "--------------------------------------------------------------"
 	if ( ! $(grep "snd-usb-audio" /etc/modules >/dev/null) ); then
 		echo "snd-usb-audio" >> "/etc/modules"
 	fi
@@ -614,47 +679,65 @@ fi
 
 # RASPBERRY PI ,ODROID 1 wire / spi Interface
 if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ] ; then
-#ModProbe moules
-modprobe i2c-bcm2708
-modeporbe spi-bcm208
+	echo "--------------------------------------------------------------"
+	echo " Configuring /etc/modules for bcm chip"
+	echo "--------------------------------------------------------------"
+	#ModProbe moules
+	modprobe i2c-bcm2708
+	modeporbe spi-bcm208
 fi
 
 if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ] || [ $device_short_name == "oc1+" ] || [ $device_short_name == "oc2" ] ; then
-#ModProbe moules
-modprobe i2c-dev
-modprobe w1-gpio
-modprobe w1-therm
+	echo "--------------------------------------------------------------"
+	echo " Modprobing modules"
+	echo "--------------------------------------------------------------"
+	#ModProbe moules
+	modprobe i2c-dev
+	modprobe w1-gpio
+	modprobe w1-therm
 
 # Enable the spi & i2c
-echo "i2c-dev" >> /etc/modules
-echo "w1-gpio" >> /etc/modules
-echo "w1-therm" >> /etc/modules
+	echo "--------------------------------------------------------------"
+	echo " Enable the spi & i2c /etc/modules"	
+	echo "--------------------------------------------------------------"
+	echo "i2c-dev" >> /etc/modules
+	echo "w1-gpio" >> /etc/modules
+	echo "w1-therm" >> /etc/modules
 fi
 
 if [ $os_short_name == "Raspbian" ]; then
-if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ]; then
-#edit /boot/config.txt
-# Uncomment some or all of these to enable the optional hardware interfaces
-sed -i /boot/config.txt -e "s#dtparam=audio=on#dtparam=audio=off#"
-sed -i /boot/config.txt -e "s#\#dtparam=i2c_arm=on#dtparam=i2c_arm=on#"
-sed -i /boot/config.txt -e "s#\#dtparam=spi=on#dtparam=spi=on#"
-fi
+	if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ]; then
+		#edit /boot/config.txt
+		# Uncomment some or all of these to enable the optional hardware interfaces
+		echo "--------------------------------------------------------------"
+		echo " Configuring /boot/config.txt options 1"
+		echo "--------------------------------------------------------------"
+		sed -i /boot/config.txt -e "s#dtparam=audio=on#dtparam=audio=off#"
+		sed -i /boot/config.txt -e "s#\#dtparam=i2c_arm=on#dtparam=i2c_arm=on#"
+		sed -i /boot/config.txt -e "s#\#dtparam=spi=on#dtparam=spi=on#"
+	fi
 fi
 
 if [ $os_short_name == "Dietpi" ] ; then
-if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ] ; then
-#edit /boot/config.txt
-# Uncomment some or all of these to enable the optional hardware interfaces
-sed -i /boot/config.txt -e "s#dtparam=audio=on#dtparam=audio=off#"
-sed -i /boot/config.txt -e "s#dtparam=i2c_arm=off#dtparam=i2c_arm=on#"
-sed -i /boot/config.txt -e "s#dtparam=i2c1=off#dtparam=i2c_arm=on#"
-sed -i /boot/config.txt -e "s#dtparam=spi=off#dtparam=spi=on#"
-fi
+	if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ] ; then
+		#edit /boot/config.txt
+		# Uncomment some or all of these to enable the optional hardware interfaces
+		echo "--------------------------------------------------------------"
+		echo " Configuring /boot/config.txt options part 2"
+		echo "--------------------------------------------------------------"
+		sed -i /boot/config.txt -e "s#dtparam=audio=on#dtparam=audio=off#"
+		sed -i /boot/config.txt -e "s#dtparam=i2c_arm=off#dtparam=i2c_arm=on#"
+		sed -i /boot/config.txt -e "s#dtparam=i2c1=off#dtparam=i2c_arm=on#"
+		sed -i /boot/config.txt -e "s#dtparam=spi=off#dtparam=spi=on#"
+	fi
 fi
 
 if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ] ; then
-# set usb power level
-cat >> /boot/config.txt << DELIM
+	echo "--------------------------------------------------------------"
+	echo " Configuring /boot/config.txt options part 3                  "
+	echo "--------------------------------------------------------------"
+	# set usb power level
+	cat >> /boot/config.txt << DELIM
 
 #usb max current
 usb_max_current=1
@@ -667,6 +750,9 @@ fi
 # RASPBERRY PI ONLY:
 # Disable onboard HDMI sound card not used in openrepeater
 if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ] ; then
+	echo "--------------------------------------------------------------"
+	echo " Disable onboard HDMI sound card not used in openrepeater     "
+	echo "--------------------------------------------------------------"
 	#/boot/config.txt
 	sed -i /boot/config.txt -e"s#dtparam=audio=on#\#dtparam=audio=on#"
 
@@ -676,7 +762,10 @@ if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ] ; then
 	sed -i /etc/modules -e"s#snd-bcm2835#\#snd-bcm2835#"
 fi
 
-# Set fs to run in a tempfs ramdrive
+# Set fs to run in a tempfs 
+echo "--------------------------------------------------------------"
+echo " Set fs to run in a tempfs                                    "
+echo "--------------------------------------------------------------"
 cat >> /etc/fstab << DELIM
 tmpfs /tmp  tmpfs nodev,nosuid,mode=1777  0 0
 tmpfs /var/tmp  tmpfs nodev,nosuid,mode=1777  0 0
@@ -684,13 +773,19 @@ tmpfs /var/cache/apt/archives tmpfs   size=100M,defaults,noexec,nosuid,nodev,mod
 DELIM
 
 #enable services
+echo "--------------------------------------------------------------"
+echo " Enable SvxLink systemd services                              "
+echo "--------------------------------------------------------------"
 systemctl enable svxserver
 systemctl enable svxlink
 systemsctl enable remotertrx
 
 # BEAGLEBONE ONLY Disable HDMI sound
 if [ $device_short_name == "bbb" ] ; then
-cat >> /boot/uEnv.txt << DELIM
+	echo "--------------------------------------------------------------"
+	echo " Disable HDMI sound                                           "
+	echo "--------------------------------------------------------------"
+	cat >> /boot/uEnv.txt << DELIM
 optargs=capemgr.disable_partno=BB-BONELT-HDMI
 DELIM
 fi
@@ -698,6 +793,9 @@ fi
 # RASPBERRY PI ONLY:
 # Add-on extra scripts for cloning the drive
 if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ] ; then
+	echo "--------------------------------------------------------------"
+	echo " Add-on extra scripts for cloning the drive                   "
+	echo "--------------------------------------------------------------"
 	cd /usr/local/bin || exit
 	wget https://raw.githubusercontent.com/billw2/rpi-clone/master/rpi-clone
 	chmod +x rpi-clone

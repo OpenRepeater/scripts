@@ -408,7 +408,7 @@ fi
 # Put in Proper Location. All addon repos should be source.list.d sub dir
 ###########################################################################
 if [ $device_short_name == "rpi" ] ; then
-cat >> /etc/apt/sources.list.d/raspi.list << DELIM
+cat > /etc/apt/sources.list.d/rpi.list << DELIM
 deb http://mirrordirector.raspbian.org/raspbian/ jessie main contrib firmware non-free rpi
 DELIM
 fi
