@@ -374,30 +374,30 @@ apt-get install -y --force-yes --fix-missing debian-archive-keyring debian-keyri
 apt-key update
 
 #Arbbian repo
+if [ $os_short_name == "Armb" ]; then
 echo "--------------------------------------------------------------"
 echo " Adding Armbian repository                                    "
 echo "--------------------------------------------------------------"
-if [ $os_short_name == "Armb" ]; then
 	cat > /etc/apt/sources.list.d/armbian.list << DELIM
 deb http://apt.armbian.com jessie main utils jessie-desktop
 DELIM
 fi
 
 #Dietpi repo
+if [ $os_short_name == "Diet" ]; then
 echo "--------------------------------------------------------------"
 echo " Adding DietPi repository                                     "
 echo "--------------------------------------------------------------"
-if [ $os_short_name == "Diet" ]; then
 	cat > /etc/apt/sources.list.d/dietpi.list << DELIM
 deb http://mirror.ox.ac.uk/sites/archive.raspbian.org/archive/raspbian jessie main contrib non-free rpi
 DELIM
 fi
 
 #Raspbian Repos
+if [ $os_short_name == "Rasp" ]; then
 echo "--------------------------------------------------------------"
 echo " Adding Raspbierry P repository                               "
 echo "--------------------------------------------------------------"
-if [ $os_short_name == "Rasp" ]; then
 	cat > /etc/apt/sources.list.d/rpi.list << DELIM
 deb http://archive.raspberrypi.org/debian/ jessie main ui
 # Uncomment line below then 'apt-get update' to enable 'apt-get source'
@@ -425,30 +425,30 @@ gpg --import raspbian.public.key | apt-key add -
 fi
 
 #BBB Repo
+if [ $os_short_name == "Deb" ]; then
 echo "--------------------------------------------------------------"
 echo " Adding BBBlack repository                                    "
 echo "--------------------------------------------------------------"
-if [ $os_short_name == "Deb" ]; then
-cat > /etc/apt/sources.list.d/beaglebone.list << DELIM
+	cat > /etc/apt/sources.list.d/beaglebone.list << DELIM
 deb [arch=armhf] http://repos.rcn-ee.net/debian/ jessie main
 DELIM
 fi
 
 #Chip repo
+if [ $device_short_name == "chip" ]; then
 echo "--------------------------------------------------------------"
 echo " Adding C.H.I.P repository                                    "
 echo "--------------------------------------------------------------"
-if [ $device_short_name == "chip" ]; then
 	cat > /etc/apt/source.list.d/nextthing.list  << DELIM
 deb http://opensource.nextthing.co/chip/debian/repo jessie main
 DELIM
 fi
 
+# SvxLink Stable Repo Arm32
+if [ $svx_short_name == "SVX-Stable" ]; then
 echo "--------------------------------------------------------------"
 echo " Adding SvxLink repository                                    "
 echo "--------------------------------------------------------------"
-# SvxLink Stable Repo Arm32
-if [ $svx_short_name == "SVX-Stable" ]; then
 	cat > /etc/apt/sources.list.d/svxlink.list << DELIM
 deb http://repo.openrepeater.com/svxlink/stable/debian/ jessie main
 DELIM
@@ -468,11 +468,11 @@ deb http://repo.openrepeater.com/svxlink/devel/debian/ jessie main
 DELIM
 fi
 
+# Adding OpenRepeater Repo armhf
+if [ $orp_short_name == "ORP-Stable" ]; then
 echo "--------------------------------------------------------------"
 echo " Adding OpenRepeater repository                               "
 echo "--------------------------------------------------------------"
-# Adding OpenRepeater Repo armhf
-if [ $orp_short_name == "ORP-Stable" ]; then
 	cat > "/etc/apt/sources.list.d/openrepeater.list" << DELIM
 deb http://repo.openrepeater.com/openrepeater/stable/debian/ jessie main
 DELIM
@@ -497,7 +497,6 @@ echo ""
 echo "--------------------------------------------------------------"
 echo "Performing Base OS Update..."
 echo "--------------------------------------------------------------"
-
 for i in update upgrade clean ;do apt-get -y --force-yes "${i}" ; done
 
 # BEAGLEBONE ONLY:
