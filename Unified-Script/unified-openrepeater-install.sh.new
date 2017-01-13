@@ -367,10 +367,11 @@ ff02::2         ip6-allrouters
 DELIM
 fi
 
-if [ $os_short_name == "Dietpi" ]; then
+#
+#install debian keys
+#
 apt-get install -y --force-yes --fix-missing debian-archive-keyring debian-keyring debian-ports-archive-keyring
 apt-key update
-fi
 
 #
 # all boards
@@ -395,19 +396,25 @@ DELIM
 fi
 
 if [ $os_short_name == "Dietpi" ]; then
-cat >> /etc/apt/sources.list.d/dietpi.list << DELIM
+cat > /etc/apt/sources.list.d/dietpi.list << DELIM
 deb http://mirror.ox.ac.uk/sites/archive.raspbian.org/archive/raspbian jessie main contrib non-free rpi
 DELIM
 fi
 
 if [ $os_short_name == "Raspbian" ]; then
-cat > /etc/apt/source.list.d/raspbian.list
+cat > /etc/apt/sources.list.d/rpi.list
+deb http://archive.raspberrypi.org/debian/ jessie main ui
+# Uncomment line below then 'apt-get update' to enable 'apt-get source'
+#deb-src http://archive.raspberrypi.org/debian/ jessie main ui
+DELIM
+
+cat > /etc/apt/sources.list.d/raspbian.list
 deb http://mirrordirector.raspbian.org/raspbian/ jessie main contrib firmware non-free rpi
 DELIM
 fi
 
-if [ $device_short_name == "bbb" ]; then
-cat >> /etc/apt/sources.list.d/beaglebone.list << DELIM
+if [ $os_short_name == "BBB-Debian" ]; then
+cat > /etc/apt/sources.list.d/beaglebone.list << DELIM
 deb [arch=armhf] http://repos.rcn-ee.net/debian/ jessie main
 DELIM
 fi
@@ -417,19 +424,11 @@ cat > /etc/apt/source.list.d/nextthing.list
 deb http://opensource.nextthing.co/chip/debian/repo jessie main
 fi
 
-if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ]; then
-cat >> /etc/apt/sources.list.d/rpi.list << DELIM
-deb http://archive.raspberrypi.org/debian/ jessie main ui
-# Uncomment line below then 'apt-get update' to enable 'apt-get source'
-#deb-src http://archive.raspberrypi.org/debian/ jessie main ui
-DELIM
-fi
-
 #
 # SvxLink Stable Repo Arm32
 #
 if [ $svx_short_name == "Stable" ]; then
-cat >> /etc/apt/sources.list.d/svxlink.list << DELIM
+cat > /etc/apt/sources.list.d/svxlink.list << DELIM
 deb http://repo.openrepeater.com/svxlink/stable/debian/ jessie main
 DELIM
 fi
@@ -438,7 +437,7 @@ fi
 # SvxLink Testing Repo Arm32
 #
 if [ $svx_short_name == "Testing" ]; then
-cat >> /etc/apt/sources.list.d/svxlink.list << DELIM
+cat > /etc/apt/sources.list.d/svxlink.list << DELIM
 deb http://repo.openrepeater.com/svxlink/testing/debian/ jessie main
 DELIM
 fi
@@ -447,7 +446,7 @@ fi
 # SvxLink Release Repo Arm32/64
 #
 if [ $svx_short_name == "Devel" ]; then
-cat >> /etc/apt/sources.list.d/svxlink.list << DELIM
+cat > /etc/apt/sources.list.d/svxlink.list << DELIM
 deb http://repo.openrepeater.com/svxlink/devel/debian/ jessie main
 DELIM
 fi
@@ -456,7 +455,7 @@ fi
 # Adding OpenRepeater Repo armhf
 #
 if [ $orp_short_name == "ORP-Stable" ]; then
-cat >> "/etc/apt/sources.list.d/openrepeater.list" << DELIM
+cat > "/etc/apt/sources.list.d/openrepeater.list" << DELIM
 deb http://repo.openrepeater.com/openrepeater/stable/debian/ jessie main
 DELIM
 fi
@@ -465,7 +464,7 @@ fi
 # Adding OpenRepeater Testing Repo armhf
 #
 if [ $orp_short_name == "ORP-Test" ]; then
-cat >> "/etc/apt/sources.list.d/openrepeater.list" << DELIM
+cat > "/etc/apt/sources.list.d/openrepeater.list" << DELIM
 deb http://repo.openrepeater.com/openrepeater/testing/debian/ jessie main
 DELIM
 fi
@@ -474,7 +473,7 @@ fi
 # Adding OpenRepeater Devel Repo armhf
 #
 if [ $orp_short_name == "ORP-Devel" ]; then
-cat >> "/etc/apt/sources.list.d/openrepeater.list" << DELIM
+cat > "/etc/apt/sources.list.d/openrepeater.list" << DELIM
 deb http://repo.openrepeater.com/openrepeater/devel/debian/ jessie main
 DELIM
 fi
@@ -548,7 +547,7 @@ usermod -a -G gpio svxlink
 #
 wget http://github.com/kb3vgw/Svxlink-sounds-en_US-laura/releases/download/15.11.2/Svxlink-sounds-en_US-laura-16k-15.11.2.tar.bz2
 tar xjvf Svxlink-sounds-en_US-laura-16k-15.11.2.tar.bz2
-mv en_US-laura-16k /usr/share/Svxlink/sounds/en_US
+mv en_US-laura-16k /usr/share/svxlink/sounds/en_US
 rm Svxlink-sounds-en_US-laura-16k-15.11.1.tar.bz2
 
 #
