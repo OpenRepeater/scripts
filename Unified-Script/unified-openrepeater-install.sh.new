@@ -493,7 +493,6 @@ deb http://repo.openrepeater.com/openrepeater/devel/debian/ jessie main
 DELIM
 fi
 
-echo ""
 echo "--------------------------------------------------------------"
 echo "Performing Base OS Update...                                  "
 echo "--------------------------------------------------------------"
@@ -676,10 +675,9 @@ if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ] || [ $de
 fi
 fi
 
-# RASPBERRY PI ,ODROID 1 wire / spi Interface
 if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ] ; then
 	echo "--------------------------------------------------------------"
-	echo " Configuring /etc/modules for bcm chip"
+	echo " Configuring /etc/modules for bcm chip i2c / spi / 1 wire     "
 	echo "--------------------------------------------------------------"
 	#ModProbe moules
 	modprobe i2c-bcm2708
