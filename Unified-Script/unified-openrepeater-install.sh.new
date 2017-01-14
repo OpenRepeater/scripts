@@ -788,12 +788,10 @@ if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ] ; then
 	cd /root || exit
 fi
 
-echo ""
 echo " ########################################################################################## "
 echo " #             The SVXLink Repeater / Echolink server Install is now complete             # "
 echo " #                          and your system is ready for use..                            # "
 echo " #              Please goto http://ip and configure your svxlink setup.                   # "
 echo " ########################################################################################## "
-echo ""
-echo ""
+
 ) | tee /root/install.log
