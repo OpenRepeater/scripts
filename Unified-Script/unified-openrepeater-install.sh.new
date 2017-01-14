@@ -1,5 +1,5 @@
 #!/bin/bash
-#(
+(
 #   Open Repeater Project
 #
 #    Copyright (C) <2015-2017>  <Richard Neese> kb3vgw@gmail.com
@@ -113,7 +113,7 @@ select opt1 in "${options[@]}" "Quit"; do
     3 ) echo ""; echo "Building for $opt1"; os_long_name="$opt1"; os_short_name="Rasp"; break;;  
     
     # Debian
-    4 ) echo ""; echo "Building for $opt1"; os_long_name="$opt1"; os_short_name="Deb"; break;;
+    4 ) echo ""; echo "Building for $opt1"; os_long_name="$opt1"; os_short_name="BBB-Deb"; break;;
 
     $(( ${#options[@]}+1 )) ) echo "Goodbye!"; exit;;
     *) echo "Invalid option. Try another one.";continue;;
@@ -165,7 +165,6 @@ echo "$title"
 PS3="$prompt "
 select opt1 in "${options[@]}" "Quit"; do
     case "$REPLY" in
-
     # Stable Release
     1 ) echo ""; echo "Building for $opt1"; orp_long_name="$opt1"; orp_short_name="ORP-Stable"; break;;
 
@@ -195,7 +194,6 @@ echo "$title"
 PS3="$prompt "
 select opt1 in "${options[@]}" "Quit"; do
     case "$REPLY" in
-
     # Soundcard usb
     1 ) echo ""; echo "Building for $opt1"; snd_long_name="$opt1"; snd_short_name="USB"; break;;
 
@@ -303,7 +301,7 @@ echo "--------------------------------------------------------------"
 wget -q --tries=10 --timeout=5 http://www.google.com -O /tmp/index.google &> /dev/null
 
 if [ ! -s /tmp/index.google ];then
-	echo "No Internet connection. Please check ethernet cable"
+	echo "No Internet connection. Please check ethernet cable / wifi connection"
 	/bin/rm /tmp/index.google
 	exit 1
 else
@@ -315,7 +313,7 @@ printf ' Current ip is : '; ip -f inet addr show dev eth0 | sed -n 's/^ *inet *\
 echo "--------------------------------------------------------------"
 echo
 
-# Set a reboot if Kernel Panic
+
 echo "--------------------------------------------------------------"
 echo " Set a reboot if Kernel Panic                                 "
 echo "--------------------------------------------------------------"
@@ -323,13 +321,10 @@ cat >> /etc/sysctl.conf << DELIM
 kernel.panic = 10
 DELIM
 
-# Setting Host/Domain name
 echo "--------------------------------------------------------------"
 echo " Setting Host/Domain name                                     "
 echo "--------------------------------------------------------------"
-if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ] || [ $device_short_name == "chip" ] || [ $device_short_name == "oc1+" ] || [ $device_short_name == "oc2" ] ; then
-
-cat >> /etc/hostname << DELIM
+cat > /etc/hostname << DELIM
 $orp_hostname
 DELIM
 
@@ -345,7 +340,6 @@ ff02::2         ip6-allrouters
 127.0.0.1       $orp_hostname
 
 DELIM
-fi
 
 #
 # all boards
@@ -408,7 +402,6 @@ cat > /etc/apt/sources.list.d/raspbian.list  << DELIM
 deb http://mirrordirector.raspbian.org/raspbian/ jessie main contrib firmware non-free rpi
 DELIM
 
-# Updating Raspberry Pi repository keys...
 echo "--------------------------------------------------------------"
 echo " Updating Raspberry Pi repository keys...                     "
 echo "--------------------------------------------------------------"
@@ -424,8 +417,7 @@ wget https://archive.raspbian.org/raspbian.public.key
 gpg --import raspbian.public.key | apt-key add -
 fi
 
-#BBB Repo
-if [ $os_short_name == "Deb" ]; then
+if [ $os_short_name == "BBB-Deb" ]; then
 echo "--------------------------------------------------------------"
 echo " Adding BBBlack repository                                    "
 echo "--------------------------------------------------------------"
@@ -434,7 +426,6 @@ deb [arch=armhf] http://repos.rcn-ee.net/debian/ jessie main
 DELIM
 fi
 
-#Chip repo
 if [ $device_short_name == "chip" ]; then
 echo "--------------------------------------------------------------"
 echo " Adding C.H.I.P repository                                    "
@@ -444,7 +435,6 @@ deb http://opensource.nextthing.co/chip/debian/repo jessie main
 DELIM
 fi
 
-# SvxLink Stable Repo Arm32
 if [ $svx_short_name == "SVX-Stable" ]; then
 echo "--------------------------------------------------------------"
 echo " Adding SvxLink repository                                    "
@@ -454,21 +444,20 @@ deb http://repo.openrepeater.com/svxlink/stable/debian/ jessie main
 DELIM
 fi
 
-# SvxLink Testing Repo Arm32
+# SvxLink Testing Repo 
 if [ $svx_short_name == "SVX-Testing" ]; then
 	cat > /etc/apt/sources.list.d/svxlink.list << DELIM
 deb http://repo.openrepeater.com/svxlink/testing/debian/ jessie main
 DELIM
 fi
 
-# SvxLink Release Repo Arm32/64
+# SvxLink Release Repo 
 if [ $svx_short_name == "SVX-Devel" ]; then
 	cat > /etc/apt/sources.list.d/svxlink.list << DELIM
 deb http://repo.openrepeater.com/svxlink/devel/debian/ jessie main
 DELIM
 fi
 
-# Adding OpenRepeater Repo armhf
 if [ $orp_short_name == "ORP-Stable" ]; then
 echo "--------------------------------------------------------------"
 echo " Adding OpenRepeater repository                               "
@@ -478,37 +467,36 @@ deb http://repo.openrepeater.com/openrepeater/stable/debian/ jessie main
 DELIM
 fi
 
-# Adding OpenRepeater Testing Repo armhf
+# Adding OpenRepeater Testing Repo
 if [ $orp_short_name == "ORP-Testing" ]; then
 	cat > "/etc/apt/sources.list.d/openrepeater.list" << DELIM
 deb http://repo.openrepeater.com/openrepeater/testing/debian/ jessie main
 DELIM
 fi
 
-# Adding OpenRepeater Devel Repo armhf
+# Adding OpenRepeater Devel Repo
 if [ $orp_short_name == "ORP-Devel" ]; then
 	cat > "/etc/apt/sources.list.d/openrepeater.list" << DELIM
 deb http://repo.openrepeater.com/openrepeater/devel/debian/ jessie main
 DELIM
 fi
 
-# Update base OS
 echo ""
 echo "--------------------------------------------------------------"
-echo "Performing Base OS Update..."
+echo "Performing Base OS Update...                                  "
 echo "--------------------------------------------------------------"
 for i in update upgrade clean ;do apt-get -y --force-yes "${i}" ; done
 
-# BEAGLEBONE ONLY:
-# Update base OS
 if [ $device_short_name == "bbb" ] ; then
+echo "--------------------------------------------------------------"
+echo "Adding new kernel to the Beagle Bone Black                    "
+echo "--------------------------------------------------------------"
 	#update the kernal on the beaglebone black
 	apt-get install linux-image-4.4.0-rc5-bone0 linux-firmware-image-4.4.0-rc5-bone0
 fi
 
-# Installing Dependencies
 echo "--------------------------------------------------------------"
-echo " Installing Svxlink Dependencies..."
+echo " Installing Svxlink Dependencies...                           "
 echo "--------------------------------------------------------------"
 apt-get install -y --force-yes --fix-missing sqlite3 libopus0 alsa-utils vorbis-tools sox libsox-fmt-mp3 \
 	librtlsdr0 ntp libasound2 libspeex1 libgcrypt20 libpopt0 libopus0 libgsm1 tcl8.6 tk8.6 alsa-base bzip2 \
@@ -535,13 +523,14 @@ apt-get clean
 #adding user svxlink to gpio user group
 usermod -a -G gpio svxlink
 
-# Get SVXLink Sound Package (English)
+echo "--------------------------------------------------------------"
+echo " Installing svxlink sounds
+echo "--------------------------------------------------------------"
 wget http://github.com/kb3vgw/Svxlink-sounds-en_US-laura/releases/download/15.11.2/Svxlink-sounds-en_US-laura-16k-15.11.2.tar.bz2
 tar xjvf Svxlink-sounds-en_US-laura-16k-15.11.2.tar.bz2
 mv en_US-laura-16k /usr/share/svxlink/sounds/en_US
 rm Svxlink-sounds-en_US-laura-16k-15.11.1.tar.bz2
 
-# Start of nginx / php5 install
 echo "--------------------------------------------------------------"
 echo " Installing nginx and php5..."
 echo "--------------------------------------------------------------"
@@ -551,7 +540,6 @@ apt-get install -y --force-yes --fix-missing nginx-extras; apt-get install nginx
 
 apt-get clean
 
-#Backup Orig php configs
 echo "--------------------------------------------------------------"
 echo " Backup Orig php configs...                                   "
 echo "--------------------------------------------------------------"
@@ -560,24 +548,20 @@ cp /etc/php5/fpm/php-fpm.conf /etc/php5/fpm/php-fpm.conf.orig
 cp /etc/php5/fpm/php.ini /etc/php5/fpm/php.ini.orig
 cp /etc/php5/fpm/pool.d/www.conf /etc/php5/fpm/pool.d/www.conf.orig
 
-
-#self signed certificate
 echo "--------------------------------------------------------------"
 echo " Installing self signed certificate                           "
 echo "--------------------------------------------------------------"
 cp -r /etc/ssl/private/ssl-cert-snakeoil.key /etc/ssl/private/nginx.key
 cp -r /etc/ssl/certs/ssl-cert-snakeoil.pem /etc/ssl/certs/nginx.crt
 
-# Changing file upload size from 2M to upload_size
 echo "--------------------------------------------------------------"
-echo " Backup Orig php configs                                      "
+echo " Changing file upload size from 2M to upload_size             "
 echo "--------------------------------------------------------------"
 sed -i "$php_ini" -e "s#upload_max_filesize = 2M#upload_max_filesize = $upload_size#"
 
 # Changing post_max_size limit from 8M to upload_size
 sed -i "$php_ini" -e "s#post_max_size = 8M#post_max_size = $upload_size#"
 
-# Enable Memcache module for php
 echo "--------------------------------------------------------------"
 echo " Enabling memcache in php.ini                                 "
 echo "--------------------------------------------------------------"
@@ -585,7 +569,6 @@ cat >> "$php_ini" << DELIM
 extensions=memcache.so 
 DELIM
 
-# Remove / Copy / Link  Nginx & php files into place
 echo "--------------------------------------------------------------"
 echo " Remove / Copy / Link  Nginx & php files into place                                   "
 echo "--------------------------------------------------------------"
@@ -596,19 +579,16 @@ echo " Linking the nginx config to run                              "
 echo "--------------------------------------------------------------"
 ln -s /etc/nginx/sites-available/"$gui_name" /etc/nginx/sites-enabled/"$gui_name"
 
-# Make sure the path /var/www/ is owned by your web server user:
 echo "--------------------------------------------------------------"
 echo " Make sure the path /var/www/ is owned by your web server user"
 echo "--------------------------------------------------------------"
 chown -R www-data:www-data /var/www/openrepeater
 
-# Restarting Nginx and PHP FPM
 echo "--------------------------------------------------------------"
 echo " Restarting Nginx and PHP FPM...                              "
 echo "--------------------------------------------------------------"
 for i in nginx php5-fpm ;do service "${i}" restart > /dev/null 2>&1 ; done
 
-# Fetch and Install open repeater project web ui
 echo "--------------------------------------------------------------"
 echo " Fetch and Install open repeater project web ui..."
 echo "--------------------------------------------------------------"
@@ -626,7 +606,17 @@ chown -R www-data:www-data $WWW_PATH
 cp /etc/default/svxlink /etc/default/svxlink.orig
 cp /etc/default/remotetrx /etc/default/remotetrx.orig
 
-# Final Required Linking and permissions
+echo "--------------------------------------------------------------"
+echo " Copying configs for php and nginx into place                 "
+echo "--------------------------------------------------------------"
+cp /usr/share/examples/openrepeater/default/svxlink /etc/default
+cp /usr/share/examples/openrepeater/nginx/nginx.conf /etc/nginx
+cp /usr/share/examples/openrepeater/php5/fpm/php5-fpm.conf /etc/php5/fpm
+cp /usr/share/examples/openrepeater/php5/fpm/pool.d/www.conf /etc/php5/fpm/pool.d
+
+echo "--------------------------------------------------------------"
+echo " Final Required Linking and permissions into place            "
+echo "--------------------------------------------------------------"
 ln -s  /var/lib/openrepeater/sounds /var/www/openrepeater/sounds
 rm /usr/share/svxlink/events.d/local
 mkdir /etc/openrepeater/svxlink/local-events.d
@@ -644,7 +634,6 @@ if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ] ; then
 	usermod -a -G daemon,gpio,audio svxlink
 fi
 
-#setup sudoers
 echo "--------------------------------------------------------------"
 echo " Setting up sudoers permissions for openrepeater              "
 echo "--------------------------------------------------------------"
@@ -694,7 +683,6 @@ if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ] || [ $de
 	modprobe w1-gpio
 	modprobe w1-therm
 
-# Enable the spi & i2c
 	echo "--------------------------------------------------------------"
 	echo " Enable the spi & i2c /etc/modules"	
 	echo "--------------------------------------------------------------"
@@ -705,8 +693,6 @@ fi
 
 if [ $os_short_name == "Raspbian" ]; then
 	if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ]; then
-		#edit /boot/config.txt
-		# Uncomment some or all of these to enable the optional hardware interfaces
 		echo "--------------------------------------------------------------"
 		echo " Configuring /boot/config.txt options 1"
 		echo "--------------------------------------------------------------"
@@ -718,8 +704,6 @@ fi
 
 if [ $os_short_name == "Dietpi" ] ; then
 	if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ] ; then
-		#edit /boot/config.txt
-		# Uncomment some or all of these to enable the optional hardware interfaces
 		echo "--------------------------------------------------------------"
 		echo " Configuring /boot/config.txt options part 2"
 		echo "--------------------------------------------------------------"
@@ -745,8 +729,6 @@ dtoverlay=w1-gpio,gpiopin=4
 DELIM
 fi
 
-# RASPBERRY PI ONLY:
-# Disable onboard HDMI sound card not used in openrepeater
 if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ] ; then
 	echo "--------------------------------------------------------------"
 	echo " Disable onboard HDMI sound card not used in openrepeater     "
@@ -760,7 +742,6 @@ if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ] ; then
 	sed -i /etc/modules -e"s#snd-bcm2835#\#snd-bcm2835#"
 fi
 
-# Set fs to run in a tempfs 
 echo "--------------------------------------------------------------"
 echo " Set fs to run in a tempfs                                    "
 echo "--------------------------------------------------------------"
@@ -770,7 +751,6 @@ tmpfs /var/tmp  tmpfs nodev,nosuid,mode=1777  0 0
 tmpfs /var/cache/apt/archives tmpfs   size=100M,defaults,noexec,nosuid,nodev,mode=0755 0 0
 DELIM
 
-#enable services
 echo "--------------------------------------------------------------"
 echo " Enable SvxLink systemd services                              "
 echo "--------------------------------------------------------------"
@@ -788,8 +768,6 @@ optargs=capemgr.disable_partno=BB-BONELT-HDMI
 DELIM
 fi
 
-# RASPBERRY PI ONLY:
-# Add-on extra scripts for cloning the drive
 if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ] ; then
 	echo "--------------------------------------------------------------"
 	echo " Add-on extra scripts for cloning the drive                   "
@@ -800,7 +778,6 @@ if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ] ; then
 	cd /root || exit
 fi
 
-#Finish Script
 echo ""
 echo " ########################################################################################## "
 echo " #             The SVXLink Repeater / Echolink server Install is now complete             # "
