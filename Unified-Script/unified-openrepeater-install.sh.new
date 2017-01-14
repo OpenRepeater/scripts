@@ -437,7 +437,7 @@ fi
 
 if [ $svx_short_name == "SVX-Stable" ]; then
 echo "--------------------------------------------------------------"
-echo " Adding SvxLink repository                                    "
+echo " Adding SvxLink Stable Repository                             "
 echo "--------------------------------------------------------------"
 	cat > /etc/apt/sources.list.d/svxlink.list << DELIM
 deb http://repo.openrepeater.com/svxlink/stable/debian/ jessie main
@@ -446,6 +446,9 @@ fi
 
 # SvxLink Testing Repo 
 if [ $svx_short_name == "SVX-Testing" ]; then
+echo "--------------------------------------------------------------"
+echo " Adding SvxLink Testing Repository                            "
+echo "--------------------------------------------------------------"
 	cat > /etc/apt/sources.list.d/svxlink.list << DELIM
 deb http://repo.openrepeater.com/svxlink/testing/debian/ jessie main
 DELIM
@@ -453,6 +456,9 @@ fi
 
 # SvxLink Release Repo 
 if [ $svx_short_name == "SVX-Devel" ]; then
+echo "--------------------------------------------------------------"
+echo " Adding SvxLink Devel Repository                              "
+echo "--------------------------------------------------------------"
 	cat > /etc/apt/sources.list.d/svxlink.list << DELIM
 deb http://repo.openrepeater.com/svxlink/devel/debian/ jessie main
 DELIM
@@ -460,7 +466,7 @@ fi
 
 if [ $orp_short_name == "ORP-Stable" ]; then
 echo "--------------------------------------------------------------"
-echo " Adding OpenRepeater repository                               "
+echo " Adding OpenRepeater Stable repository                        "
 echo "--------------------------------------------------------------"
 	cat > "/etc/apt/sources.list.d/openrepeater.list" << DELIM
 deb http://repo.openrepeater.com/openrepeater/stable/debian/ jessie main
@@ -469,6 +475,9 @@ fi
 
 # Adding OpenRepeater Testing Repo
 if [ $orp_short_name == "ORP-Testing" ]; then
+echo "--------------------------------------------------------------"
+echo " Adding OpenRepeater Testing repository                       "
+echo "--------------------------------------------------------------"
 	cat > "/etc/apt/sources.list.d/openrepeater.list" << DELIM
 deb http://repo.openrepeater.com/openrepeater/testing/debian/ jessie main
 DELIM
@@ -476,6 +485,9 @@ fi
 
 # Adding OpenRepeater Devel Repo
 if [ $orp_short_name == "ORP-Devel" ]; then
+echo "--------------------------------------------------------------"
+echo " Adding OpenRepeater Devel repository                         "
+echo "--------------------------------------------------------------"
 	cat > "/etc/apt/sources.list.d/openrepeater.list" << DELIM
 deb http://repo.openrepeater.com/openrepeater/devel/debian/ jessie main
 DELIM
