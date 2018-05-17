@@ -143,13 +143,13 @@ function install_webserver {
 	cp /etc/php/7.0/fpm/pool.d/www.conf /etc/php/7.0/fpm/pool.d/www.conf.orig
 	
 	echo "--------------------------------------------------------------"
-	echo " Installing self signed certificate                           "
+	echo " Installing self signed SSL certificate"
 	echo "--------------------------------------------------------------"
 	cp -r /etc/ssl/private/ssl-cert-snakeoil.key /etc/ssl/private/nginx.key
 	cp -r /etc/ssl/certs/ssl-cert-snakeoil.pem /etc/ssl/certs/nginx.crt
 	
 	echo "--------------------------------------------------------------"
-	echo " Changing file upload size from 2M to upload_size             "
+	echo " Changing file upload size from 2M to upload_size"
 	echo "--------------------------------------------------------------"
 	sed -i "$php_ini" -e "s#upload_max_filesize = 2M#upload_max_filesize = $upload_size#"
 	
@@ -157,29 +157,29 @@ function install_webserver {
 	sed -i "$php_ini" -e "s#post_max_size = 8M#post_max_size = $upload_size#"
 	
 	echo "--------------------------------------------------------------"
-	echo " Enabling memcache in php.ini                                 "
+	echo " Enabling memcache in php.ini"
 	echo "--------------------------------------------------------------"
 	cat >> "$php_ini" <<- DELIM 
 		extensions=memcache.so 
 		DELIM
 	
 	echo "--------------------------------------------------------------"
-	echo " Remove / Copy / Link  Nginx & php files into place                                   "
+	echo " Remove / Copy / Link NGINX & PHP files"
 	echo "--------------------------------------------------------------"
 	rm -rf /etc/nginx/sites-enabled/default
 	
 	echo "--------------------------------------------------------------"
-	echo " Linking the nginx config to run                              "
+	echo " Linking the NGINX config to run"
 	echo "--------------------------------------------------------------"
 	ln -s /etc/nginx/sites-available/"$gui_name" /etc/nginx/sites-enabled/"$gui_name"
 	
 	echo "--------------------------------------------------------------"
-	echo " Make sure the path /var/www/ is owned by your web server user"
+	echo " Make sure WWW dir is owned by web server"
 	echo "--------------------------------------------------------------"
 	chown -R www-data:www-data "$WWW_PATH/$gui_name"
 	
 	echo "--------------------------------------------------------------"
-	echo " Restarting Nginx and PHP FPM...                              "
+	echo " Restarting NGINX and PHP"
 	echo "--------------------------------------------------------------"
 	for i in nginx php-fpm ;do service "${i}" restart > /dev/null 2>&1 ; done	
 }
