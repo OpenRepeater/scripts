@@ -9,14 +9,16 @@ REQUIRED_OS_VER="9"
 REQUIRED_OS_NAME="Stretch"
 
 # Upload size limit for php
-upload_size="25M"
+UPLOAD_SIZE="25M"
 
 WWW_PATH="/var/www"
-gui_name="openrepeater"
+GUI_NAME="openrepeater"
 
 # PHP ini config file
-php_ini="/etc/php/7.0/fpm/php.ini"
+PHP_INI="/etc/php/7.0/fpm/php.ini"
 
+#SVXLink
+SVXLINK_SOUNDS_DIR="/usr/share/svxlink/sounds"
 
 
 ################################################################################
@@ -122,6 +124,22 @@ function install_svxlink {
 
 ################################################################################
 
+function install_svxlink_sounds {
+	echo "--------------------------------------------------------------"
+	echo " Installing ORP Version of SVXLink Sounds (US English)"
+	echo "--------------------------------------------------------------"
+
+	cd /root
+ 	wget https://github.com/OpenRepeater/orp-sounds/archive/2.0.0.zip
+	unzip 2.0.0.zip
+	mkdir -p $SVXLINK_SOUNDS_DIR
+	mv orp-sounds-2.0.0/en_US $SVXLINK_SOUNDS_DIR
+	rm -R orp-sounds-2.0.0
+	rm 2.0.0.zip
+}
+
+################################################################################
+
 function install_webserver {
 	echo "GitHub install code goes here"
 
@@ -149,17 +167,17 @@ function install_webserver {
 	cp -r /etc/ssl/certs/ssl-cert-snakeoil.pem /etc/ssl/certs/nginx.crt
 	
 	echo "--------------------------------------------------------------"
-	echo " Changing file upload size from 2M to upload_size"
+	echo " Changing file upload size from 2M to UPLOAD_SIZE"
 	echo "--------------------------------------------------------------"
-	sed -i "$php_ini" -e "s#upload_max_filesize = 2M#upload_max_filesize = $upload_size#"
+	sed -i "$PHP_INI" -e "s#upload_max_filesize = 2M#upload_max_filesize = $UPLOAD_SIZE#"
 	
-	# Changing post_max_size limit from 8M to upload_size
-	sed -i "$php_ini" -e "s#post_max_size = 8M#post_max_size = $upload_size#"
+	# Changing post_max_size limit from 8M to UPLOAD_SIZE
+	sed -i "$PHP_INI" -e "s#post_max_size = 8M#post_max_size = $UPLOAD_SIZE#"
 	
 	echo "--------------------------------------------------------------"
 	echo " Enabling memcache in php.ini"
 	echo "--------------------------------------------------------------"
-	cat >> "$php_ini" <<- DELIM 
+	cat >> "$PHP_INI" <<- DELIM 
 		extensions=memcache.so 
 		DELIM
 	
@@ -171,12 +189,12 @@ function install_webserver {
 	echo "--------------------------------------------------------------"
 	echo " Linking the NGINX config to run"
 	echo "--------------------------------------------------------------"
-	ln -s /etc/nginx/sites-available/"$gui_name" /etc/nginx/sites-enabled/"$gui_name"
+	ln -s /etc/nginx/sites-available/"$GUI_NAME" /etc/nginx/sites-enabled/"$GUI_NAME"
 	
 	echo "--------------------------------------------------------------"
 	echo " Make sure WWW dir is owned by web server"
 	echo "--------------------------------------------------------------"
-	chown -R www-data:www-data "$WWW_PATH/$gui_name"
+	chown -R www-data:www-data "$WWW_PATH/$GUI_NAME"
 	
 	echo "--------------------------------------------------------------"
 	echo " Restarting NGINX and PHP"
@@ -255,7 +273,8 @@ check_network
 # check_internet
 
 # add_debian_repos
-install_webserver
+#install_svxlink_sounds
+#install_webserver
 #install_orp_dependancies
 # install_orp_from_github
 # install_orp_from_package
