@@ -449,16 +449,6 @@ if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ] ; then
 	usermod -a -G daemon,gpio,audio svxlink
 fi
 
-echo "--------------------------------------------------------------"
-echo " Setting up sudoers permissions for openrepeater              "
-echo "--------------------------------------------------------------"
-cat >> /etc/sudoers << DELIM
-#allow www-data to access amixer and service
-www-data   ALL=(ALL) NOPASSWD: /usr/bin/orp-helper.sh restart, NOPASSWD: /usr/bin/aplay, NOPASSWD: /usr/bin/arecord
-# Future Options
-#NOPASSWD: /usr/bin/orp-helper.sh start, NOPASSWD: /usr/bin/orp-helper.sh stop
-#NOPASSWD: /usr/bin/orp-helper.sh enable, NOPASSWD: /usr/bin/orp-helper.sh disable
-DELIM
 
 # RASPBERRY PI ,ODROID, BBB :
 # Set up usb sound for alsa mixer
@@ -544,16 +534,6 @@ DELIM
 fi
 
 if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ] ; then
-	echo "--------------------------------------------------------------"
-	echo " Disable onboard HDMI sound card not used in openrepeater     "
-	echo "--------------------------------------------------------------"
-	#/boot/config.txt
-	sed -i /boot/config.txt -e"s#dtparam=audio=on#\#dtparam=audio=on#"
-
-	# Enable audio (loads snd_bcm2835)
-	# dtparam=audio=on
-	#/etc/modules
-	sed -i /etc/modules -e"s#snd-bcm2835#\#snd-bcm2835#"
 fi
 
 echo "--------------------------------------------------------------"

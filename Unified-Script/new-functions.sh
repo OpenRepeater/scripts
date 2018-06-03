@@ -140,6 +140,22 @@ function install_svxlink_sounds {
 
 ################################################################################
 
+function config_fe_pi_audio_chip {
+	echo "--------------------------------------------------------------"
+	echo " Enable the Fe-Pi Audio Code Chip"
+	echo "--------------------------------------------------------------"
+
+# 	{echo "dtoverlay=fe-pi-audio"; echo "dtoverlay=i2s-mmap"} /boot/config.txt
+	cat >> /boot/config.txt <<- DELIM
+		#Enable FE-Pi Overlay
+		dtoverlay=fe-pi-audio
+		dtoverlay=i2s-mmap
+		DELIM
+	
+}
+
+################################################################################
+
 function install_webserver {
 	echo "GitHub install code goes here"
 
@@ -167,7 +183,7 @@ function install_webserver {
 	cp -r /etc/ssl/certs/ssl-cert-snakeoil.pem /etc/ssl/certs/nginx.crt
 	
 	echo "--------------------------------------------------------------"
-	echo " Changing file upload size from 2M to UPLOAD_SIZE"
+	echo " Changing file upload size from 2M to $UPLOAD_SIZE"
 	echo "--------------------------------------------------------------"
 	sed -i "$PHP_INI" -e "s#upload_max_filesize = 2M#upload_max_filesize = $UPLOAD_SIZE#"
 	
@@ -182,15 +198,63 @@ function install_webserver {
 		DELIM
 	
 	echo "--------------------------------------------------------------"
-	echo " Remove / Copy / Link NGINX & PHP files"
+	echo " Setup NGINX Site Config File for OpenRepeater UI"
 	echo "--------------------------------------------------------------"
+
 	rm -rf /etc/nginx/sites-enabled/default
+	ln -sf /etc/nginx/sites-available/"$GUI_NAME" /etc/nginx/sites-enabled/"$GUI_NAME"
 	
-	echo "--------------------------------------------------------------"
-	echo " Linking the NGINX config to run"
-	echo "--------------------------------------------------------------"
-	ln -s /etc/nginx/sites-available/"$GUI_NAME" /etc/nginx/sites-enabled/"$GUI_NAME"
-	
+	# Nginx Config File
+	cat > /etc/nginx/sites-available/$GUI_NAME  <<- 'DELIM'
+		server {
+		   listen  80;
+		   listen [::]:80 default_server ipv6only=on;
+		   if ($ssl_protocol = "") {
+		      rewrite     ^   https://$server_addr$request_uri? permanent;
+		   }
+		}
+		
+		server {
+		   listen 443;
+		   listen [::]:443 default_server ipv6only=on;
+		   
+		   include snippets/snakeoil.conf;
+		   ssl  on;
+		   
+		   root /var/www/openrepeater;
+		   index index.php;
+		   
+		   error_page 404 /404.php;
+		   
+		   client_max_body_size 25M;
+		   client_body_buffer_size 128k;
+		   
+		   access_log /var/log/nginx/access.log;
+		   error_log /var/log/nginx/error.log;
+		   
+		   location ~ \.php$ {
+		      include snippets/fastcgi-php.conf;
+		      include fastcgi_params;
+		      fastcgi_pass unix:/var/run/php/php7.0-fpm.sock;
+		      fastcgi_param   SCRIPT_FILENAME /var/www/openrepeater/$fastcgi_script_name;
+		      error_page  404   404.php;
+		      fastcgi_intercept_errors on;		
+		   }
+		   
+		   # Disable viewing .htaccess & .htpassword & .db
+		   location ~ .htaccess {
+		      deny all;
+		   }
+		   location ~ .htpassword {
+		      deny all;
+		   }
+		   location ~^.+.(db)$ {
+		      deny all;
+		   }
+		}
+	DELIM
+
+
 	echo "--------------------------------------------------------------"
 	echo " Make sure WWW dir is owned by web server"
 	echo "--------------------------------------------------------------"
@@ -220,13 +284,68 @@ function install_orp_dependancies {
 ################################################################################
 
 function install_orp_from_github {
-	echo "GitHub install code goes here"
+	echo "--------------------------------------------------------------"
+	echo " Installing OpenRepeater files from GitHub repo (Clone)"
+	echo "--------------------------------------------------------------"
+
+# 	rm -rf $WWW_PATH/$GUI_NAME/* #Clear out folder
+	cd $WWW_PATH/$GUI_NAME
+# 	git clone https://github.com/OpenRepeater/openrepeater.git $WWW_PATH/$GUI_NAME
+#	git checkout -b ionosphere
+
+	#DEV LINKING: Database
+# 	mkdir -p "/var/lib/openrepeater/db"
+# 	ln -sf "$WWW_PATH/$GUI_NAME/install/sql/openrepeater.db" "/var/lib/openrepeater/db/openrepeater.db"
+# 	mkdir -p "/etc/openrepeater"
+# 	ln -sf "$WWW_PATH/$GUI_NAME/install/sql/database.php" "/etc/openrepeater/database.php"
+
+#	ln -s "$WWW_PATH/$GUI_NAME/install/dev" "$WWW_PATH/$GUI_NAME/dev"
+#ln -s /source /dest
+
+	ln -s "$WWW_PATH/$GUI_NAME/install/sounds" "$WWW_PATH/$GUI_NAME/sounds"
+	ln -s "$WWW_PATH/$GUI_NAME/install/sounds" "/var/lib/openrepeater/sounds"
+
+	ln -s "$WWW_PATH/$GUI_NAME/install/scripts/orp_helper" "/usr/sbin/orp_helper"
+	
+#sounds -> /var/lib/openrepeater/sounds
+
+	# FIX PERMISSIONS/OWNERSHIP
+	chown www-data:www-data "/var/lib/openrepeater/" -R
+	chmod 777 "/var/lib/openrepeater/" -R
+	chown www-data:www-data "$WWW_PATH/$GUI_NAME" -R
 }
 
 ################################################################################
 
 function install_orp_from_package {
-	echo "Package install code goes here"
+	echo "ORP Package install code goes here"
+}
+
+################################################################################
+
+function modify_sudoers {
+	echo "--------------------------------------------------------------"
+	echo " Setting up sudoers permissions for openrepeater              "
+	echo "--------------------------------------------------------------"
+	cat >> /etc/sudoers <<- DELIM
+		# OPENREPEATER: allow www-data to access orp_helper
+		www-data   ALL=(ALL) NOPASSWD: /usr/sbin/orp_helper
+		DELIM
+}
+
+################################################################################
+
+function rpi_disables {
+	echo "--------------------------------------------------------------"
+	echo " Disable onboard HDMI sound card not used in OpenRepeater"
+	echo "--------------------------------------------------------------"
+	#/boot/config.txt
+	sed -i /boot/config.txt -e"s#dtparam=audio=on#\#dtparam=audio=on#"
+
+	# Enable audio (loads snd_bcm2835)
+	# dtparam=audio=on
+	#/etc/modules
+	sed -i /etc/modules -e"s#snd-bcm2835#\#snd-bcm2835#"
 }
 
 ################################################################################
@@ -258,6 +377,9 @@ function message_end {
 	echo "------------------------------------------------------------------------------------------"
 }
 
+
+
+
 ################################################################################
 #
 # MAIN SCRIPT
@@ -273,11 +395,19 @@ check_network
 # check_internet
 
 # add_debian_repos
-#install_svxlink_sounds
-#install_webserver
-#install_orp_dependancies
-# install_orp_from_github
+# install_svxlink_sounds
+# config_fe_pi_audio_chip
+# install_webserver
+# install_orp_dependancies
+install_orp_from_github
 # install_orp_from_package
+modify_sudoers
+# rpi_disables
 # message_end
+
+
+# can you add this to your /boot/config.txt
+# enable_uart=1
+# that way we can use a uart cable for local login
 
 ) | tee /root/install.log
