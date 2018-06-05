@@ -1,28 +1,6 @@
 #!/bin/bash
 (
 #   Open Repeater Project
-#
-#    Copyright (C) <2015-2017>  <Richard Neese> kb3vgw@gmail.com
-#
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU General Public License as published by
-#    the Free Software Foundation, either version 3 of the License, or
-#    (at your option) any later version.
-#
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU General Public License for more details.
-#
-#    You should have received a copy of the GNU General Public License
-#    along with this program.
-#
-#    If not, see <http://www.gnu.org/licenses/gpl-3.0.en.html>
-
-
-
-
-
 
 #
 # Request user input to ask for device type
@@ -309,34 +287,6 @@ deb http://opensource.nextthing.co/chip/debian/repo jessie main
 DELIM
 fi
 
-if [ $svx_short_name == "SVX-Stable" ]; then
-echo "--------------------------------------------------------------"
-echo " Adding SvxLink Stable Repository                             "
-echo "--------------------------------------------------------------"
-	cat > /etc/apt/sources.list.d/svxlink.list << DELIM
-deb http://repo.openrepeater.com/svxlink/stable/debian/ jessie main
-DELIM
-fi
-
-# SvxLink Testing Repo 
-if [ $svx_short_name == "SVX-Testing" ]; then
-echo "--------------------------------------------------------------"
-echo " Adding SvxLink Testing Repository                            "
-echo "--------------------------------------------------------------"
-	cat > /etc/apt/sources.list.d/svxlink.list << DELIM
-deb http://repo.openrepeater.com/svxlink/testing/debian/ jessie main
-DELIM
-fi
-
-# SvxLink Release Repo 
-if [ $svx_short_name == "SVX-Devel" ]; then
-echo "--------------------------------------------------------------"
-echo " Adding SvxLink Devel Repository                              "
-echo "--------------------------------------------------------------"
-	cat > /etc/apt/sources.list.d/svxlink.list << DELIM
-deb http://repo.openrepeater.com/svxlink/devel/debian/ jessie main
-DELIM
-fi
 
 if [ $orp_short_name == "ORP-Stable" ]; then
 echo "--------------------------------------------------------------"
@@ -379,26 +329,6 @@ echo "--------------------------------------------------------------"
 	#update the kernal on the beaglebone black
 	apt-get install linux-image-4.4.0-rc5-bone0 linux-firmware-image-4.4.0-rc5-bone0
 fi
-
-
-# Install svxlink
-echo "--------------------------------------------------------------"
-echo " Installing svxlink + remotetrx"
-echo "--------------------------------------------------------------"
-apt-get -y --force-yes install svxserver svxlink-server remotetrx
-apt-get clean
-
-#adding user svxlink to gpio user group
-usermod -a -G gpio svxlink
-
-echo "--------------------------------------------------------------"
-echo " Installing svxlink sounds"
-echo "--------------------------------------------------------------"
-wget http://github.com/kb3vgw/Svxlink-sounds-en_US-laura/releases/download/15.11.2/Svxlink-sounds-en_US-laura-16k-15.11.2.tar.bz2
-tar xjvf Svxlink-sounds-en_US-laura-16k-15.11.2.tar.bz2
-mv en_US-laura-16k /usr/share/svxlink/sounds/en_US
-rm Svxlink-sounds-en_US-laura-16k-15.11.1.tar.bz2
-
 
 
 

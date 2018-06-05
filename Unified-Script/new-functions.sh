@@ -4,6 +4,7 @@
 # DEFINE VARIABLES (Scroll down for main script)
 #
 ################################################################################
+ORP_VERSION="ionosphere"
 
 REQUIRED_OS_VER="9"
 REQUIRED_OS_NAME="Stretch"
@@ -89,37 +90,27 @@ function check_os {
 
 function check_network {
 	# Get Eth0 IP for later display
-	ip_address=$(ip addr show eth0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1);
+	IP_ADDRESS=$(ip addr show eth0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1);
 }
 
 ################################################################################
 
-function add_debian_repos {
+function install_svxlink_packge {
 	echo "--------------------------------------------------------------"
-	echo " Adding Debian Repository...                                  "
+	echo " Installing SVXLink from Package"
 	echo "--------------------------------------------------------------"
+	
+	# Based on: https://github.com/sm0svx/svxlink/wiki/InstallBinRaspbian
+	echo 'deb http://mirrordirector.raspbian.org/raspbian/ buster main' | sudo tee /etc/apt/sources.list.d/svxlink.list
+	apt-get update
+	
+	apt-get install svxlink-server
+	
+	rm /etc/apt/sources.list.d/svxlink.list
+	
+	# Add svxlink user to gpio user group
+	usermod -a -G gpio svxlink
 
-	LC_OS_NAME=$(echo "$REQUIRED_OS_NAME" | tr '[:upper:]' '[:lower:]')
-
-# 	cat > /etc/apt/sources.list <<- DELIM
-# 		deb http://httpredir.debian.org/debian/ $LC_OS_NAME main contrib non-free
-# 		deb http://httpredir.debian.org/debian/ $LC_OS_NAME-updates main contrib non-free
-# 		deb http://httpredir.debian.org/debian/ $LC_OS_NAME-backports main contrib non-free
-# 		deb http://security.debian.org/ $LC_OS_NAME/updates main contrib non-free
-# 		DELIM
-# 
-# 	#install debian keys
-# 	echo "--------------------------------------------------------------"
-# 	echo " Updating Debian repository keys..                            "
-# 	echo "--------------------------------------------------------------"
-# 	apt-get install -y --force-yes --fix-missing debian-archive-keyring debian-keyring debian-ports-archive-keyring
-# 	apt-key update
-}
-
-################################################################################
-
-function install_svxlink {
-	echo "GitHub install code goes here"
 }
 
 ################################################################################
@@ -136,8 +127,31 @@ function install_svxlink_sounds {
 	mv orp-sounds-2.0.0/en_US $SVXLINK_SOUNDS_DIR
 	rm -R orp-sounds-2.0.0
 	rm 2.0.0.zip
+	
+	ln -s "$SVXLINK_SOUNDS_DIR/en_US/Default/0.wav" "$SVXLINK_SOUNDS_DIR/en_US/Default/phonetic_0.wav"
+	ln -s "$SVXLINK_SOUNDS_DIR/en_US/Default/1.wav" "$SVXLINK_SOUNDS_DIR/en_US/Default/phonetic_1.wav"
+	ln -s "$SVXLINK_SOUNDS_DIR/en_US/Default/2.wav" "$SVXLINK_SOUNDS_DIR/en_US/Default/phonetic_2.wav"
+	ln -s "$SVXLINK_SOUNDS_DIR/en_US/Default/3.wav" "$SVXLINK_SOUNDS_DIR/en_US/Default/phonetic_3.wav"
+	ln -s "$SVXLINK_SOUNDS_DIR/en_US/Default/4.wav" "$SVXLINK_SOUNDS_DIR/en_US/Default/phonetic_4.wav"
+	ln -s "$SVXLINK_SOUNDS_DIR/en_US/Default/5.wav" "$SVXLINK_SOUNDS_DIR/en_US/Default/phonetic_5.wav"
+	ln -s "$SVXLINK_SOUNDS_DIR/en_US/Default/6.wav" "$SVXLINK_SOUNDS_DIR/en_US/Default/phonetic_6.wav"
+	ln -s "$SVXLINK_SOUNDS_DIR/en_US/Default/7.wav" "$SVXLINK_SOUNDS_DIR/en_US/Default/phonetic_7.wav"
+	ln -s "$SVXLINK_SOUNDS_DIR/en_US/Default/8.wav" "$SVXLINK_SOUNDS_DIR/en_US/Default/phonetic_8.wav"
+	ln -s "$SVXLINK_SOUNDS_DIR/en_US/Default/9.wav" "$SVXLINK_SOUNDS_DIR/en_US/Default/phonetic_9.wav"	
+
+	ln -s "$SVXLINK_SOUNDS_DIR/en_US/Default/Hz.wav" "$SVXLINK_SOUNDS_DIR/en_US/Core/hz.wav"	
 }
 
+################################################################################
+
+function enable_i2c {
+	echo "--------------------------------------------------------------"
+	echo " Enable I2C bus and I2C Devices"
+	echo "--------------------------------------------------------------"
+
+	sed -i /boot/config.txt -e "s#\#dtparam=i2c_arm=on#dtparam=i2c_arm=on#"
+	echo "i2c-dev" >> /etc/modules
+}
 ################################################################################
 
 function config_fe_pi_audio_chip {
@@ -310,9 +324,23 @@ function install_orp_from_github {
 #sounds -> /var/lib/openrepeater/sounds
 
 	# FIX PERMISSIONS/OWNERSHIP
-	chown www-data:www-data "/var/lib/openrepeater/" -R
-	chmod 777 "/var/lib/openrepeater/" -R
-	chown www-data:www-data "$WWW_PATH/$GUI_NAME" -R
+chown www-data:www-data "/var/lib/openrepeater/" -R
+chmod 777 "/var/lib/openrepeater/" -R
+
+#ln -s  "/var/lib/openrepeater/sounds" "/var/www/openrepeater/sounds"
+# rm "/usr/share/svxlink/events.d/local"
+# mkdir -p "/etc/openrepeater/svxlink/local-events.d"
+# ln -s "/etc/openrepeater/svxlink/local-events.d" "/usr/share/svxlink/events.d/local"
+# ln -s "/var/log/svxlink" "/var/www/openrepeater/log"
+
+chown www-data:www-data "$WWW_PATH/$GUI_NAME" -R
+chown root:www-data "/etc/openrepeater" -R
+
+
+	# Reset database...just in case it contains callsign info.
+	sqlite3 "/var/lib/openrepeater/db/openrepeater.db" "UPDATE settings SET value='' WHERE keyID='callSign'"
+	sqlite3 "/var/lib/openrepeater/db/openrepeater.db" "UPDATE modules SET moduleEnabled='0', moduleOptions='' WHERE moduleName='EchoLink'"
+
 }
 
 ################################################################################
@@ -323,13 +351,22 @@ function install_orp_from_package {
 
 ################################################################################
 
+function install_orp_modules {
+	echo "--------------------------------------------------------------"
+	echo " Installing OpenRepeater custom SVXLink Modules"
+	echo "--------------------------------------------------------------"
+
+}
+
+################################################################################
+
 function modify_sudoers {
 	echo "--------------------------------------------------------------"
-	echo " Setting up sudoers permissions for openrepeater              "
+	echo " Setting up sudoers permissions for OpenRepeater"
 	echo "--------------------------------------------------------------"
-	cat >> /etc/sudoers <<- DELIM
+	cat >> "/etc/sudoers" <<- DELIM
 		# OPENREPEATER: allow www-data to access orp_helper
-		www-data   ALL=(ALL) NOPASSWD: /usr/sbin/orp_helper
+		www-data   ALL=(ALL) NOPASSWD: "/usr/sbin/orp_helper"
 		DELIM
 }
 
@@ -346,6 +383,17 @@ function rpi_disables {
 	# dtparam=audio=on
 	#/etc/modules
 	sed -i /etc/modules -e"s#snd-bcm2835#\#snd-bcm2835#"
+}
+
+################################################################################
+
+function update_versioning {
+	echo "--------------------------------------------------------------"
+	echo " Setting ORP Build Version"
+	echo "--------------------------------------------------------------"
+
+	# Update version in database
+	sqlite3 "/var/lib/openrepeater/db/openrepeater.db" "UPDATE version_info SET version_num='$ORP_VERSION'"
 }
 
 ################################################################################
@@ -370,7 +418,7 @@ function message_start {
 function message_end {
 	echo "------------------------------------------------------------------------------------------"
 	echo " The OpenRepeater install is now complete and your system is ready for use."
-	echo " Please go to https://$ip_address in your browser and configure your OpenRepeater setup."
+	echo " Please go to https://$IP_ADDRESS in your browser and configure your OpenRepeater setup."
 	echo ""
 	echo " NOTE: You may receive a security warning from your web browser. This is normal as the"
 	echo "       SSL certificate is self-signed."
@@ -386,6 +434,8 @@ function message_end {
 #
 ################################################################################
 
+# /root/scripts/Unified-Script/new-functions.sh
+
 (
 check_root
 check_os
@@ -394,14 +444,18 @@ check_network
 # message_start
 # check_internet
 
-# add_debian_repos
+# install_svxlink_packge
 # install_svxlink_sounds
+# enable_i2c
 # config_fe_pi_audio_chip
 # install_webserver
+
 # install_orp_dependancies
-install_orp_from_github
+# install_orp_from_github
 # install_orp_from_package
-modify_sudoers
+# install_orp_modules
+update_versioning
+# modify_sudoers
 # rpi_disables
 # message_end
 
