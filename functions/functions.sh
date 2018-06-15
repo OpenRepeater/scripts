@@ -1,30 +1,8 @@
 #!/bin/bash
-################################################################################
-#
-# DEFINE VARIABLES (Scroll down for main script)
-#
-################################################################################
-ORP_VERSION="ionosphere"
-
-REQUIRED_OS_VER="9"
-REQUIRED_OS_NAME="Stretch"
-
-# Upload size limit for php
-UPLOAD_SIZE="25M"
-
-WWW_PATH="/var/www"
-GUI_NAME="openrepeater"
-
-# PHP ini config file
-PHP_INI="/etc/php/7.0/fpm/php.ini"
-
-#SVXLink
-SVXLINK_SOUNDS_DIR="/usr/share/svxlink/sounds"
-
 
 ################################################################################
 #
-# DEFINE FUNCTIONS (Scroll down for main script)
+# DEFINE FUNCTIONS
 #
 ################################################################################
 
@@ -430,21 +408,6 @@ function modify_sudoers {
 
 ################################################################################
 
-function rpi_disables {
-	echo "--------------------------------------------------------------"
-	echo " Disable onboard HDMI sound card not used in OpenRepeater"
-	echo "--------------------------------------------------------------"
-	#/boot/config.txt
-	sed -i /boot/config.txt -e"s#dtparam=audio=on#\#dtparam=audio=on#"
-
-	# Enable audio (loads snd_bcm2835)
-	# dtparam=audio=on
-	# /etc/modules
-	sed -i /etc/modules -e"s#snd-bcm2835#\#snd-bcm2835#"
-}
-
-################################################################################
-
 function update_versioning {
 	echo "--------------------------------------------------------------"
 	echo " Setting ORP Build Version"
@@ -482,40 +445,3 @@ function message_end {
 	echo "       SSL certificate is self-signed."
 	echo "------------------------------------------------------------------------------------------"
 }
-
-
-
-
-################################################################################
-#
-# MAIN SCRIPT
-#
-################################################################################
-
-# /root/scripts/Unified-Script/new-functions.sh
-
-(
-check_root
-check_os
-check_network
-
-# message_start
-# check_internet
-
-# install_svxlink_packge
-install_svxlink_source
-# install_svxlink_sounds
-# enable_i2c
-# config_ics_controllers
-# install_webserver
-
-# install_orp_dependancies
-# install_orp_from_github
-# install_orp_from_package
-# install_orp_modules
-update_versioning
-# modify_sudoers
-# rpi_disables
-# message_end
-
-) | tee /root/install.log
