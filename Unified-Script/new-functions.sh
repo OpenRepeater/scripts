@@ -95,22 +95,66 @@ function check_network {
 
 ################################################################################
 
-function install_svxlink_packge {
-	echo "--------------------------------------------------------------"
-	echo " Installing SVXLink from Package"
-	echo "--------------------------------------------------------------"
-	
-	# Based on: https://github.com/sm0svx/svxlink/wiki/InstallBinRaspbian
-	echo 'deb http://mirrordirector.raspbian.org/raspbian/ buster main' | sudo tee /etc/apt/sources.list.d/svxlink.list
-	apt-get update
-	
-	apt-get install svxlink-server
-	
-	rm /etc/apt/sources.list.d/svxlink.list
-	
-	# Add svxlink user to gpio user group
-	usermod -a -G gpio svxlink
+# THIS PACKAGE IS OUT OF DATE. USING COMPILE FROM SOURCE INSTEAD
 
+# function install_svxlink_packge {
+# 	echo "--------------------------------------------------------------"
+# 	echo " Installing SVXLink from Package"
+# 	echo "--------------------------------------------------------------"
+# 	
+# 	# Based on: https://github.com/sm0svx/svxlink/wiki/InstallBinRaspbian
+# 	echo 'deb http://mirrordirector.raspbian.org/raspbian/ buster main' | sudo tee /etc/apt/sources.list.d/svxlink.list
+# 	apt-get update
+# 	
+# 	apt-get install svxlink-server
+# 	
+# 	rm /etc/apt/sources.list.d/svxlink.list
+# 	
+# 	# Add svxlink user to user groups
+# 	usermod -a -G daemon,gpio,audio svxlink
+# }
+
+################################################################################
+
+function install_svxlink_source {
+	echo "--------------------------------------------------------------"
+	echo " Compile/Install SVXLink from Source Code"
+	echo "--------------------------------------------------------------"
+	
+	# Based on: https://github.com/sm0svx/svxlink/wiki/InstallSrcDebian
+
+	# Install required packages
+ 	apt update
+
+	apt install g++ cmake make libsigc++-2.0-dev libgsm1-dev libpopt-dev tcl8.5-dev \
+		libgcrypt11-dev libspeex-dev libasound2-dev libopus-dev librtlsdr-dev doxygen \
+		groff alsa-utils vorbis-tools curl
+
+
+	
+	# Download and compile from source
+	cd "/root"
+	curl -Lo svxlink-maint.tar.gz https://github.com/sm0svx/svxlink/archive/maint.tar.gz
+	tar xvzf svxlink-maint.tar.gz
+	cd svxlink-maint/src
+	mkdir build
+	cd build
+	cmake -DCMAKE_INSTALL_PREFIX=/usr -DSYSCONF_INSTALL_DIR=/etc -DLOCAL_STATE_DIR=/var -DUSE_QT=no ..
+	make
+	make doc
+	make install
+	ldconfig
+
+	# Add SystemD Services
+### Add two services here...either from source or manually.
+
+
+	# Add svxlink user to user groups
+ 	usermod -a -G daemon,gpio,audio svxlink
+
+ 	# Enable/Disable Services
+	systemctl enable svxlink
+	systemctl disable remotetrx
 }
 
 ################################################################################
@@ -149,23 +193,33 @@ function enable_i2c {
 	echo " Enable I2C bus and I2C Devices"
 	echo "--------------------------------------------------------------"
 
+	apt-get install -y --fix-missing i2c-tools
+
 	sed -i /boot/config.txt -e "s#\#dtparam=i2c_arm=on#dtparam=i2c_arm=on#"
 	echo "i2c-dev" >> /etc/modules
 }
 ################################################################################
 
-function config_fe_pi_audio_chip {
+function config_ics_controllers {
 	echo "--------------------------------------------------------------"
-	echo " Enable the Fe-Pi Audio Code Chip"
+	echo " Enable ICS Controller intergrations"
 	echo "--------------------------------------------------------------"
 
-# 	{echo "dtoverlay=fe-pi-audio"; echo "dtoverlay=i2s-mmap"} /boot/config.txt
 	cat >> /boot/config.txt <<- DELIM
 		#Enable FE-Pi Overlay
 		dtoverlay=fe-pi-audio
 		dtoverlay=i2s-mmap
-		DELIM
-	
+
+		#Enable mcp23s17 Overlay
+		dtoverlay=mcp23017,addr=0x20,gpiopin=12
+		
+		#Enable mcp3008 adc overlay
+		dtoverlay=mcp3008:spi0-0-present,spi0-0-speed=3600000
+
+		# Enable UART for serial console
+		enable_uart=1
+
+		DELIM	
 }
 
 ################################################################################
@@ -302,40 +356,44 @@ function install_orp_from_github {
 	echo " Installing OpenRepeater files from GitHub repo (Clone)"
 	echo "--------------------------------------------------------------"
 
-# 	rm -rf $WWW_PATH/$GUI_NAME/* #Clear out folder
+	rm -rf $WWW_PATH/$GUI_NAME/* #Clear out folder
 	cd $WWW_PATH/$GUI_NAME
-# 	git clone https://github.com/OpenRepeater/openrepeater.git $WWW_PATH/$GUI_NAME
-#	git checkout -b ionosphere
+	git clone https://github.com/OpenRepeater/openrepeater.git $WWW_PATH/$GUI_NAME
+	git checkout -b ionosphere
 
-	#DEV LINKING: Database
-# 	mkdir -p "/var/lib/openrepeater/db"
-# 	ln -sf "$WWW_PATH/$GUI_NAME/install/sql/openrepeater.db" "/var/lib/openrepeater/db/openrepeater.db"
-# 	mkdir -p "/etc/openrepeater"
-# 	ln -sf "$WWW_PATH/$GUI_NAME/install/sql/database.php" "/etc/openrepeater/database.php"
+	# DEV LINKING: Database
+	mkdir -p "/var/lib/openrepeater/db"
+	ln -sf "$WWW_PATH/$GUI_NAME/install/sql/openrepeater.db" "/var/lib/openrepeater/db/openrepeater.db"
+	mkdir -p "/etc/openrepeater"
+	ln -sf "$WWW_PATH/$GUI_NAME/install/sql/database.php" "/etc/openrepeater/database.php"
 
-#	ln -s "$WWW_PATH/$GUI_NAME/install/dev" "$WWW_PATH/$GUI_NAME/dev"
-#ln -s /source /dest
-
+	# DEV LINKING: ORP Sounds (Courtesy Tones / Sample IDs)
 	ln -s "$WWW_PATH/$GUI_NAME/install/sounds" "$WWW_PATH/$GUI_NAME/sounds"
 	ln -s "$WWW_PATH/$GUI_NAME/install/sounds" "/var/lib/openrepeater/sounds"
 
+	# DEV LINKING: ORP Helper Bash Script
 	ln -s "$WWW_PATH/$GUI_NAME/install/scripts/orp_helper" "/usr/sbin/orp_helper"
 	
-#sounds -> /var/lib/openrepeater/sounds
+	# DEV LINKING: Link ORP into SVXLink directories
+	ln -s "/etc/svxlink" "/etc/openrepeater/svxlink"
+	mkdir -p "/etc/openrepeater/svxlink/local-events.d"	
+
+	#Link ORP to SVXLink log
+	ln -s "/var/log/svxlink" "/var/www/openrepeater/log"
+
+	# DEV LINKING: Dev Test Folder
+	ln -s "$WWW_PATH/$GUI_NAME/install/dev" "$WWW_PATH/$GUI_NAME/dev"
+
 
 	# FIX PERMISSIONS/OWNERSHIP
-chown www-data:www-data "/var/lib/openrepeater/" -R
-chmod 777 "/var/lib/openrepeater/" -R
+	chown www-data:www-data "$WWW_PATH/$GUI_NAME" -R
 
-#ln -s  "/var/lib/openrepeater/sounds" "/var/www/openrepeater/sounds"
-# rm "/usr/share/svxlink/events.d/local"
-# mkdir -p "/etc/openrepeater/svxlink/local-events.d"
-# ln -s "/etc/openrepeater/svxlink/local-events.d" "/usr/share/svxlink/events.d/local"
-# ln -s "/var/log/svxlink" "/var/www/openrepeater/log"
+	chown www-data:www-data "/etc/openrepeater" -R
+	chown www-data:www-data "/etc/svxlink" -R
+	chown www-data:www-data "/usr/share/svxlink/events.d/" -R
 
-chown www-data:www-data "$WWW_PATH/$GUI_NAME" -R
-chown root:www-data "/etc/openrepeater" -R
-
+	chown www-data:www-data "/var/lib/openrepeater/" -R
+	chmod 777 "/var/lib/openrepeater/" -R
 
 	# Reset database...just in case it contains callsign info.
 	sqlite3 "/var/lib/openrepeater/db/openrepeater.db" "UPDATE settings SET value='' WHERE keyID='callSign'"
@@ -381,7 +439,7 @@ function rpi_disables {
 
 	# Enable audio (loads snd_bcm2835)
 	# dtparam=audio=on
-	#/etc/modules
+	# /etc/modules
 	sed -i /etc/modules -e"s#snd-bcm2835#\#snd-bcm2835#"
 }
 
@@ -445,9 +503,10 @@ check_network
 # check_internet
 
 # install_svxlink_packge
+install_svxlink_source
 # install_svxlink_sounds
 # enable_i2c
-# config_fe_pi_audio_chip
+# config_ics_controllers
 # install_webserver
 
 # install_orp_dependancies
@@ -458,10 +517,5 @@ update_versioning
 # modify_sudoers
 # rpi_disables
 # message_end
-
-
-# can you add this to your /boot/config.txt
-# enable_uart=1
-# that way we can use a uart cable for local login
 
 ) | tee /root/install.log
