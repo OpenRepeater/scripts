@@ -40,6 +40,9 @@ SVXLINK_SOUNDS_DIR="/usr/share/svxlink/sounds"
 
 # run: /root/scripts/install_main.sh
 
+# Make sure function scripts are executable.
+chmod +x functions/*
+
 # Include Main Functions File & RPI functions
 source "${BASH_SOURCE%/*}/functions/functions.sh"
 source "${BASH_SOURCE%/*}/functions/functions_rpi.sh"
