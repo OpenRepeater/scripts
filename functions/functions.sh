@@ -96,25 +96,22 @@ function check_network {
 
 function install_svxlink_source {
 	echo "--------------------------------------------------------------"
-	echo " Compile/Install SVXLink from Source Code"
+	echo " Compile/Install SVXLink from Source Code (ver $SVXLINK_VER)"
 	echo "--------------------------------------------------------------"
 	
 	# Based on: https://github.com/sm0svx/svxlink/wiki/InstallSrcDebian
 
 	# Install required packages
  	apt update
-
 	apt install g++ cmake make libsigc++-2.0-dev libgsm1-dev libpopt-dev tcl8.5-dev \
 		libgcrypt11-dev libspeex-dev libasound2-dev libopus-dev librtlsdr-dev doxygen \
 		groff alsa-utils vorbis-tools curl
 
-
-	
 	# Download and compile from source
 	cd "/root"
-	curl -Lo svxlink-maint.tar.gz https://github.com/sm0svx/svxlink/archive/maint.tar.gz
-	tar xvzf svxlink-maint.tar.gz
-	cd svxlink-maint/src
+	curl -Lo svxlink-source.tar.gz "https://github.com/sm0svx/svxlink/archive/$SVXLINK_VER.tar.gz"
+	tar xvzf svxlink-source.tar.gz
+	cd svxlink-source/src
 	mkdir build
 	cd build
 	cmake -DCMAKE_INSTALL_PREFIX=/usr -DSYSCONF_INSTALL_DIR=/etc -DLOCAL_STATE_DIR=/var -DUSE_QT=no ..
@@ -133,6 +130,10 @@ function install_svxlink_source {
  	# Enable/Disable Services
 	systemctl enable svxlink
 	systemctl disable remotetrx
+
+	# Clean Up
+	rm svxlink-source.tar.gz
+	rm svxlink-source -R
 }
 
 ################################################################################
@@ -203,8 +204,6 @@ function config_ics_controllers {
 ################################################################################
 
 function install_webserver {
-	echo "GitHub install code goes here"
-
 	echo "--------------------------------------------------------------"
 	echo " Installing NGINX and PHP"
 	echo "--------------------------------------------------------------"
@@ -334,8 +333,8 @@ function install_orp_from_github {
 	echo " Installing OpenRepeater files from GitHub repo (Clone)"
 	echo "--------------------------------------------------------------"
 
-	rm -rf $WWW_PATH/$GUI_NAME/* #Clear out folder
-	cd $WWW_PATH/$GUI_NAME
+	rm -rf $WWW_PATH/$GUI_NAME/*
+	cd $WWW_PATH
 	git clone https://github.com/OpenRepeater/openrepeater.git $WWW_PATH/$GUI_NAME
 	git checkout -b ionosphere
 

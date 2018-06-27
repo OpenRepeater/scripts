@@ -26,6 +26,8 @@ PHP_INI="/etc/php/7.0/fpm/php.ini"
 #SVXLink
 SVXLINK_SOUNDS_DIR="/usr/share/svxlink/sounds"
 
+# SVXLINK VERSION - Must match versioning at https://github.com/sm0svx/svxlink/releases
+SVXLINK_VER="17.12.2"
 
 ################################################################################
 #
@@ -67,7 +69,7 @@ message_start
 # install_orp_from_github
 # install_orp_from_package
 # install_orp_modules
-update_versioning
+# update_versioning
 # modify_sudoers
 # rpi_disables
 # message_end
