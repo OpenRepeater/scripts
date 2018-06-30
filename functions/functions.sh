@@ -302,6 +302,11 @@ function install_webserver {
 	echo "--------------------------------------------------------------"
 	echo " Make sure WWW dir is owned by web server"
 	echo "--------------------------------------------------------------"
+	# Create Temp Folder UI. Will later be replaced.
+	mkdir "$WWW_PATH/$GUI_NAME"
+	echo "Future home of ORP" > $WWW_PATH/$GUI_NAME/index.php
+
+	# Change permissions
 	chown -R www-data:www-data "$WWW_PATH/$GUI_NAME"
 	
 	echo "--------------------------------------------------------------"
