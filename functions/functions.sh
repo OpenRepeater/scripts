@@ -111,7 +111,7 @@ function install_svxlink_source {
 	cd "/root"
 	curl -Lo svxlink-source.tar.gz "https://github.com/sm0svx/svxlink/archive/$SVXLINK_VER.tar.gz"
 	tar xvzf svxlink-source.tar.gz
-	cd svxlink-source/src
+	cd svxlink-$SVXLINK_VER/src
 	mkdir build
 	cd build
 	cmake -DCMAKE_INSTALL_PREFIX=/usr -DSYSCONF_INSTALL_DIR=/etc -DLOCAL_STATE_DIR=/var -DUSE_QT=no ..
