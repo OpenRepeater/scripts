@@ -82,9 +82,9 @@ function check_network {
 # 	
 # 	# Based on: https://github.com/sm0svx/svxlink/wiki/InstallBinRaspbian
 # 	echo 'deb http://mirrordirector.raspbian.org/raspbian/ buster main' | sudo tee /etc/apt/sources.list.d/svxlink.list
-# 	apt-get update
+# 	apt update
 # 	
-# 	apt-get install svxlink-server
+# 	apt install svxlink-server
 # 	
 # 	rm /etc/apt/sources.list.d/svxlink.list
 # 	
@@ -103,7 +103,7 @@ function install_svxlink_source {
 
 	# Install required packages
  	apt update
-	apt install g++ cmake make libsigc++-2.0-dev libgsm1-dev libpopt-dev tcl8.5-dev \
+	apt install --assume-yes --fix-missing g++ cmake make libsigc++-2.0-dev libgsm1-dev libpopt-dev tcl8.5-dev \
 		libgcrypt11-dev libspeex-dev libasound2-dev libopus-dev librtlsdr-dev doxygen \
 		groff alsa-utils vorbis-tools curl
 
@@ -172,7 +172,7 @@ function enable_i2c {
 	echo " Enable I2C bus and I2C Devices"
 	echo "--------------------------------------------------------------"
 
-	apt-get install -y --fix-missing i2c-tools
+	apt install --assume-yes --fix-missing i2c-tools
 
 	sed -i /boot/config.txt -e "s#\#dtparam=i2c_arm=on#dtparam=i2c_arm=on#"
 	echo "i2c-dev" >> /etc/modules
@@ -206,11 +206,12 @@ function install_webserver {
 	echo "--------------------------------------------------------------"
 	echo " Installing NGINX and PHP"
 	echo "--------------------------------------------------------------"
-	apt-get install -y --fix-missing nginx-extras; apt-get install nginx memcached ssl-cert \
+	apt install --assume-yes --fix-missing nginx-extras;
+	apt install --assume-yes --fix-missing nginx memcached ssl-cert \
 		openssl-blacklist php-common php-fpm php-common php-curl php-dev php-gd php-imagick php-mcrypt \
 		php-memcache php-pspell php-snmp php-sqlite3 php-xmlrpc php-xsl php-pear php-ssh2 php-cli
 	
-	apt-get clean
+	apt clean
 	
 	echo "--------------------------------------------------------------"
 	echo " Backup original config files"
@@ -322,7 +323,7 @@ function install_orp_dependancies {
 	echo " Installing OpenRepeater/SVXLink Dependencies"
 	echo "--------------------------------------------------------------"
 
-	apt-get install -y --fix-missing alsa-base alsa-utils bzip2 cron dialog fail2ban flite gawk \
+	apt install --assume-yes --fix-missing alsa-base alsa-utils bzip2 cron dialog fail2ban flite gawk \
 		git-core gpsd gpsd-clients i2c-tools inetutils-syslogd install-info libasound2 libasound2-plugin-equal \
 		libgcrypt20 libgsm1 libopus0 libpopt0 libsigc++-2.0-0v5 libsox-fmt-mp3 libxml2 libxml2-dev \
 		libxslt1-dev logrotate network-manager ntp python3-configobj python-cheetah python3-dev python-imaging \
