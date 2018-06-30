@@ -107,6 +107,10 @@ function install_svxlink_source {
 		libgcrypt11-dev libspeex-dev libasound2-dev libopus-dev librtlsdr-dev doxygen \
 		groff alsa-utils vorbis-tools curl
 
+	# Add svxlink user and add to user groups
+	useradd -r svxlink
+	usermod -a -G daemon,gpio,audio svxlink
+
 	# Download and compile from source
 	cd "/root"
 	curl -Lo svxlink-source.tar.gz "https://github.com/sm0svx/svxlink/archive/$SVXLINK_VER.tar.gz"
@@ -122,10 +126,6 @@ function install_svxlink_source {
 
 	# Add SystemD Services
 ### Add two services here...either from source or manually.
-
-
-	# Add svxlink user to user groups
- 	usermod -a -G daemon,gpio,audio svxlink
 
  	# Enable/Disable Services
 	systemctl enable svxlink
