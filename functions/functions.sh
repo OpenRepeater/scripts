@@ -132,8 +132,8 @@ function install_svxlink_source {
 	systemctl disable remotetrx
 
 	# Clean Up
-	rm svxlink-source.tar.gz
-	rm svxlink-source -R
+	rm /root/svxlink-source.tar.gz
+	rm /root/svxlink-$SVXLINK_VER -R
 }
 
 ################################################################################
