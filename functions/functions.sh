@@ -197,8 +197,7 @@ function config_ics_controllers {
 
 		# Enable UART for serial console
 		enable_uart=1
-
-		DELIM	
+		DELIM
 }
 
 ################################################################################
