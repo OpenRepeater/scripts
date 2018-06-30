@@ -56,9 +56,8 @@ check_os
 check_network
 
 message_start
-# check_internet
+check_internet
 
-# install_svxlink_packge
 # install_svxlink_source
 # install_svxlink_sounds
 # enable_i2c
@@ -67,7 +66,6 @@ message_start
 
 # install_orp_dependancies
 # install_orp_from_github
-# install_orp_from_package
 # install_orp_modules
 # update_versioning
 # modify_sudoers
