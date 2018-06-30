@@ -393,6 +393,15 @@ function install_orp_modules {
 	echo " Installing OpenRepeater custom SVXLink Modules"
 	echo "--------------------------------------------------------------"
 
+	### Install ORP Remote Relay Module
+	cd /root
+	wget https://github.com/OpenRepeater/ORP-Remote-Relay-Module/archive/master.zip -O remote_relay.zip
+	unzip remote_relay.zip
+	cd ORP-Remote-Relay-Module-master
+	cp RemoteRelay.tcl /usr/share/svxlink/events.d/RemoteRelay.tcl
+	cp ModuleRemoteRelay.tcl /usr/share/svxlink/modules.d/ModuleRemoteRelay.tcl
+	rm -R /root/ORP-Remote-Relay-Module-master
+	rm /root/remote_relay.zip
 }
 
 ################################################################################
