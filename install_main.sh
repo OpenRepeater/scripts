@@ -60,6 +60,7 @@ check_internet
 
 ### SVXLINK FUNCTIONS ###
 install_svxlink_source
+fix_svxlink_gpio
 install_svxlink_sounds
 enable_i2c
 config_ics_controllers
