@@ -1,3 +1,5 @@
+THIS SCRIPT IS BROKEN...IT IS ONLY HERE FOR ARCHIVE PURPOSES
+
 OpenRepeater Build Scripts
 =======
 This is the repository for install scripts for the OpenRepeater project. With these scripts you can install OpenRepeater on your system or use it to build a complete system to image for download by others. The script will install Debian packages for OpenRepeater, SVXLink, and other packages dependancies required by OpenRepeater. It will also make some other system adjustments as well. Currently we support 3 boards:
