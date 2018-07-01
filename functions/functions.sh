@@ -135,6 +135,16 @@ function install_svxlink_source {
 
 ################################################################################
 
+function fix_svxlink_gpio {
+	echo "--------------------------------------------------------------"
+	echo " Apply Fixes to SVXLink GPIO Support until corrected"
+	echo "--------------------------------------------------------------"
+	
+	sed -i -e 's/$GPIOPATH/$GPIO_PATH/g' /usr/sbin/svxlink_gpio_up
+}
+
+################################################################################
+
 function install_svxlink_sounds {
 	echo "--------------------------------------------------------------"
 	echo " Installing ORP Version of SVXLink Sounds (US English)"
