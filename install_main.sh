@@ -40,7 +40,7 @@ SVXLINK_VER="17.12.2"
 # just the require functions for the RPI are called below. If you don't want to
 # run a specific function, simply comment it out (#).
 
-# run: /root/scripts/install_main.sh
+# run: /root/scripts-2.x.x/install_main.sh
 
 # Make sure function scripts are executable.
 chmod +x functions/*
@@ -51,24 +51,28 @@ source "${BASH_SOURCE%/*}/functions/functions_rpi.sh"
 
 # Run script and output to log file
 (
+### INITIAL FUNCTIONS ####
 check_root
 check_os
 check_network
-
 message_start
 check_internet
 
-# install_svxlink_source
-# install_svxlink_sounds
-# enable_i2c
-# config_ics_controllers
-# install_webserver
+### SVXLINK FUNCTIONS ###
+install_svxlink_source
+install_svxlink_sounds
+enable_i2c
+config_ics_controllers
 
+### OPEN REPEATER FUCNTIONS ###
+# install_webserver
 # install_orp_dependancies
 # install_orp_from_github
 # install_orp_modules
 # update_versioning
 # modify_sudoers
+
+### ENDING FUNCTIONS ###
 # rpi_disables
 # message_end
 
