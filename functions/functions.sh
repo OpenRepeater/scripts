@@ -421,7 +421,7 @@ function modify_sudoers {
 	echo "--------------------------------------------------------------"
 	cat >> "/etc/sudoers" <<- DELIM
 		# OPENREPEATER: allow www-data to access orp_helper
-		www-data   ALL=(ALL) NOPASSWD: "/usr/sbin/orp_helper"
+		www-data   ALL=(ALL) NOPASSWD: /usr/sbin/orp_helper
 		DELIM
 }
 
