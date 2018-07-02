@@ -348,7 +348,6 @@ function install_orp_from_github {
 	rm -rf $WWW_PATH/$GUI_NAME/*
 	cd $WWW_PATH
 	git clone https://github.com/OpenRepeater/openrepeater.git $WWW_PATH/$GUI_NAME
-	git checkout -b ionosphere
 
 	# DEV LINKING: Database
 	mkdir -p "/var/lib/openrepeater/db"
