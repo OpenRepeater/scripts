@@ -462,5 +462,7 @@ function message_end {
 	echo ""
 	echo " NOTE: You may receive a security warning from your web browser. This is normal as the"
 	echo "       SSL certificate is self-signed."
+	echo ""
+	echo " DON'T FORGET TO REBOOT FIRST!!!"
 	echo "------------------------------------------------------------------------------------------"
 }
