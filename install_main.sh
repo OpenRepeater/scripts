@@ -9,7 +9,7 @@
 # DEFINE VARIABLES (Scroll down for main script)
 #
 ################################################################################
-ORP_VERSION="ionosphere"
+ORP_VERSION="2.0.0"
 
 REQUIRED_OS_VER="9"
 REQUIRED_OS_NAME="Stretch"
