@@ -35,7 +35,7 @@ SVXLINK_VER="17.12.2"
 # Make sure function scripts are executable.
 chmod +x functions/*
 
-# Include Main Functions File & RPI functions
+# Include Menus file
 source "${BASH_SOURCE%/*}/functions/menus.sh"
 
 # Include Main Functions File & RPI functions
@@ -65,28 +65,28 @@ menu_hostname
 # Run script and output to log file
 (
 
-### SET HOSTNAME ###
-hostname $HOSTNAME
+	### SET HOSTNAME ###
+	hostname $HOSTNAME
 
-### SVXLINK FUNCTIONS ###
-install_svxlink_source
-fix_svxlink_gpio
-install_svxlink_sounds
-enable_i2c
-config_ics_controllers
+	### SVXLINK FUNCTIONS ###
+	install_svxlink_source
+	fix_svxlink_gpio
+	install_svxlink_sounds
+	enable_i2c
+	config_ics_controllers
 
-### OPEN REPEATER FUCNTIONS ###
-if [ $INPUT_INSTALL_TYPE = "ORP" ]; then
-	install_webserver
-	install_orp_dependancies
-	install_orp_from_github
-	install_orp_modules
-	update_versioning
-	modify_sudoers
+	### OPEN REPEATER FUCNTIONS ###
+	if [ $INPUT_INSTALL_TYPE = "ORP" ]; then
+		install_webserver
+		install_orp_dependancies
+		install_orp_from_github
+		install_orp_modules
+		update_versioning
+		modify_sudoers
 	
-	### ENDING FUNCTIONS ###
-	rpi_disables
-fi
+		### ENDING FUNCTIONS ###
+		rpi_disables
+	fi
 
 ) | tee /root/orp_install.log
 
