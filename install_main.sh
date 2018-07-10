@@ -5,9 +5,7 @@
 # Dana Rawding (N1OFZ)
 
 ################################################################################
-#
 # DEFINE VARIABLES (Scroll down for main script)
-#
 ################################################################################
 ORP_VERSION="2.0.0"
 
@@ -29,34 +27,46 @@ SVXLINK_SOUNDS_DIR="/usr/share/svxlink/sounds"
 # SVXLINK VERSION - Must match versioning at https://github.com/sm0svx/svxlink/releases
 SVXLINK_VER="17.12.2"
 
-################################################################################
-#
-# MAIN SCRIPT
-#
-################################################################################
 
-# NOTE: This is the main script that calls the appropriate functions from an
-# external script. The plan is to add the user prompts back in, but for now 
-# just the require functions for the RPI are called below. If you don't want to
-# run a specific function, simply comment it out (#).
-
-# run: /root/scripts-2.x.x/install_main.sh
+################################################################################
+# PRE-INSTALL
+################################################################################
 
 # Make sure function scripts are executable.
 chmod +x functions/*
 
 # Include Main Functions File & RPI functions
+source "${BASH_SOURCE%/*}/functions/menus.sh"
+
+# Include Main Functions File & RPI functions
 source "${BASH_SOURCE%/*}/functions/functions.sh"
 source "${BASH_SOURCE%/*}/functions/functions_rpi.sh"
 
-# Run script and output to log file
-(
 ### INITIAL FUNCTIONS ####
 check_root
 check_os
 check_network
-message_start
 check_internet
+
+
+################################################################################
+# USER INPUT
+################################################################################
+
+menu_welcome_message
+menu_build_type
+menu_hostname
+
+
+################################################################################
+# MAIN SCRIPT - Run Functions and Save to Log
+################################################################################
+
+# Run script and output to log file
+(
+
+### SET HOSTNAME ###
+hostname $HOSTNAME
 
 ### SVXLINK FUNCTIONS ###
 install_svxlink_source
@@ -66,15 +76,22 @@ enable_i2c
 config_ics_controllers
 
 ### OPEN REPEATER FUCNTIONS ###
-# install_webserver
-# install_orp_dependancies
-# install_orp_from_github
-# install_orp_modules
-# update_versioning
-# modify_sudoers
-
-### ENDING FUNCTIONS ###
-# rpi_disables
-# message_end
+if [ $INPUT_INSTALL_TYPE = "ORP" ]; then
+	install_webserver
+	install_orp_dependancies
+	install_orp_from_github
+	install_orp_modules
+	update_versioning
+	modify_sudoers
+	
+	### ENDING FUNCTIONS ###
+	rpi_disables
+fi
 
 ) | tee /root/orp_install.log
+
+
+################################################################################
+# POST INSTALL
+################################################################################
+menu_end_message

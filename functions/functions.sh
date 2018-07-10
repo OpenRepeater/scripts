@@ -1,9 +1,7 @@
 #!/bin/bash
 
 ################################################################################
-#
 # DEFINE FUNCTIONS
-#
 ################################################################################
 
 function check_root {
@@ -434,35 +432,4 @@ function update_versioning {
 
 	# Update version in database
 	sqlite3 "/var/lib/openrepeater/db/openrepeater.db" "UPDATE version_info SET version_num='$ORP_VERSION'"
-}
-
-################################################################################
-
-# Messages
-
-function message_start {
-	echo ""
-	echo "--------------------------------------------------------------"
-	echo " WELCOME TO OPENREPEATER"
-	echo "--------------------------------------------------------------"
-	echo " This script is not meant for LAMP installs."
-	echo " (LAMP = Linux Apache Mysql PHP)"
-	echo "--------------------------------------------------------------"
-	echo " THIS SCRIPT IS NOT INTENDED TO BE RUN MORE THAN ONCE"
-	echo "--------------------------------------------------------------"
-	echo " This script is meant to be run on a fresh install of"
-	echo " Debian $REQUIRED_OS_VER ($REQUIRED_OS_NAME)"
-	echo "--------------------------------------------------------------"
-}
-
-function message_end {
-	echo "------------------------------------------------------------------------------------------"
-	echo " The OpenRepeater install is now complete and your system is ready for use."
-	echo " Please go to https://$IP_ADDRESS in your browser and configure your OpenRepeater setup."
-	echo ""
-	echo " NOTE: You may receive a security warning from your web browser. This is normal as the"
-	echo "       SSL certificate is self-signed."
-	echo ""
-	echo " DON'T FORGET TO REBOOT FIRST!!!"
-	echo "------------------------------------------------------------------------------------------"
 }
