@@ -48,6 +48,8 @@ check_os
 check_network
 check_internet
 
+# Start Time
+START_TIME=`date +%s`
 
 ################################################################################
 # USER INPUT
@@ -64,6 +66,7 @@ menu_hostname
 
 # Run script and output to log file
 (
+	date
 
 	### SET HOSTNAME ###
 	hostname $HOSTNAME
@@ -88,10 +91,17 @@ menu_hostname
 		rpi_disables
 	fi
 
+	date
+
 ) | tee /root/orp_install.log
 
 
 ################################################################################
 # POST INSTALL
 ################################################################################
-menu_end_message
+
+# End Time & Build Time
+END_TIME=`date +%s`
+BUILD_TIME="Build Time: $((($END_TIME-$START_TIME)/60)) minutes"
+
+menu_end_message "$BUILD_TIME"
