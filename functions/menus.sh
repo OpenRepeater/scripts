@@ -53,9 +53,9 @@ function menu_hostname {
 ################################################################################
 
 function menu_end_message {
-	END_MESSAGE="The OpenRepeater install is now complete and your system is ready for use. Please go to https://$IP_ADDRESS in your browser and configure your OpenRepeater setup.\n\nNOTE: You may receive a security warning from your web browser. This is normal as the SSL certificate is self-signed.\n\nDON'T FORGET TO REBOOT FIRST!!!"
+	END_MESSAGE="The OpenRepeater install is now complete and your system is ready for use. Please go to https://$IP_ADDRESS in your browser and configure your OpenRepeater setup.\n\nNOTE: You may receive a security warning from your web browser. This is normal as the SSL certificate is self-signed.\n\nDON'T FORGET TO REBOOT FIRST!!!\n\n$1"
 	
-	if (whiptail --title "$DIALOG_TITLE" --yes-button "REBOOT NOW" --no-button "Cancel"  --yesno "$END_MESSAGE" 15 60) then
+	if (whiptail --title "$DIALOG_TITLE" --yes-button "REBOOT NOW" --no-button "Cancel"  --yesno "$END_MESSAGE" 18 60) then
 	    echo "REBOOTING NOW"; reboot;
 	else
 	    echo "Don't forget to reboot..."; exit;
