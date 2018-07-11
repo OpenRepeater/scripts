@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DIALOG_TITLE="OpenRepeater Setup"
+DIALOG_TITLE="OpenRepeater $ORP_VERSION Setup"
 
 ################################################################################
 # WELCOME MESSAGE
