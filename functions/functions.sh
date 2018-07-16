@@ -64,6 +64,22 @@ function check_os {
 
 ################################################################################
 
+function check_filesystem {
+	PARTITION_SIZE=$(df -m | awk '$1=="/dev/root"{print$2}')
+	
+	if [ $PARTITION_SIZE -ge $MIN_PARTITION_SIZE ]; then
+		# Partition is large enough
+		echo "--------------------------------------------------------------"
+		echo " Partition Size Looks Good...Continuing!"
+		echo "--------------------------------------------------------------"
+	else
+		# Partition is too small. Show Message
+		menu_expand_file_system $MIN_DISK_SIZE
+	fi
+}
+
+################################################################################
+
 function check_network {
 	# Get Eth0 IP for later display
 	IP_ADDRESS=$(ip addr show eth0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1);
