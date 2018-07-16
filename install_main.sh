@@ -12,6 +12,10 @@ ORP_VERSION="2.0.0"
 REQUIRED_OS_VER="9"
 REQUIRED_OS_NAME="Stretch"
 
+# File System Requirements
+MIN_PARTITION_SIZE="3000"
+MIN_DISK_SIZE="4GB"
+
 # Upload size limit for php
 UPLOAD_SIZE="25M"
 
@@ -45,6 +49,7 @@ source "${BASH_SOURCE%/*}/functions/functions_rpi.sh"
 ### INITIAL FUNCTIONS ####
 check_root
 check_os
+check_filesystem
 check_network
 check_internet
 
