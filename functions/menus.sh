@@ -3,6 +3,21 @@
 DIALOG_TITLE="OpenRepeater $ORP_VERSION Setup"
 
 ################################################################################
+# FILE SYSTEM RESIZE MESSAGE
+################################################################################
+
+function menu_expand_file_system {
+	MESSAGE="WE'VE ENCOUNTERED A PROBLEM: Either you forgot to expand your file system or your card/disk is not large enough. OpenRepeater requires a card/disk of at least $1 or greater.\n\nYou may run this script again one you have expanded your file system and rebooted your system.\n\nNOTE FOR RASPBERRY PI USERS: You may choose the 'raspi-config' option to expand your file system. You can find the expand file system function under the 'Advanced' menu."
+	
+	if (whiptail --title "$DIALOG_TITLE" --yes-button "Abort & Fix Manually" --no-button "Run Raspi-Config"  --yesno "$MESSAGE" 15 120) then
+	    echo "You must now expand your file system before you can proceed."; exit;
+	else
+	    raspi-config;
+	fi
+}
+
+
+################################################################################
 # WELCOME MESSAGE
 ################################################################################
 
