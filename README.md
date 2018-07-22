@@ -59,8 +59,11 @@ These directions will be geared a little more towards the Raspberry Pi and Raspb
 * Run the script
 	* $ ./install_main.sh
 	* Please be patient, this process may take a while.
+* Be sure to reboot when done
+* Run "alsamixer" from the command prompt and make sure your input and output levels are properly set. You will need your hardware/sound card connected to set these levels.
 
 #### Post Install Considerations:
+
 * Remove the install script.
 	* $ rm /root/2.x.x.zip
 	* $ rm /root/scripts-2.x.x -R
