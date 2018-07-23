@@ -17,6 +17,9 @@ While this script is primarily created to run on a Raspberry Pi, it will most li
 * **functions (folder)** - Contains any functions required by the main script. Board specific functions also live here.
 	* **functions.sh** - This script contains the all the main functions required by all boards for building an ORP installation.
 	* **functions_rpi.sh** - This script contains functions specific to the Raspberry Pi.
+	* **menus.sh** - Specific functions to display menus (using whiptail) to display information and request user input.
+* **utilities (folder)**
+	* **shrink_img.sh** - This is a script that is intended to be run on on a Linux computer with the SD card in a card read to shrink the image for ease of distribution. This script has not been fully tested and was written by others. 
 
 #### Prepare your OS:
 These directions will be geared a little more towards the Raspberry Pi and Raspbian, but you should be able to modify them accordingly for other Debian systems.
