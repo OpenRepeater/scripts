@@ -389,6 +389,37 @@ function install_orp_from_github {
 	ln -s "$WWW_PATH/$GUI_NAME/install/dev" "$WWW_PATH/$GUI_NAME/dev"
 
 
+	# ###########################################################
+	# # FUTURE STANDARD INSTALL, MOVE FILES INSTEAD OF LINKING 
+	# 
+	# # MOVE: Database
+	# mkdir -p "/var/lib/openrepeater/db"
+	# mv "$WWW_PATH/$GUI_NAME/install/sql/openrepeater.db" "/var/lib/openrepeater/db/openrepeater.db"
+	# mkdir -p "/etc/openrepeater"
+	# mv "$WWW_PATH/$GUI_NAME/install/sql/database.php" "/etc/openrepeater/database.php"
+	# 
+	# # MOVE: ORP Sounds (Courtesy Tones / Sample IDs)
+	# mv "$WWW_PATH/$GUI_NAME/install/sounds" "/var/lib/openrepeater/sounds"
+	# ln -s "/var/lib/openrepeater/sounds" "$WWW_PATH/$GUI_NAME/sounds"
+	# 
+	# # MOVE: ORP Helper Bash Script
+	# mv "$WWW_PATH/$GUI_NAME/install/scripts/orp_helper" "/usr/sbin/orp_helper"
+	# 
+	# # LINKING: Link ORP into SVXLink directories
+	# ln -s "/etc/svxlink" "/etc/openrepeater/svxlink"
+	# mkdir -p "/etc/openrepeater/svxlink/local-events.d"	
+	# 
+	# # LINKING: Link ORP to SVXLink log
+	# ln -s "/var/log/svxlink" "/var/www/openrepeater/log"
+	# 
+	# # REMOVE: Cleanup install folders/files
+	# rm -R "$WWW_PATH/$GUI_NAME/debian"
+	# rm -R "$WWW_PATH/$GUI_NAME/install"
+	# rm "$WWW_PATH/$GUI_NAME/README.md"
+	# 
+	# ###########################################################
+
+
 	# FIX PERMISSIONS/OWNERSHIP
 	chown www-data:www-data "$WWW_PATH/$GUI_NAME" -R
 
