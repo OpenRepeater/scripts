@@ -7,7 +7,7 @@
 ################################################################################
 # DEFINE VARIABLES (Scroll down for main script)
 ################################################################################
-ORP_VERSION="2.0.0"
+ORP_VERSION="2.1.0 (dev)"
 
 REQUIRED_OS_VER="9"
 REQUIRED_OS_NAME="Stretch"
