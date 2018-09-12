@@ -51,11 +51,11 @@ These directions will be geared a little more towards the Raspberry Pi and Raspb
 * Change to the root folder
 	* $ cd /root
 * Download this script in it's entirety from GitHub directly to your board's root folder.
-	* $ wget https://github.com/OpenRepeater/scripts/archive/2.x.x.zip
+	* $ wget https://github.com/OpenRepeater/scripts/archive/2.1.x.zip
 * Unzip the script archive
-	* $ unzip 2.x.x.zip
+	* $ unzip 2.1.x.zip
 * Change to the script folder
-	* $ cd scripts-2.x.x
+	* $ cd scripts-2.1.x
 * Make the script executable
 	* $ chmod +x install_main.sh
 	* Note: when you run the install_main.sh script, it will set the function scripts as executable.
@@ -68,8 +68,8 @@ These directions will be geared a little more towards the Raspberry Pi and Raspb
 #### Post Install Considerations:
 
 * Remove the install script.
-	* $ rm /root/2.x.x.zip
-	* $ rm /root/scripts-2.x.x -R
+	* $ rm /root/2.1.x.zip
+	* $ rm /root/scripts-2.1.x -R
 * On the Raspberry Pi, you may want to disable, remove, or change the default password for the default user (pi) to something more secure.
 
 * If you are building this for your own use, please change the root password to something that is more secure and not published.
