@@ -127,7 +127,7 @@ function install_svxlink_source {
 
 	# Download and compile from source, either the trunk or latest package
 	cd "/root"
-	if [ $svxlink_trunk ]; then
+	if [ $svxlink_trunk=true ]; then
 		mkdir svxlink
 		cd svxlink
 		git clone https://github.com/sm0svx/svxlink.git
@@ -140,7 +140,7 @@ function install_svxlink_source {
 	fi
 	
 	# If Selected, enable the non-standard modules to be included in the build process
-	if [ $Svxlink_contrib_Modules ]; then
+	if [ $Svxlink_contrib_Modules=true ]; then
 		$Modules_Build_Cmake_switches = " -DWITH_CONTRIB_MODULE_REMOTE_RELAY=ON -DWITH_CONTRIB_MODULE_SITE_STATUS=ON -DWITH_CONTRIB_MODULE_TCLSSTV=ON -DWITH_CONTRIB_MODULE_TXFAN=ON"
 	else
 		$Modules_Build_Cmake_switches = ""
