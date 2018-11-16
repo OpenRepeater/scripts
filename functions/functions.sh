@@ -125,16 +125,32 @@ function install_svxlink_source {
 	useradd -r svxlink
 	usermod -a -G daemon,gpio,audio svxlink
 
-	# Download and compile from source
+	# Download and compile from source, either the trunk or latest package
 	cd "/root"
-	curl -Lo svxlink-source.tar.gz "https://github.com/sm0svx/svxlink/archive/$SVXLINK_VER.tar.gz"
-	tar xvzf svxlink-source.tar.gz
-	cd svxlink-$SVXLINK_VER/src
+		mkdir svxlink
+		cd svxlink
+		git clone https://github.com/sm0svx/svxlink.git
+		cd svxlink/src
+
+	else
+		curl -Lo svxlink-source.tar.gz "https://github.com/sm0svx/svxlink/archive/$SVXLINK_VER.tar.gz"
+		tar xvzf svxlink-source.tar.gz
+		cd svxlink-$SVXLINK_VER/src
+	fi
+	
+	# If Selected, enable the non-standard modules to be included in the build process
+		$Modules_Build_Cmake_switches = " -DWITH_CONTRIB_MODULE_REMOTE_RELAY=ON -DWITH_CONTRIB_MODULE_SITE_STATUS=ON -DWITH_CONTRIB_MODULE_TCLSSTV=ON -DWITH_CONTRIB_MODULE_TXFAN=ON"
+	else
+		$Modules_Build_Cmake_switches = ""
+	fi
+	
 	mkdir build
 	cd build
-	cmake -DCMAKE_INSTALL_PREFIX=/usr -DSYSCONF_INSTALL_DIR=/etc -DLOCAL_STATE_DIR=/var -DWITH_SYSTEMD=ON -DUSE_QT=no ..	
+	cmake -DCMAKE_INSTALL_PREFIX=/usr -DSYSCONF_INSTALL_DIR=/etc -DLOCAL_STATE_DIR=/var -DWITH_SYSTEMD=ON -DUSE_QT=no  -DWITH_CONTRIB_MODULE_REMOTE_RELAY=ON -DWITH_CONTRIB_MODULE_SITE_STATUS=ON -DWITH_CONTRIB_MODULE_TCLSSTV=ON -DWITH_CONTRIB_MODULE_TXFAN=ON $Modules_Build_Cmake_switches..	ls
+	
 	make
 	make doc
+
 	make install
 	ldconfig
 
@@ -143,8 +159,9 @@ function install_svxlink_source {
 	systemctl disable remotetrx
 
 	# Clean Up
-	rm /root/svxlink-source.tar.gz
-	rm /root/svxlink-$SVXLINK_VER -R
+	#rm /root/svxlink-source.tar.gz
+	#rm /root/svxlink-$SVXLINK_VER -R
+	rm /root/svxlink* -r -f
 }
 
 ################################################################################
@@ -363,9 +380,7 @@ function install_orp_from_github {
 
 	rm -rf $WWW_PATH/$GUI_NAME/*
 	cd $WWW_PATH
-
-#	git clone https://github.com/OpenRepeater/openrepeater.git $WWW_PATH/$GUI_NAME
-	git clone -b 2.1.x --single-branch https://github.com/OpenRepeater/openrepeater.git $WWW_PATH/$GUI_NAME
+	git clone https://github.com/OpenRepeater/openrepeater.git $WWW_PATH/$GUI_NAME
 
 	# DEV LINKING: Database
 	mkdir -p "/var/lib/openrepeater/db"

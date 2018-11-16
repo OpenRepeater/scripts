@@ -16,6 +16,36 @@ function menu_expand_file_system {
 	fi
 }
 
+################################################################################
+# INCLUDE USER CONTRIBUTED MODULES MESSAGE
+################################################################################
+
+function menu_contrib_modules {
+	MESSAGE="Would you like to include the user contributed modules?  These may still be in development and may not work, but will not 
+	cause anything else to malfunction if not enabled in the config file?"
+	
+	if (whiptail --title "$DIALOG_TITLE" --yes-button "Include the modules" --no-button "Exclude the modules"  --yesno "$MESSAGE" 15 120) then
+	    $Modules_Build_Cmake_switches = true;
+	else
+		$Modules_Build_Cmake_switches = false;
+	fi
+}
+
+################################################################################
+# BUILD FROM TRUNK MESSAGE
+################################################################################
+
+function menu_svxlink_build_type {
+	MESSAGE="Would you like to build from a controlled version of svxlink (Safe option) or build from the development trunk that may have issues (development work)?"
+	
+	if (whiptail --title "$DIALOG_TITLE" --yes-button "Build from released version" --no-button "Build from development trunk"  --yesno "$MESSAGE" 15 120) then
+	    $svxlink_trunk = true;
+	else
+		$svxlink_trunk = false;
+	fi
+}
+
+
 
 ################################################################################
 # WELCOME MESSAGE

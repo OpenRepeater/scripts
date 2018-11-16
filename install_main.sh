@@ -63,6 +63,8 @@ START_TIME=`date +%s`
 menu_welcome_message
 menu_build_type
 menu_hostname
+menu_svxlink_build_type
+menu_contrib_modules
 
 
 ################################################################################
