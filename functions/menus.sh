@@ -21,13 +21,18 @@ function menu_expand_file_system {
 ################################################################################
 
 function menu_contrib_modules {
-	MESSAGE="Would you like to include the user contributed modules?  These may still be in development and may not work, but will not 
-	cause anything else to malfunction if not enabled in the config file?"
-	
-	if (whiptail --title "$DIALOG_TITLE" --yes-button "Include the modules" --no-button "Exclude the modules"  --yesno "$MESSAGE" 15 120) then
-	    $Modules_Build_Cmake_switches = true;
+	OPTION=$(whiptail --title "$DIALOG_TITLE" --menu "Choose tto include optional contrib modules" 15 60 4 \
+	"1" "USE_CONTRIB_MODULES" \
+	"2" "DONT_USE_CONTRIB_MODULES"  3>&1 1>&2 2>&3)
+	 
+	exitstatus=$?
+	if [ $exitstatus = 0 ]; then
+		case $OPTION in
+			1) INPUT_SVXLINK_CONTRIBS="USE_CONTRIBS";;
+			2) INPUT_SVXLINK_CONTRIBS="DONT_USE_CONTRIBS";;
+		esac
 	else
-		$Modules_Build_Cmake_switches = false;
+	    exit;
 	fi
 }
 
@@ -36,13 +41,28 @@ function menu_contrib_modules {
 ################################################################################
 
 function menu_svxlink_build_type {
-	MESSAGE="Would you like to build from a controlled version of svxlink (Safe option) or build from the development trunk that may have issues (development work)?"
 	
-	if (whiptail --title "$DIALOG_TITLE" --yes-button "Build from released version" --no-button "Build from development trunk"  --yesno "$MESSAGE" 15 120) then
-	    $svxlink_trunk = true;
+	OPTION=$(whiptail --title "$DIALOG_TITLE" --menu "Choose the type of svxlink build you wish to perform" 15 60 4 \
+	"1" "Latest Release (Stable)" \
+	"2" "Trunk (Advanced)"  3>&1 1>&2 2>&3)
+	 
+	exitstatus=$?
+	if [ $exitstatus = 0 ]; then
+		case $OPTION in
+			1) INPUT_SVXLINK_INSTALL_TYPE="svx_released";;
+			2) INPUT_SVXLINK_INSTALL_TYPE="svx_trunk";;
+		esac
 	else
-		$svxlink_trunk = false;
+	    exit;
 	fi
+	
+	# MESSAGE="Would you like to build from a controlled version of svxlink (Safe option) or build from the development trunk that may have issues (development work)?"
+	
+	# if (whiptail --title "$DIALOG_TITLE" --yes-button "Build from released version" --no-button "Build from development trunk"  --yesno "$MESSAGE" 15 120) then
+	    # $svxlink_trunk = true;
+	# else
+		# $svxlink_trunk = false;
+	# fi
 }
 
 

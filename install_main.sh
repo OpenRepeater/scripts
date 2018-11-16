@@ -79,7 +79,9 @@ menu_contrib_modules
 	hostname $HOSTNAME
 
 	### SVXLINK FUNCTIONS ###
-	install_svxlink_source
+	
+	
+	install_svxlink_source $INPUT_SVXLINK_INSTALL_TYPE $INPUT_SVXLINK_CONTRIBS
 	fix_svxlink_gpio
 	install_svxlink_sounds
 	enable_i2c
