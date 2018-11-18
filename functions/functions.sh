@@ -119,7 +119,7 @@ function install_svxlink_source () {
  	apt update
 	apt install --assume-yes --fix-missing g++ cmake make libsigc++-2.0-dev libgsm1-dev libpopt-dev tcl8.5-dev \
 		libgcrypt11-dev libspeex-dev libasound2-dev libopus-dev librtlsdr-dev doxygen \
-		groff alsa-utils vorbis-tools curl
+		groff alsa-utils vorbis-tools curl git
 
 	# Add svxlink user and add to user groups
 	useradd -r svxlink
@@ -141,14 +141,14 @@ function install_svxlink_source () {
 	
 	# If Selected, enable the non-standard modules to be included in the build process
 	if [ $2="USE_CONTRIBS" ]; then
-		$Modules_Build_Cmake_switches = " -DWITH_CONTRIB_MODULE_REMOTE_RELAY=ON -DWITH_CONTRIB_MODULE_SITE_STATUS=ON -DWITH_CONTRIB_MODULE_TCLSSTV=ON -DWITH_CONTRIB_MODULE_TXFAN=ON"
+		$Modules_Build_Cmake_switches = " -DWITH_CONTRIB_MODULE_REMOTE_RELAY=ON -DWITH_CONTRIB_MODULE_SITE_STATUS=ON -DWITH_CONTRIB_MODULE_TCLSSTV=ON -DWITH_CONTRIB_MODULE_TXFAN=ON "
 	else
 		$Modules_Build_Cmake_switches = ""
 	fi
 	
 	mkdir build
 	cd build
-	cmake -DCMAKE_INSTALL_PREFIX=/usr -DSYSCONF_INSTALL_DIR=/etc -DLOCAL_STATE_DIR=/var -DWITH_SYSTEMD=ON -DUSE_QT=no  -DWITH_CONTRIB_MODULE_REMOTE_RELAY=ON -DWITH_CONTRIB_MODULE_SITE_STATUS=ON -DWITH_CONTRIB_MODULE_TCLSSTV=ON -DWITH_CONTRIB_MODULE_TXFAN=ON $Modules_Build_Cmake_switches..	ls
+	cmake -DCMAKE_INSTALL_PREFIX=/usr -DSYSCONF_INSTALL_DIR=/etc -DLOCAL_STATE_DIR=/var -DWITH_SYSTEMD=ON -DUSE_QT=no $Modules_Build_Cmake_switches..
 	
 	make
 	make doc
