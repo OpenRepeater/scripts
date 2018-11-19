@@ -388,7 +388,7 @@ function install_orp_from_github {
 
 	rm -rf $WWW_PATH/$GUI_NAME/*
 	cd $WWW_PATH
-	git clone https://github.com/OpenRepeater/openrepeater.git $WWW_PATH/$GUI_NAME
+	git clone -b 2.1.x --single-branch https://github.com/OpenRepeater/openrepeater.git $WWW_PATH/$GUI_NAME
 
 	# DEV LINKING: Database
 	mkdir -p "/var/lib/openrepeater/db"
