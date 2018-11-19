@@ -127,6 +127,7 @@ function install_svxlink_source () {
 
 	# Download and compile from source, either the trunk or latest package
 	cd "/root"
+	echo "svx_trunk=$1"
 	if [ $1="svx_trunk" ]; then
 		mkdir svxlink
 		cd svxlink
@@ -140,15 +141,20 @@ function install_svxlink_source () {
 	fi
 	
 	# If Selected, enable the non-standard modules to be included in the build process
+	
+	echo "USE_CONTRIBS=$2"
 	if [ $2="USE_CONTRIBS" ]; then
-		$Modules_Build_Cmake_switches = " -DWITH_CONTRIB_MODULE_REMOTE_RELAY=ON -DWITH_CONTRIB_MODULE_SITE_STATUS=ON -DWITH_CONTRIB_MODULE_TCLSSTV=ON -DWITH_CONTRIB_MODULE_TXFAN=ON "
+		echo "Entering config to enable optional contrib modules"
+		Modules_Build_Cmake_switches=' -DWITH_CONTRIB_MODULE_REMOTE_RELAY=ON -DWITH_CONTRIB_MODULE_SITE_STATUS=ON -DWITH_CONTRIB_MODULE_TCLSSTV=ON -DWITH_CONTRIB_MODULE_TXFAN=ON '
 	else
-		$Modules_Build_Cmake_switches = ""
+		echo "Optional contrib modules not selected"
+		Modules_Build_Cmake_switches=""
 	fi
 	
 	mkdir build
 	cd build
-	cmake -DCMAKE_INSTALL_PREFIX=/usr -DSYSCONF_INSTALL_DIR=/etc -DLOCAL_STATE_DIR=/var -DWITH_SYSTEMD=ON -DUSE_QT=no $Modules_Build_Cmake_switches..
+	echo "make command: cmake -DCMAKE_INSTALL_PREFIX=/usr -DSYSCONF_INSTALL_DIR=/etc -DLOCAL_STATE_DIR=/var -DWITH_SYSTEMD=ON -DUSE_QT=no $Modules_Build_Cmake_switches .."
+	cmake -DCMAKE_INSTALL_PREFIX=/usr -DSYSCONF_INSTALL_DIR=/etc -DLOCAL_STATE_DIR=/var -DWITH_SYSTEMD=ON -DUSE_QT=no $Modules_Build_Cmake_switches ..
 	
 	make
 	make doc
