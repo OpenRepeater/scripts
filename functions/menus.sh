@@ -21,7 +21,7 @@ function menu_expand_file_system {
 ################################################################################
 
 function menu_contrib_modules {
-	OPTION=$(whiptail --title "$DIALOG_TITLE" --menu "Choose tto include optional contrib modules" 15 60 4 \
+	OPTION=$(whiptail --title "$DIALOG_TITLE" --menu "Choose to include optional contrib modules.  These may require you to use the trunk option of svxlink." 15 60 4 \
 	"1" "USE_CONTRIB_MODULES" \
 	"2" "DONT_USE_CONTRIB_MODULES"  3>&1 1>&2 2>&3)
 	 
