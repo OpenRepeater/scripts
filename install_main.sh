@@ -76,7 +76,13 @@ menu_contrib_modules
 	date
 
 	### SET HOSTNAME ###
-	hostname $HOSTNAME
+	#reference link - https://www.networkworld.com/article/3129313/internet-of-things/whats-in-a-raspberry-pi-name-how-to-rename-your-rpi-under-raspbian.html
+	echo "--------------------------------------------------------------"
+	echo " set hostname: sudo hostnamectl set-hostname $HOSTNAME"
+	echo "--------------------------------------------------------------"
+	sudo hostnamectl set-hostname “$HOSTNAME”
+	
+	#hostname $HOSTNAME # this only sets a 1 time session name
 
 	### SVXLINK FUNCTIONS ###
 	
