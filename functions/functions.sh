@@ -108,7 +108,7 @@ function check_network {
 
 ################################################################################
 
-function install_svxlink_source {
+function install_svxlink_source () {
 	echo "--------------------------------------------------------------"
 	echo " Compile/Install SVXLink from Source Code (ver $SVXLINK_VER)"
 	echo "--------------------------------------------------------------"
@@ -119,22 +119,46 @@ function install_svxlink_source {
  	apt update
 	apt install --assume-yes --fix-missing g++ cmake make libsigc++-2.0-dev libgsm1-dev libpopt-dev tcl8.5-dev \
 		libgcrypt11-dev libspeex-dev libasound2-dev libopus-dev librtlsdr-dev doxygen \
-		groff alsa-utils vorbis-tools curl
+		groff alsa-utils vorbis-tools curl git
 
 	# Add svxlink user and add to user groups
 	useradd -r svxlink
 	usermod -a -G daemon,gpio,audio svxlink
 
-	# Download and compile from source
+	# Download and compile from source, either the trunk or latest package
 	cd "/root"
-	curl -Lo svxlink-source.tar.gz "https://github.com/sm0svx/svxlink/archive/$SVXLINK_VER.tar.gz"
-	tar xvzf svxlink-source.tar.gz
-	cd svxlink-$SVXLINK_VER/src
+	echo "svx_trunk=$1"
+	if [ $1="svx_trunk" ]; then
+		mkdir svxlink
+		cd svxlink
+		git clone https://github.com/sm0svx/svxlink.git
+		cd svxlink/src
+
+	else
+		curl -Lo svxlink-source.tar.gz "https://github.com/sm0svx/svxlink/archive/$SVXLINK_VER.tar.gz"
+		tar xvzf svxlink-source.tar.gz
+		cd svxlink-$SVXLINK_VER/src
+	fi
+	
+	# If Selected, enable the non-standard modules to be included in the build process
+	
+	echo "USE_CONTRIBS=$2"
+	if [ $2="USE_CONTRIBS" ]; then
+		echo "Entering config to enable optional contrib modules"
+		Modules_Build_Cmake_switches=' -DWITH_CONTRIB_MODULE_REMOTE_RELAY=ON -DWITH_CONTRIB_MODULE_SITE_STATUS=ON -DWITH_CONTRIB_MODULE_TCLSSTV=ON -DWITH_CONTRIB_MODULE_TXFAN=ON '
+	else
+		echo "Optional contrib modules not selected"
+		Modules_Build_Cmake_switches=""
+	fi
+	
 	mkdir build
 	cd build
-	cmake -DCMAKE_INSTALL_PREFIX=/usr -DSYSCONF_INSTALL_DIR=/etc -DLOCAL_STATE_DIR=/var -DWITH_SYSTEMD=ON -DUSE_QT=no ..	
+	echo "make command: cmake -DCMAKE_INSTALL_PREFIX=/usr -DSYSCONF_INSTALL_DIR=/etc -DLOCAL_STATE_DIR=/var -DWITH_SYSTEMD=ON -DUSE_QT=no $Modules_Build_Cmake_switches .."
+	cmake -DCMAKE_INSTALL_PREFIX=/usr -DSYSCONF_INSTALL_DIR=/etc -DLOCAL_STATE_DIR=/var -DWITH_SYSTEMD=ON -DUSE_QT=no $Modules_Build_Cmake_switches ..
+	
 	make
 	make doc
+
 	make install
 	ldconfig
 
@@ -143,8 +167,9 @@ function install_svxlink_source {
 	systemctl disable remotetrx
 
 	# Clean Up
-	rm /root/svxlink-source.tar.gz
-	rm /root/svxlink-$SVXLINK_VER -R
+	#rm /root/svxlink-source.tar.gz
+	#rm /root/svxlink-$SVXLINK_VER -R
+	rm /root/svxlink* -r -f
 }
 
 ################################################################################
@@ -363,8 +388,6 @@ function install_orp_from_github {
 
 	rm -rf $WWW_PATH/$GUI_NAME/*
 	cd $WWW_PATH
-
-#	git clone https://github.com/OpenRepeater/openrepeater.git $WWW_PATH/$GUI_NAME
 	git clone -b 2.1.x --single-branch https://github.com/OpenRepeater/openrepeater.git $WWW_PATH/$GUI_NAME
 
 	# DEV LINKING: Database

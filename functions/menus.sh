@@ -16,6 +16,56 @@ function menu_expand_file_system {
 	fi
 }
 
+################################################################################
+# INCLUDE USER CONTRIBUTED MODULES MESSAGE
+################################################################################
+
+function menu_contrib_modules {
+	OPTION=$(whiptail --title "$DIALOG_TITLE" --menu "Choose to include optional contrib modules.  These may require you to use the trunk option of svxlink." 15 60 4 \
+	"1" "USE_CONTRIB_MODULES" \
+	"2" "DONT_USE_CONTRIB_MODULES"  3>&1 1>&2 2>&3)
+	 
+	exitstatus=$?
+	if [ $exitstatus = 0 ]; then
+		case $OPTION in
+			1) INPUT_SVXLINK_CONTRIBS="USE_CONTRIBS";;
+			2) INPUT_SVXLINK_CONTRIBS="DONT_USE_CONTRIBS";;
+		esac
+	else
+	    exit;
+	fi
+}
+
+################################################################################
+# BUILD FROM TRUNK MESSAGE
+################################################################################
+
+function menu_svxlink_build_type {
+	
+	OPTION=$(whiptail --title "$DIALOG_TITLE" --menu "Choose the type of svxlink build you wish to perform" 15 60 4 \
+	"1" "Latest Release (Stable)" \
+	"2" "Trunk (Advanced)"  3>&1 1>&2 2>&3)
+	 
+	exitstatus=$?
+	if [ $exitstatus = 0 ]; then
+		case $OPTION in
+			1) INPUT_SVXLINK_INSTALL_TYPE="svx_released";;
+			2) INPUT_SVXLINK_INSTALL_TYPE="svx_trunk";;
+		esac
+	else
+	    exit;
+	fi
+	
+	# MESSAGE="Would you like to build from a controlled version of svxlink (Safe option) or build from the development trunk that may have issues (development work)?"
+	
+	# if (whiptail --title "$DIALOG_TITLE" --yes-button "Build from released version" --no-button "Build from development trunk"  --yesno "$MESSAGE" 15 120) then
+	    # $svxlink_trunk = true;
+	# else
+		# $svxlink_trunk = false;
+	# fi
+}
+
+
 
 ################################################################################
 # WELCOME MESSAGE

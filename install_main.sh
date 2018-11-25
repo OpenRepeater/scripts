@@ -63,6 +63,8 @@ START_TIME=`date +%s`
 menu_welcome_message
 menu_build_type
 menu_hostname
+menu_svxlink_build_type
+menu_contrib_modules
 
 
 ################################################################################
@@ -74,10 +76,18 @@ menu_hostname
 	date
 
 	### SET HOSTNAME ###
-	hostname $HOSTNAME
+	#reference link - https://www.networkworld.com/article/3129313/internet-of-things/whats-in-a-raspberry-pi-name-how-to-rename-your-rpi-under-raspbian.html
+	echo "--------------------------------------------------------------"
+	echo " set hostname: sudo hostnamectl set-hostname $HOSTNAME"
+	echo "--------------------------------------------------------------"
+	sudo hostnamectl set-hostname “$HOSTNAME”
+	
+	#hostname $HOSTNAME # this only sets a 1 time session name
 
 	### SVXLINK FUNCTIONS ###
-	install_svxlink_source
+	
+	
+	install_svxlink_source $INPUT_SVXLINK_INSTALL_TYPE $INPUT_SVXLINK_CONTRIBS
 	fix_svxlink_gpio
 	install_svxlink_sounds
 	enable_i2c
