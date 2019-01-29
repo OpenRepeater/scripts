@@ -92,7 +92,8 @@ menu_contrib_modules
 	install_svxlink_sounds
 	enable_i2c
 	config_ics_controllers
-
+	set_ics_asound
+	
 	### OPEN REPEATER FUCNTIONS ###
 	if [ $INPUT_INSTALL_TYPE = "ORP" ]; then
 		install_webserver
