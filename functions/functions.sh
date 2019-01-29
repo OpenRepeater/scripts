@@ -160,6 +160,33 @@ function check_network {
 
 ################################################################################
 
+function wait_for_network {
+	echo "--------------------------------------------------------------"
+	echo " Waiting for network/internet connection"
+	echo "--------------------------------------------------------------"
+	
+	# Verify network is still up for building over wifi
+	echo "Verifying network/internet is still available, please wait..."
+	while !(wget -q --spider http://google.com >> /dev/null); do
+		echo "Network is down.  Waiting 5 seconds for the network to reconnect..."
+		sleep 5s
+	done
+	echo "Network connected.  Proceeding..."
+}
+
+################################################################################
+
+function set_hostname () {
+	### SET HOSTNAME ###
+	echo "--------------------------------------------------------------"
+	echo " Setting Hostname to $1"
+	echo "--------------------------------------------------------------"
+
+	sudo hostnamectl set-hostname "$1"
+}
+
+################################################################################
+
 # THIS PACKAGE IS OUT OF DATE. USING COMPILE FROM SOURCE INSTEAD
 
 # function install_svxlink_packge {
@@ -330,7 +357,7 @@ function install_webserver {
 	apt install --assume-yes --fix-missing nginx-extras;
 	apt install --assume-yes --fix-missing nginx memcached ssl-cert \
 		openssl-blacklist php-common php-fpm php-common php-curl php-dev php-gd php-imagick php-mcrypt \
-		php-memcache php-pspell php-snmp php-sqlite3 php-xmlrpc php-xsl php-pear php-ssh2 php-cli
+		php-memcache php-pspell php-snmp php-sqlite3 php-xmlrpc php-xsl php-pear php-ssh2 php-cli php-zip
 	
 	apt clean
 	

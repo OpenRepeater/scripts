@@ -9,6 +9,8 @@ While this script is primarily created to run on a Raspberry Pi, it will most li
 * You must be running Debian/Raspbian Stretch OS (Ver 9) on your device
 * You must run the install script as root
 * Make sure that you device is connected to the internet as it will need to download files and packages to install.
+* ***You should set a STATIC ip address*** for your device to prevent the IP changing during/after build.
+* It's **HIGHLY RECOMMNED NOT TO BUILD OVER WIFI**. If your device does not have onboard ethernet, it is advised to use a USB to ethernet adapter.
 * You should have a working knowledge of Linux. This guide/script is not intended for beginners.
 
 #### Overview of the files:

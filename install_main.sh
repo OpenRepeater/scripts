@@ -2,7 +2,7 @@
 
 # SCRIPT CONTRIBUTORS:
 # Aaron Crawford (N3MBH), Richard Neese (KB3VGW), Dan Loranger (KG7PAR),
-# Dana Rawding (N1OFZ)
+# Dana Rawding (N1OFZ), John Tetreault
 
 ################################################################################
 # DEFINE VARIABLES (Scroll down for main script)
@@ -56,15 +56,26 @@ check_internet
 # Start Time
 START_TIME=`date +%s`
 
+
 ################################################################################
 # USER INPUT
 ################################################################################
 
 menu_welcome_message
-menu_build_type
-menu_hostname
-menu_svxlink_build_type
-menu_contrib_modules
+express_build_menu
+
+if [ $INPUT_EXPRESS_INSTALL = "yes" ]; then
+	HOSTNAME="openrepeater"
+	INPUT_INSTALL_TYPE="ORP"
+	INPUT_SVXLINK_CONTRIBS=""
+	INPUT_SVXLINK_INSTALL_TYPE=""
+	
+else
+	menu_hostname
+	menu_build_type
+	menu_svxlink_build_type
+	menu_contrib_modules
+fi
 
 
 ################################################################################
@@ -74,19 +85,10 @@ menu_contrib_modules
 # Run script and output to log file
 (
 	date
-
-	### SET HOSTNAME ###
-	#reference link - https://www.networkworld.com/article/3129313/internet-of-things/whats-in-a-raspberry-pi-name-how-to-rename-your-rpi-under-raspbian.html
-	echo "--------------------------------------------------------------"
-	echo " set hostname: sudo hostnamectl set-hostname $HOSTNAME"
-	echo "--------------------------------------------------------------"
-	sudo hostnamectl set-hostname “$HOSTNAME”
 	
-	#hostname $HOSTNAME # this only sets a 1 time session name
+	set_hostname $HOSTNAME
 
 	### SVXLINK FUNCTIONS ###
-	
-	
 	install_svxlink_source $INPUT_SVXLINK_INSTALL_TYPE $INPUT_SVXLINK_CONTRIBS
 	fix_svxlink_gpio
 	install_svxlink_sounds
@@ -98,6 +100,7 @@ menu_contrib_modules
 	if [ $INPUT_INSTALL_TYPE = "ORP" ]; then
 		install_webserver
 		install_orp_dependancies
+		wait_for_network
 		install_orp_from_github
 		install_orp_modules
 		update_versioning
