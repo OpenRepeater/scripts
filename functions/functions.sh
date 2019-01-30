@@ -401,9 +401,22 @@ function install_orp_dependancies {
 	apt install --assume-yes --fix-missing alsa-base alsa-utils bzip2 cron dialog fail2ban flite gawk \
 		git-core gpsd gpsd-clients i2c-tools inetutils-syslogd install-info libasound2 libasound2-plugin-equal \
 		libgcrypt20 libgsm1 libopus0 libpopt0 libsigc++-2.0-0v5 libsox-fmt-mp3 libxml2 libxml2-dev \
-		libxslt1-dev logrotate network-manager ntp python3-configobj python-cheetah python3-dev python-imaging \
+		libxslt1-dev logrotate ntp python3-configobj python-cheetah python3-dev python-imaging \
 		python3-pip python3-usb python3-serial python3-serial resolvconf screen sox sqlite3 \
 		sudo tcl8.6 time tk8.6 usbutils uuid vim vorbis-tools watchdog wvdial
+
+	# w3rcr -> network-manager package was removed as it caused instability 
+	# particularly with wifi networks. This is a packaged geared towards laptop
+        # users who constant change their connection
+	# This fixes issues:
+	#   https://github.com/OpenRepeater/scripts/issues/20
+	#   https://github.com/OpenRepeater/scripts/issues/21
+	#
+	# If this is needed down the road prior to the installation put entry in
+	# config file in /etc/NetworkManager/conf.d.
+	# [device]
+	# wifi.scan-rand-mac-address=no
+	# ethernet.scan-rand-mac-address=no
 }
 
 ################################################################################
