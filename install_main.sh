@@ -2,7 +2,7 @@
 
 # SCRIPT CONTRIBUTORS:
 # Aaron Crawford (N3MBH), Richard Neese (KB3VGW), Dan Loranger (KG7PAR),
-# Dana Rawding (N1OFZ), John Tetreault
+# Dana Rawding (N1OFZ), John Tetreault, Bob Ruddy (W3RCR)
 
 ################################################################################
 # DEFINE VARIABLES (Scroll down for main script)
