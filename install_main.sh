@@ -30,6 +30,7 @@ SVXLINK_SOUNDS_DIR="/usr/share/svxlink/sounds"
 
 # SVXLINK VERSION - Must match versioning at https://github.com/sm0svx/svxlink/releases
 SVXLINK_VER="17.12.2"
+ORP_RMT_RELAY_BRANCH="1.1"
 
 
 ################################################################################
