@@ -46,6 +46,7 @@ source "${BASH_SOURCE%/*}/functions/menus.sh"
 # Include Main Functions File & RPI functions
 source "${BASH_SOURCE%/*}/functions/functions.sh"
 source "${BASH_SOURCE%/*}/functions/functions_rpi.sh"
+source "${BASH_SOURCE%/*}/functions/functions_ics.sh"
 
 ### INITIAL FUNCTIONS ####
 check_root
@@ -95,7 +96,8 @@ fi
 	install_svxlink_sounds
 	enable_i2c
 	config_ics_controllers
-
+	set_ics_asound
+	
 	### OPEN REPEATER FUCNTIONS ###
 	if [ $INPUT_INSTALL_TYPE = "ORP" ]; then
 		install_webserver
