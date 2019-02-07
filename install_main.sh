@@ -74,6 +74,9 @@ if [ $INPUT_EXPRESS_INSTALL = "yes" ]; then
 else
 	menu_hostname
 	menu_build_type
+	if [ $INPUT_INSTALL_TYPE = "ORP" ]; then
+		menu_orp_file_loc
+	fi
 	menu_svxlink_build_type
 	menu_contrib_modules
 fi
@@ -83,7 +86,7 @@ fi
 # MAIN SCRIPT - Run Functions and Save to Log
 ################################################################################
 
-# Run script and output to log file
+Run script and output to log file
 (
 	date
 	

@@ -85,6 +85,27 @@ function menu_build_type {
 
 
 ################################################################################
+# HOW TO INSTALL ORP UI FILES
+################################################################################
+
+function menu_orp_file_loc {
+	OPTION=$(whiptail --title "$DIALOG_TITLE" --menu "Choose where you would like the ORP UI files placed? A 'Proper Install' will place files where they should be within the file system. This must be used for builds intended to be distributed as IMGs. For developers, there is the option to keep all files within the cloned repo and create symlinks back to this location. This is useful for developers who wish to sync changes from the main GitHub repo." 18 70 4 \
+	"1" "Proper Install (Recommended)" \
+	"2" "Developer Install (Advanced)"  3>&1 1>&2 2>&3)
+	 
+	exitstatus=$?
+	if [ $exitstatus = 0 ]; then
+		case $OPTION in
+			1) ORP_FILE_LOCATIONS="normal";;
+			2) ORP_FILE_LOCATIONS="dev";;
+		esac
+	else
+	    exit;
+	fi
+}
+
+
+################################################################################
 # INCLUDE USER CONTRIBUTED MODULES MESSAGE
 ################################################################################
 
