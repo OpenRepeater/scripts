@@ -116,8 +116,7 @@ Run script and output to log file
 
 	date
 
-) | tee /root/orp_install.log
-
+) 2> >(tee /root/orp_error.log) | tee /root/orp_install.log
 
 ################################################################################
 # POST INSTALL
