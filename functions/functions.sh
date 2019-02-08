@@ -490,6 +490,8 @@ function install_orp_from_github {
 		rm -R "$WWW_PATH/$GUI_NAME/debian"
 		rm -R "$WWW_PATH/$GUI_NAME/install"
 		rm "$WWW_PATH/$GUI_NAME/README.md"
+		rm /var/www/openrepeater/dev
+		rm -R /var/www/openrepeater/.git*
 
 	fi
 
