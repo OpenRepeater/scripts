@@ -125,9 +125,9 @@ function set_hostname () {
 # 	
 # 	# Based on: https://github.com/sm0svx/svxlink/wiki/InstallBinRaspbian
 # 	echo 'deb http://mirrordirector.raspbian.org/raspbian/ buster main' | sudo tee /etc/apt/sources.list.d/svxlink.list
-# 	apt update
+# 	apt-get update
 # 	
-# 	apt install svxlink-server
+# 	apt-get install svxlink-server
 # 	
 # 	rm /etc/apt/sources.list.d/svxlink.list
 # 	
@@ -145,8 +145,8 @@ function install_svxlink_source () {
 	# Based on: https://github.com/sm0svx/svxlink/wiki/InstallSrcDebian
 
 	# Install required packages
- 	apt update
-	apt install --assume-yes --fix-missing g++ cmake make libsigc++-2.0-dev libgsm1-dev libpopt-dev tcl8.5-dev \
+ 	apt-get update
+	apt-get install --assume-yes --fix-missing g++ cmake make libsigc++-2.0-dev libgsm1-dev libpopt-dev tcl8.5-dev \
 		libgcrypt11-dev libspeex-dev libasound2-dev libopus-dev librtlsdr-dev doxygen \
 		groff alsa-utils vorbis-tools curl git
 
@@ -252,7 +252,7 @@ function enable_i2c {
 	echo " Enable I2C bus and I2C Devices"
 	echo "--------------------------------------------------------------"
 
-	apt install --assume-yes --fix-missing i2c-tools
+	apt-get install --assume-yes --fix-missing i2c-tools
 
 	sed -i /boot/config.txt -e "s#\#dtparam=i2c_arm=on#dtparam=i2c_arm=on#"
 	echo "i2c-dev" >> /etc/modules
@@ -286,12 +286,12 @@ function install_webserver {
 	echo "--------------------------------------------------------------"
 	echo " Installing NGINX and PHP"
 	echo "--------------------------------------------------------------"
-	apt install --assume-yes --fix-missing nginx-extras;
-	apt install --assume-yes --fix-missing nginx memcached ssl-cert \
+	apt-get install --assume-yes --fix-missing nginx-extras;
+	apt-get install --assume-yes --fix-missing nginx memcached ssl-cert \
 		openssl-blacklist php-common php-fpm php-common php-curl php-dev php-gd php-imagick php-mcrypt \
 		php-memcache php-pspell php-snmp php-sqlite3 php-xmlrpc php-xsl php-pear php-ssh2 php-cli php-zip
 	
-	apt clean
+	apt-get clean
 	
 	echo "--------------------------------------------------------------"
 	echo " Backup original config files"
@@ -403,7 +403,7 @@ function install_orp_dependancies {
 	echo " Installing OpenRepeater/SVXLink Dependencies"
 	echo "--------------------------------------------------------------"
 
-	apt install --assume-yes --fix-missing alsa-base alsa-utils bzip2 cron dialog fail2ban flite gawk \
+	apt-get install --assume-yes --fix-missing alsa-base alsa-utils bzip2 cron dialog fail2ban flite gawk \
 		git-core gpsd gpsd-clients i2c-tools inetutils-syslogd install-info libasound2 libasound2-plugin-equal \
 		libgcrypt20 libgsm1 libopus0 libpopt0 libsigc++-2.0-0v5 libsox-fmt-mp3 libxml2 libxml2-dev \
 		libxslt1-dev logrotate ntp python3-configobj python-cheetah python3-dev python-imaging \
@@ -531,13 +531,13 @@ function install_orp_modules {
 
 	### Install ORP Remote Relay Module
 	cd /root
-	wget https://github.com/OpenRepeater/MODULE_Remote_Relay/archive/1.1.zip -O remote_relay.zip	
+	curl -sSLo remote_relay.zip https://github.com/OpenRepeater/MODULE_Remote_Relay/archive/${ORP_RMT_RELAY_BRANCH}.zip
 	unzip remote_relay.zip
-	cd MODULE_Remote_Relay-1.1
-	cp svxlink/events.d/RemoteRelay.tcl /usr/share/svxlink/events.d/RemoteRelay.tcl
-	cp svxlink/modules.d/ModuleRemoteRelay.tcl /usr/share/svxlink/modules.d/ModuleRemoteRelay.tcl
-	rm -R /root/MODULE_Remote_Relay-1.1
-	rm /root/remote_relay.zip
+	BASE_DIR=MODULE_Remote_Relay-${ORP_RMT_RELAY_BRANCH}
+	cp ${BASE_DIR}/svxlink/events.d/RemoteRelay.tcl /usr/share/svxlink/events.d/RemoteRelay.tcl
+	cp ${BASE_DIR}/svxlink/modules.d/ModuleRemoteRelay.tcl /usr/share/svxlink/modules.d/ModuleRemoteRelay.tcl
+	rm -R ${BASE_DIR}
+	rm remote_relay.zip
 }
 
 ################################################################################
