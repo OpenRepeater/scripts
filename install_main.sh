@@ -2,7 +2,7 @@
 
 # SCRIPT CONTRIBUTORS:
 # Aaron Crawford (N3MBH), Richard Neese (KB3VGW), Dan Loranger (KG7PAR),
-# Dana Rawding (N1OFZ), John Tetreault, Bob Ruddy (W3RCR)
+# Dana Rawding (N1OFZ), John Tetreault (KC1KVT), Bob Ruddy (W3RCR)
 
 ################################################################################
 # DEFINE VARIABLES (Scroll down for main script)
@@ -75,6 +75,9 @@ if [ $INPUT_EXPRESS_INSTALL = "yes" ]; then
 else
 	menu_hostname
 	menu_build_type
+	if [ $INPUT_INSTALL_TYPE = "ORP" ]; then
+		menu_orp_file_loc
+	fi
 	menu_svxlink_build_type
 	menu_contrib_modules
 fi
@@ -84,7 +87,7 @@ fi
 # MAIN SCRIPT - Run Functions and Save to Log
 ################################################################################
 
-# Run script and output to log file
+Run script and output to log file
 (
 	date
 	
@@ -104,7 +107,7 @@ fi
 		install_orp_dependancies
 		wait_for_network
 		install_orp_from_github
-		install_orp_modules
+		# install_orp_modules ### DEPRECIATED
 		update_versioning
 		modify_sudoers
 	
@@ -115,7 +118,6 @@ fi
 	date
 
 ) 2> >(tee /root/orp_error.log) | tee /root/orp_install.log
-
 
 ################################################################################
 # POST INSTALL

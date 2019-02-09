@@ -236,6 +236,9 @@ function install_svxlink_sounds {
 	ln -s "$SVXLINK_SOUNDS_DIR/en_US/Default/7.wav" "$SVXLINK_SOUNDS_DIR/en_US/Default/phonetic_7.wav"
 	ln -s "$SVXLINK_SOUNDS_DIR/en_US/Default/8.wav" "$SVXLINK_SOUNDS_DIR/en_US/Default/phonetic_8.wav"
 	ln -s "$SVXLINK_SOUNDS_DIR/en_US/Default/9.wav" "$SVXLINK_SOUNDS_DIR/en_US/Default/phonetic_9.wav"	
+	ln -s "$SVXLINK_SOUNDS_DIR/en_US/Default/O.wav" "$SVXLINK_SOUNDS_DIR/en_US/Default/oX.wav"
+	ln -s "$SVXLINK_SOUNDS_DIR/en_US/MetarInfo/hours.wav" "$SVXLINK_SOUNDS_DIR/en_US/Default/hours.wav"
+	ln -s "$SVXLINK_SOUNDS_DIR/en_US/MetarInfo/hour.wav" "$SVXLINK_SOUNDS_DIR/en_US/Default/hour.wav"
 
 	ln -s "$SVXLINK_SOUNDS_DIR/en_US/Default/Hz.wav" "$SVXLINK_SOUNDS_DIR/en_US/Core/hz.wav"
 	
@@ -432,59 +435,68 @@ function install_orp_from_github {
 	cd $WWW_PATH
 	git clone -b 2.1.x --single-branch https://github.com/OpenRepeater/openrepeater.git $WWW_PATH/$GUI_NAME
 
-	# DEV LINKING: Database
-	mkdir -p "/var/lib/openrepeater/db"
-	ln -sf "$WWW_PATH/$GUI_NAME/install/sql/openrepeater.db" "/var/lib/openrepeater/db/openrepeater.db"
-	mkdir -p "/etc/openrepeater"
-	ln -sf "$WWW_PATH/$GUI_NAME/install/sql/database.php" "/etc/openrepeater/database.php"
+	if [ $ORP_FILE_LOCATIONS = "dev" ]; then
+		#######################################################################
+		# DEVELOPER SETUP: LINK FILES INTO PLACE FOR GITHUB SYNC
+		#######################################################################
 
-	# DEV LINKING: ORP Sounds (Courtesy Tones / Sample IDs)
-	ln -s "$WWW_PATH/$GUI_NAME/install/sounds" "$WWW_PATH/$GUI_NAME/sounds"
-	ln -s "$WWW_PATH/$GUI_NAME/install/sounds" "/var/lib/openrepeater/sounds"
-
-	# DEV LINKING: ORP Helper Bash Script
-	ln -s "$WWW_PATH/$GUI_NAME/install/scripts/orp_helper" "/usr/sbin/orp_helper"
+		# DEV LINKING: Database
+		mkdir -p "/var/lib/openrepeater/db"
+		ln -sf "$WWW_PATH/$GUI_NAME/install/sql/openrepeater.db" "/var/lib/openrepeater/db/openrepeater.db"
+		mkdir -p "/etc/openrepeater"
+		ln -sf "$WWW_PATH/$GUI_NAME/install/sql/database.php" "/etc/openrepeater/database.php"
 	
-	# DEV LINKING: Link ORP into SVXLink directories
-	ln -s "/etc/svxlink" "/etc/openrepeater/svxlink"
-	mkdir -p "/etc/openrepeater/svxlink/local-events.d"	
+		# DEV LINKING: ORP Sounds (Courtesy Tones / Sample IDs)
+		ln -s "$WWW_PATH/$GUI_NAME/install/sounds" "$WWW_PATH/$GUI_NAME/sounds"
+		ln -s "$WWW_PATH/$GUI_NAME/install/sounds" "/var/lib/openrepeater/sounds"
+	
+		# DEV LINKING: ORP Helper Bash Script
+		ln -s "$WWW_PATH/$GUI_NAME/install/scripts/orp_helper" "/usr/sbin/orp_helper"
+		
+		# DEV LINKING: Link ORP into SVXLink directories
+		ln -s "/etc/svxlink" "/etc/openrepeater/svxlink"
+		mkdir -p "/etc/openrepeater/svxlink/local-events.d"	
+	
+		#Link ORP to SVXLink log
+		ln -s "/var/log/svxlink" "/var/www/openrepeater/log"
+	
+		# DEV LINKING: Dev Test Folder
+		ln -s "$WWW_PATH/$GUI_NAME/install/dev" "$WWW_PATH/$GUI_NAME/dev"
 
-	#Link ORP to SVXLink log
-	ln -s "/var/log/svxlink" "/var/www/openrepeater/log"
 
-	# DEV LINKING: Dev Test Folder
-	ln -s "$WWW_PATH/$GUI_NAME/install/dev" "$WWW_PATH/$GUI_NAME/dev"
+	else
+		#######################################################################
+		# NORMAL SETUP: PLACE FILES WHERE THEY SHOULD BE 
+		#######################################################################
 
+		# MOVE: Database
+		mkdir -p "/var/lib/openrepeater/db"
+		mv "$WWW_PATH/$GUI_NAME/install/sql/openrepeater.db" "/var/lib/openrepeater/db/openrepeater.db"
+		mkdir -p "/etc/openrepeater"
+		mv "$WWW_PATH/$GUI_NAME/install/sql/database.php" "/etc/openrepeater/database.php"
+		
+		# MOVE: ORP Sounds (Courtesy Tones / Sample IDs)
+		mv "$WWW_PATH/$GUI_NAME/install/sounds" "/var/lib/openrepeater/sounds"
+		ln -s "/var/lib/openrepeater/sounds" "$WWW_PATH/$GUI_NAME/sounds"
+		
+		# MOVE: ORP Helper Bash Script
+		mv "$WWW_PATH/$GUI_NAME/install/scripts/orp_helper" "/usr/sbin/orp_helper"
+		
+		# LINKING: Link ORP into SVXLink directories
+		ln -s "/etc/svxlink" "/etc/openrepeater/svxlink"
+		mkdir -p "/etc/openrepeater/svxlink/local-events.d"	
+		
+		# LINKING: Link ORP to SVXLink log
+		ln -s "/var/log/svxlink" "/var/www/openrepeater/log"
+		
+		# REMOVE: Cleanup install folders/files
+		rm -R "$WWW_PATH/$GUI_NAME/debian"
+		rm -R "$WWW_PATH/$GUI_NAME/install"
+		rm "$WWW_PATH/$GUI_NAME/README.md"
+		rm /var/www/openrepeater/dev
+		rm -R /var/www/openrepeater/.git*
 
-	# ###########################################################
-	# # FUTURE STANDARD INSTALL, MOVE FILES INSTEAD OF LINKING 
-	# 
-	# # MOVE: Database
-	# mkdir -p "/var/lib/openrepeater/db"
-	# mv "$WWW_PATH/$GUI_NAME/install/sql/openrepeater.db" "/var/lib/openrepeater/db/openrepeater.db"
-	# mkdir -p "/etc/openrepeater"
-	# mv "$WWW_PATH/$GUI_NAME/install/sql/database.php" "/etc/openrepeater/database.php"
-	# 
-	# # MOVE: ORP Sounds (Courtesy Tones / Sample IDs)
-	# mv "$WWW_PATH/$GUI_NAME/install/sounds" "/var/lib/openrepeater/sounds"
-	# ln -s "/var/lib/openrepeater/sounds" "$WWW_PATH/$GUI_NAME/sounds"
-	# 
-	# # MOVE: ORP Helper Bash Script
-	# mv "$WWW_PATH/$GUI_NAME/install/scripts/orp_helper" "/usr/sbin/orp_helper"
-	# 
-	# # LINKING: Link ORP into SVXLink directories
-	# ln -s "/etc/svxlink" "/etc/openrepeater/svxlink"
-	# mkdir -p "/etc/openrepeater/svxlink/local-events.d"	
-	# 
-	# # LINKING: Link ORP to SVXLink log
-	# ln -s "/var/log/svxlink" "/var/www/openrepeater/log"
-	# 
-	# # REMOVE: Cleanup install folders/files
-	# rm -R "$WWW_PATH/$GUI_NAME/debian"
-	# rm -R "$WWW_PATH/$GUI_NAME/install"
-	# rm "$WWW_PATH/$GUI_NAME/README.md"
-	# 
-	# ###########################################################
+	fi
 
 
 	# FIX PERMISSIONS/OWNERSHIP
@@ -511,6 +523,7 @@ function install_orp_from_package {
 
 ################################################################################
 
+### THIS FUNCTION IS BEING DEPRECIATED ###
 function install_orp_modules {
 	echo "--------------------------------------------------------------"
 	echo " Installing OpenRepeater custom SVXLink Modules"
