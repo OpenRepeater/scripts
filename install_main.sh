@@ -92,13 +92,6 @@ Run script and output to log file
 	date
 	
 	set_hostname $HOSTNAME
-	
-	### Setup the wifi hotspot
-	wifi_hotspot
-	
-	sleep 15
-	wait_for_network
-	
 
 	### SVXLINK FUNCTIONS ###
 	install_svxlink_source $INPUT_SVXLINK_INSTALL_TYPE $INPUT_SVXLINK_CONTRIBS
