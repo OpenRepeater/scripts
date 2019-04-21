@@ -297,7 +297,7 @@ function wifi_hotspot {
 	echo " Configure Hotspot - /etc/dnsmasq.conf"
 	echo "--------------------------------------------------------------"
 	
-	cat >> /etc/dnsmasq.conf  <<- DELIM
+	cat >> /etc/dnsmasq.cof  <<- DELIM
 	#AutoHotspot config
 	interface=wlan0
 	bind-dynamic 
@@ -331,10 +331,10 @@ function wifi_hotspot {
 	sed -i /etc/sysctl.conf -e "s#\#net.ipv4.ip_forward=1#net.ipv4.ip_forward=1#"	
 	
 	echo "--------------------------------------------------------------"
-	echo " Configure Hotspot - prepare /etc/dhcpcd.conf"
+	echo " Configure Hotspot - prepare /etc/dhcpd.conf"
 	echo "--------------------------------------------------------------"
 	
-	echo >> /etc/dhcpcd.conf <<- DELIM
+	echo >> /etc/dhcpd.conf <<- DELIM
 	nohook wpa_supplicant
 	DELIM
 	
@@ -369,7 +369,6 @@ function wifi_hotspot {
 #You may share this script on the condition a reference to RaspberryConnect.com 
 #must be included in copies or derivatives of this script. 
 
-#Network Wifi & Hotspot with Internet
 #A script to switch between a wifi network and an Internet routed Hotspot
 #A Raspberry Pi with a network port required for Internet in hotspot mode.
 #Works at startup or with a seperate timer or manually without a reboot
@@ -491,53 +490,6 @@ do
               ssidChk='NoSSid'
      fi
 done
-}
-
-NoDevice()
-{
-	#if no wifi device,ie usb wifi removed, activate wifi so when it is
-	#reconnected wifi to a router will be available
-	echo "No wifi device connected"
-	wpa_supplicant -B -i "$wifidev" -c /etc/wpa_supplicant/wpa_supplicant.conf >/dev/null 2>&1
-	exit 1
-}
-
-FindSSID
-
-#Create Hotspot or connect to valid wifi networks
-if [ "$ssidChk" != "NoSSid" ] 
-then
-       echo 0 > /proc/sys/net/ipv4/ip_forward #deactivate ip forwarding
-       if systemctl status hostapd | grep "(running)" >/dev/null 2>&1
-       then #hotspot running and ssid in range
-              KillHotspot
-              echo "Hotspot Deactivated, Bringing Wifi Up"
-              wpa_supplicant -B -i "$wifidev" -c /etc/wpa_supplicant/wpa_supplicant.conf >/dev/null 2>&1
-              ChkWifiUp
-       elif { wpa_cli -i "$wifidev" status | grep 'ip_address'; } >/dev/null 2>&1
-       then #Already connected
-              echo "Wifi already connected to a network"
-       else #ssid exists and no hotspot running connect to wifi network
-              echo "Connecting to the WiFi Network"
-              wpa_supplicant -B -i "$wifidev" -c /etc/wpa_supplicant/wpa_supplicant.conf >/dev/null 2>&1
-              ChkWifiUp
-       fi
-else #ssid or MAC address not in range
-       if systemctl status hostapd | grep "(running)" >/dev/null 2>&1
-       then
-              echo "Hostspot already active"
-       elif { wpa_cli status | grep "$wifidev"; } >/dev/null 2>&1
-       then
-              echo "Cleaning wifi files and Activating Hotspot"
-              wpa_cli terminate >/dev/null 2>&1
-              ip addr flush "$wifidev"
-              ip link set dev "$wifidev" down
-              rm -r /var/run/wpa_supplicant >/dev/null 2>&1
-              createAdHocNetwork
-       else #"No SSID, activating Hotspot"
-              createAdHocNetwork
-       fi
-fi
 }
 
 NoDevice()
