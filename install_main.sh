@@ -48,6 +48,7 @@ source "${BASH_SOURCE%/*}/functions/functions.sh"
 source "${BASH_SOURCE%/*}/functions/functions_rpi.sh"
 source "${BASH_SOURCE%/*}/functions/functions_ics.sh"
 
+
 ### INITIAL FUNCTIONS ####
 check_root
 check_os
@@ -70,7 +71,8 @@ if [ $INPUT_EXPRESS_INSTALL = "yes" ]; then
 	HOSTNAME="openrepeater"
 	INPUT_INSTALL_TYPE="ORP"
 	INPUT_SVXLINK_CONTRIBS=""
-	INPUT_SVXLINK_INSTALL_TYPE=""
+	INPUT_SVXLINK_INSTALL_TYPE="svx_released"
+	
 	
 else
 	menu_hostname
@@ -94,11 +96,28 @@ Run script and output to log file
 	set_hostname $HOSTNAME
 
 	### SVXLINK FUNCTIONS ###
+	echo "SVXLINK Install type selection = $INPUT_SVXLINK_INSTALL_TYPE"
+	echo "SVXLINK Contrib selection = $INPUT_SVXLINK_CONTRIBS"
+	read -p "Press [Enter] key to continue the install process..."
 	install_svxlink_source $INPUT_SVXLINK_INSTALL_TYPE $INPUT_SVXLINK_CONTRIBS
+	
+	# fixup the RepeaterLogic so IDs work correctly
+	logic_fixup 'RepeaterLogic.tcl' 'proc repeater_down' 'RepeaterLogic.tcl'
+	
+	# fixup a typo in the svxlink source that breaks the gpio service
 	fix_svxlink_gpio
+	
+	# install copy of repo with all the synthetic voice files
 	install_svxlink_sounds
+	
+	# cards with gpio expanders will need to have the i2c bus enabled.
 	enable_i2c
+	
+	# Need to add some settings to the config.txt file to enable interface card
+	# or they won't load up properly
 	config_ics_controllers
+	
+	# need some asound.conf tweaks to keep the channels seperated
 	set_ics_asound
 	
 	### OPEN REPEATER FUCNTIONS ###
@@ -110,7 +129,7 @@ Run script and output to log file
 		# install_orp_modules ### DEPRECIATED
 		update_versioning
 		modify_sudoers
-	
+		
 		### ENDING FUNCTIONS ###
 		rpi_disables
 	fi

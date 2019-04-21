@@ -562,3 +562,82 @@ function update_versioning {
 	# Update version in database
 	sqlite3 "/var/lib/openrepeater/db/openrepeater.db" "UPDATE version_info SET version_num='$ORP_VERSION'"
 }
+
+function logic_fixup {
+	#find the desired function
+	
+	InputFileName=$1
+	if [ -z "$InputFileName" ]; then
+	  echo "parameter \'InputFileName\' was not entered"
+	  echo "Usage= ./Logic_fixup.sh <input file> \"proc <function name>\" <output file>"
+	  echo "it is assumed the input logic file resides at ${BASE_DIR}/svxlink/events.d/<input file>"
+	  return -1
+	fi  
+	if  ! [ -f $InputFileName  ]; then
+	  echo "parameter \'InputFileName\' is not a valid file or path"
+	  echo "it is assumed the input logic file resides at ${BASE_DIR}/svxlink/events.d/<input file>"
+	  return -1
+	else
+	  echo "$InputFileName is a valid path"
+	fi
+
+	FunctionName=$2
+	if [ -z "$FunctionName" ]; then
+	  echo "parameter 'FunctionName' was not entered"
+	  return -1
+	else
+	  echo "FunctionName is '$FunctionName'"
+	fi
+
+	OutputFileName=$3
+	if [ -z "$OutputFileName" ]; then
+	  echo "parameter 'OutputFileName' was not entered"
+	else
+	  echo "OutputFileName is $OutputFileName"
+	fi
+
+	file="${BASE_DIR}/svxlink/events.d/$InputFileName"
+	#echo $file
+	#Locate the begining of the function
+	StartLine=1
+	while IFS= read -r line
+	do
+	#echo $line
+	  
+	  if [[ $line == *"$FunctionName"* ]]; then
+		break
+	  fi
+	  ((StartLine++))
+	done <"$file"
+	echo "StartLine: $StartLine"
+
+	#Locate the start of the next function
+	NextStart=0
+	while IFS= read -r line
+	do
+	  #make sure we are not looking in the wrong place
+	  if (($NextStart > (($StartLine )))) && [[ $line == *"proc "* ]]; then
+		break;
+	  fi
+	  ((NextStart++))
+	done <"$file"
+	echo "NextStart: $NextStart"
+
+	# we should now have the starting line of the desired function, and the start of the next function.
+	# Now we need to comment out the respective lines of code leaving the desired function effectively
+	# empty
+	CurrentLine=0
+
+	while IFS= read -r line
+	do
+	  if  (( $CurrentLine >= $StartLine )) && [[ $line != '}' ]] && [[ $line != "" ]] && [[ ${line:0:1} != '#' ]] && [[ (($CurrentLine < $NextStart)) ]]; then   
+
+		echo "#$line" >> "$OutputFileName"
+	  else
+		echo "$line" >> "$OutputFileName"
+	  fi
+	  
+	  ((CurrentLine++))
+	done <"$file"
+}
+
