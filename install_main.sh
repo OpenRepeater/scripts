@@ -96,9 +96,6 @@ Run script and output to log file
 	set_hostname $HOSTNAME
 
 	### SVXLINK FUNCTIONS ###
-	echo "SVXLINK Install type selection = $INPUT_SVXLINK_INSTALL_TYPE"
-	echo "SVXLINK Contrib selection = $INPUT_SVXLINK_CONTRIBS"
-	read -p "Press [Enter] key to continue the install process..."
 	install_svxlink_source $INPUT_SVXLINK_INSTALL_TYPE $INPUT_SVXLINK_CONTRIBS
 	
 	# fixup the RepeaterLogic so IDs work correctly
