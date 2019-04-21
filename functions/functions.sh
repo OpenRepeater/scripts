@@ -157,13 +157,15 @@ function install_svxlink_source () {
 	# Download and compile from source, either the trunk or latest package
 	cd "/root"
 	echo "svx_trunk=$1"
-	if [ $1="svx_trunk" ]; then
+	if [ "$1" = "svx_trunk" ]; then
+		echo "Building SVXLINK from Trunk"
 		mkdir svxlink
 		cd svxlink
 		git clone https://github.com/sm0svx/svxlink.git
 		cd svxlink/src
 
 	else
+		echo "building svxlink from release version"
 		curl -Lo svxlink-source.tar.gz "https://github.com/sm0svx/svxlink/archive/$SVXLINK_VER.tar.gz"
 		tar xvzf svxlink-source.tar.gz
 		cd svxlink-$SVXLINK_VER/src
@@ -172,7 +174,7 @@ function install_svxlink_source () {
 	# If Selected, enable the non-standard modules to be included in the build process
 	
 	echo "USE_CONTRIBS=$2"
-	if [ $2="USE_CONTRIBS" ]; then
+	if [ "$2" = "USE_CONTRIBS" ]; then
 		echo "Entering config to enable optional contrib modules"
 		Modules_Build_Cmake_switches=' -DWITH_CONTRIB_MODULE_REMOTE_RELAY=ON -DWITH_CONTRIB_MODULE_SITE_STATUS=ON -DWITH_CONTRIB_MODULE_TCLSSTV=ON -DWITH_CONTRIB_MODULE_TXFAN=ON '
 	else
