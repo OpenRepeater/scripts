@@ -324,11 +324,11 @@ function wifi_hotspot {
 	DELIM
 	
 	echo "--------------------------------------------------------------"
-	echo " Configure Hotspot - prepare /etc/sysctl.conf"
+	echo " Configure Hotspot - prepare /etc/sysctl"
 	echo " Configure Hotspot - to allow IP forwarding"
 	echo "--------------------------------------------------------------"
 	
-	sed -i /etc/sysctl.conf -e "s#\#net.ipv4.ip_forward=1#net.ipv4.ip_forward=1#"	
+	sed -i /etc/sysctl -e "s#\##net.ipv4.ip_forward=1#net.ipv4.ip_forward=1#"	
 	
 	echo "--------------------------------------------------------------"
 	echo " Configure Hotspot - prepare /etc/dhcpd.conf"
@@ -342,8 +342,8 @@ function wifi_hotspot {
 	echo " Configure Hotspot - Create autohotspot service"
 	echo "--------------------------------------------------------------"
 	
-	echo "" > /etc/systemd/system/autohotspot.service
-	cat >> /etc/systemd/system/autohotspot.service <<- DELIM
+	echo "" > /etc/systemd/system/autohostpot.service
+	cat >> /etc/systemd/system/autohostpot.service <<- DELIM
 	[Unit]
 	Description=Automatically generates an internet Hotspot when a valid ssid is not in range
 	After=multi-user.target
@@ -361,8 +361,8 @@ function wifi_hotspot {
 	echo " Configure Hotspot - Create autohotspot script"
 	echo "--------------------------------------------------------------"
 	
-	echo "" > /usr/bin/autohotspotN
-	cat >> /usr/bin/autohotspotN <<- DELIM
+	echo "" > /usr/bin/autohostpotN
+	cat >> /usr/bin/autohostpotN <<- DELIM
 #!/bin/bash
 #version 0.95-4-N/HS-I
 
