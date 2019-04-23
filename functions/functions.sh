@@ -566,18 +566,22 @@ function update_versioning {
 }
 
 function logic_fixup {
+
+	# change to the top level directory
+	cd /
+	
 	#find the desired function
 	
 	InputFileName=$1
 	if [ -z "$InputFileName" ]; then
-	  echo "parameter \'InputFileName\' was not entered"
-	  echo "Usage= ./Logic_fixup.sh <input file> \"proc <function name>\" <output file>"
-	  echo "it is assumed the input logic file resides at ${BASE_DIR}/svxlink/events.d/<input file>"
+	  echo "parameter 'InputFileName' was not entered"
+	  echo "Usage= ./Logic_fixup.sh <input file path> \"proc <function name>\" <output file path>"
+	  echo "it is assumed the input file path is an absolute path"
 	  return -1
 	fi  
 	if  ! [ -f $InputFileName  ]; then
-	  echo "parameter \'InputFileName\' is not a valid file or path"
-	  echo "it is assumed the input logic file resides at ${BASE_DIR}/svxlink/events.d/<input file>"
+	  echo "parameter \'InputFileName\' is not a valid file path"
+	  echo "it is assumed the input file path is an absolute path"
 	  return -1
 	else
 	  echo "$InputFileName is a valid path"
@@ -598,9 +602,9 @@ function logic_fixup {
 	  echo "OutputFileName is $OutputFileName"
 	fi
 
-	file="${BASE_DIR}/svxlink/events.d/$InputFileName"
-	#echo $file
+
 	#Locate the begining of the function
+	file="$InputFileName"
 	StartLine=1
 	while IFS= read -r line
 	do
@@ -629,9 +633,22 @@ function logic_fixup {
 	# Now we need to comment out the respective lines of code leaving the desired function effectively
 	# empty
 	CurrentLine=0
+	
+	#Handle the situation of output is the same as input file
+	if [ $InputFileName = $OutputFileName ]; then
+		#clone the file to become the input file
+		cp $InputFileName "$InputFileName"".tmp"
+		#chmod 777 "$InputFileName"".tmp"
+		# empty the original file
+		echo "" > $InputFileName
+		#use the copy of the input file going forward
+		file="$InputFileName"".tmp"
+	fi
 
+	# process the file
 	while IFS= read -r line
 	do
+	  echo $CurrentLine
 	  if  (( $CurrentLine >= $StartLine )) && [[ $line != '}' ]] && [[ $line != "" ]] && [[ ${line:0:1} != '#' ]] && [[ (($CurrentLine < $NextStart)) ]]; then   
 
 		echo "#$line" >> "$OutputFileName"
@@ -641,5 +658,10 @@ function logic_fixup {
 	  
 	  ((CurrentLine++))
 	done <"$file"
+	
+	if [ -z "$InputFileName"".tmp" ]; then
+		rm "$InputFileName"".tmp"
+	fi
 }
+
 
