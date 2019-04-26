@@ -99,7 +99,10 @@ Run script and output to log file
 	install_svxlink_source $INPUT_SVXLINK_INSTALL_TYPE $INPUT_SVXLINK_CONTRIBS
 	
 	# fixup the RepeaterLogic so IDs work correctly
-	logic_fixup '/usr/share/svxlink/events.d/RepeaterLogic.tcl' 'proc repeater_down' '/usr/share/svxlink/events.d/RepeaterLogic.tcl'
+	logic_fixup '../../usr/share/svxlink/events.d/RepeaterLogic.tcl' 'proc repeater_down' '/usr/share/svxlink/events.d/RepeaterLogic.tcl'
+	### allow a few seconds for the file system to catch up since we are working on the same file as before
+	sleep 5s
+	logic_fixup '../../usr/share/svxlink/events.d/RepeaterLogic.tcl' 'proc repeater_up' '/usr/share/svxlink/events.d/RepeaterLogic.tcl'
 	
 	# fixup a typo in the svxlink source that breaks the gpio service
 	fix_svxlink_gpio
