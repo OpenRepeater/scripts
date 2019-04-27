@@ -148,7 +148,7 @@ function install_svxlink_source () {
  	apt-get update
 	apt-get install --assume-yes --fix-missing g++ cmake make libsigc++-2.0-dev libgsm1-dev libpopt-dev tcl8.5-dev \
 		libgcrypt11-dev libspeex-dev libasound2-dev libopus-dev librtlsdr-dev doxygen \
-		groff alsa-utils vorbis-tools curl git
+		groff alsa-utils vorbis-tools curl git libcurl4-openssl-dev
 
 	# Add svxlink user and add to user groups
 	useradd -r svxlink
@@ -157,13 +157,15 @@ function install_svxlink_source () {
 	# Download and compile from source, either the trunk or latest package
 	cd "/root"
 	echo "svx_trunk=$1"
-	if [ $1="svx_trunk" ]; then
+	if [ "$1" = "svx_trunk" ]; then
+		echo "Building SVXLINK from Trunk"
 		mkdir svxlink
 		cd svxlink
 		git clone https://github.com/sm0svx/svxlink.git
 		cd svxlink/src
 
 	else
+		echo "building svxlink from release version"
 		curl -Lo svxlink-source.tar.gz "https://github.com/sm0svx/svxlink/archive/$SVXLINK_VER.tar.gz"
 		tar xvzf svxlink-source.tar.gz
 		cd svxlink-$SVXLINK_VER/src
@@ -172,7 +174,7 @@ function install_svxlink_source () {
 	# If Selected, enable the non-standard modules to be included in the build process
 	
 	echo "USE_CONTRIBS=$2"
-	if [ $2="USE_CONTRIBS" ]; then
+	if [ "$2" = "USE_CONTRIBS" ]; then
 		echo "Entering config to enable optional contrib modules"
 		Modules_Build_Cmake_switches=' -DWITH_CONTRIB_MODULE_REMOTE_RELAY=ON -DWITH_CONTRIB_MODULE_SITE_STATUS=ON -DWITH_CONTRIB_MODULE_TCLSSTV=ON -DWITH_CONTRIB_MODULE_TXFAN=ON '
 	else
@@ -562,3 +564,92 @@ function update_versioning {
 	# Update version in database
 	sqlite3 "/var/lib/openrepeater/db/openrepeater.db" "UPDATE version_info SET version_num='$ORP_VERSION'"
 }
+
+function logic_fixup {
+
+	# change to the top level directory
+	cd /
+	
+	#find the desired function
+	
+	InputFileName=$1
+	if [ -z "$InputFileName" ]; then
+	  echo "parameter 'InputFileName' was not entered"
+	  echo "Usage= ./Logic_fixup.sh <input file path> \"proc <function name>\" <output file path>"
+	  echo "it is assumed the input file path is an absolute path"
+	  return -1
+	fi  
+	if  ! [ -f $InputFileName  ]; then
+	  echo "parameter \'InputFileName\' is not a valid file path"
+	  echo "it is assumed the input file path is an absolute path"
+	  return -1
+	else
+	  echo "$InputFileName is a valid path"
+	fi
+
+	FunctionName=$2
+	if [ -z "$FunctionName" ]; then
+	  echo "parameter 'FunctionName' was not entered"
+	  return -1
+	else
+	  echo "FunctionName is '$FunctionName'"
+	fi
+
+	OutputFileName=$3
+	if [ -z "$OutputFileName" ]; then
+	  echo "parameter 'OutputFileName' was not entered"
+	else
+	  echo "OutputFileName is $OutputFileName"
+	fi
+
+
+	#Locate the begining of the function
+	file="$InputFileName"
+	StartLine=1
+	while IFS= read -r line
+	do
+	#echo $line
+	  
+	  if [[ $line == *"$FunctionName"* ]]; then
+		break
+	  fi
+	  ((StartLine++))
+	done <"$file"
+	echo "StartLine: $StartLine"
+
+	#Locate the start of the next function
+	NextStart=0
+	while IFS= read -r line
+	do
+	  #make sure we are not looking in the wrong place
+	  if (($NextStart > (($StartLine )))) && [[ $line == *"proc "* ]]; then
+		break;
+	  fi
+	  ((NextStart++))
+	done <"$file"
+	echo "NextStart: $NextStart"
+
+	# we should now have the starting line of the desired function, and the start of the next function.
+	# Now we need to comment out the respective lines of code leaving the desired function effectively
+	# empty
+	CurrentLine=0
+
+	# process the file
+	while IFS= read -r line
+	do
+	  #echo $CurrentLine
+	  if  (( $CurrentLine >= $StartLine )) && [[ $line != '}' ]] && [[ $line != "" ]] && [[ ${line:0:1} != '#' ]] && [[ (($CurrentLine < $NextStart)) ]]; then   
+
+		echo "#$line" >> "$OutputFileName"".tmp"
+	  else
+		echo "$line" >> "$OutputFileName"".tmp"
+	  fi
+	  
+	  ((CurrentLine++))
+	done <"$file"
+	
+	mv "$OutputFileName"".tmp" "$OutputFileName"
+
+}
+
+
