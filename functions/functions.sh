@@ -633,35 +633,23 @@ function logic_fixup {
 	# Now we need to comment out the respective lines of code leaving the desired function effectively
 	# empty
 	CurrentLine=0
-	
-	#Handle the situation of output is the same as input file
-	if [ $InputFileName = $OutputFileName ]; then
-		#clone the file to become the input file
-		cp $InputFileName "$InputFileName"".tmp"
-		#chmod 777 "$InputFileName"".tmp"
-		# empty the original file
-		echo "" > $InputFileName
-		#use the copy of the input file going forward
-		file="$InputFileName"".tmp"
-	fi
 
 	# process the file
 	while IFS= read -r line
 	do
-	  echo $CurrentLine
+	  #echo $CurrentLine
 	  if  (( $CurrentLine >= $StartLine )) && [[ $line != '}' ]] && [[ $line != "" ]] && [[ ${line:0:1} != '#' ]] && [[ (($CurrentLine < $NextStart)) ]]; then   
 
-		echo "#$line" >> "$OutputFileName"
+		echo "#$line" >> "$OutputFileName"".tmp"
 	  else
-		echo "$line" >> "$OutputFileName"
+		echo "$line" >> "$OutputFileName"".tmp"
 	  fi
 	  
 	  ((CurrentLine++))
 	done <"$file"
 	
-	if [ -z "$InputFileName"".tmp" ]; then
-		rm "$InputFileName"".tmp"
-	fi
+	mv "$OutputFileName"".tmp" "$OutputFileName"
+
 }
 
 
