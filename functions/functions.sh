@@ -222,7 +222,7 @@ function fix_svxlink_gpio {
 	After=systemd-modules.load.service\n\
 	After=network.target\n\
 	Before=sysvinit.target\n\
-	ConditionPathExists=/sys/class/i2c-adapter/usr/sbin/svxlink_gpio_up#"
+	ConditionPathExists=/sys/class/i2c-adapter#"
 	
 }
 
