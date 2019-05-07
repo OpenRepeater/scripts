@@ -211,6 +211,19 @@ function fix_svxlink_gpio {
 	echo "--------------------------------------------------------------"
 	
 	sed -i -e 's/$GPIOPATH/$GPIO_PATH/g' /usr/sbin/svxlink_gpio_up
+	
+	echo "--------------------------------------------------------------"
+	echo " Apply SystemD Fixes to SVXLink GPIO Service"
+	echo "--------------------------------------------------------------"
+	sed -i /lib/systemd/system/svxlink_gpio_setup.service -e "s#Documentation=man:svxlink(1)#\
+	Documentation=man:svxlink(1)\n\
+	\#fix to address the gpio not exporting at boot\n\
+	Requires=systemd-modules-load.service\n\
+	After=systemd-modules.load.service\n\
+	After=network.target\n\
+	Before=sysvinit.target\n\
+	ConditionPathExists=/sys/class/i2c-adapter/usr/sbin/svxlink_gpio_up#"
+	
 }
 
 ################################################################################
