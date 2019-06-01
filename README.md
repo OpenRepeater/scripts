@@ -21,6 +21,7 @@ While this script is primarily created to run on a Raspberry Pi, it will most li
 	* **functions_rpi.sh** - This script contains functions specific to the Raspberry Pi.
 	* **menus.sh** - Specific functions to display menus (using whiptail) to display information and request user input.
 * **utilities (folder)**
+	* **prep4img.sh** - This is a script that is run on the an install prior to making an image intended for distribution. It cleans up any settings and identifiable information. 
 	* **shrink_img.sh** - This is a script that is intended to be run on on a Linux computer with the SD card in a card read to shrink the image for ease of distribution. This script has not been fully tested and was written by others. 
 
 #### Prepare your OS:
@@ -53,11 +54,11 @@ These directions will be geared a little more towards the Raspberry Pi and Raspb
 * Change to the root folder
 	* $ cd /root
 * Download this script in it's entirety from GitHub directly to your board's root folder.
-	* $ wget https://github.com/OpenRepeater/scripts/archive/2.1.x.zip
+	* $ wget https://github.com/OpenRepeater/scripts/archive/2.2.x.zip
 * Unzip the script archive
-	* $ unzip 2.1.x.zip
+	* $ unzip 2.2.x.zip
 * Change to the script folder
-	* $ cd scripts-2.1.x
+	* $ cd scripts-2.2.x
 * Make the script executable
 	* $ chmod +x install_main.sh
 	* Note: when you run the install_main.sh script, it will set the function scripts as executable.
@@ -70,8 +71,8 @@ These directions will be geared a little more towards the Raspberry Pi and Raspb
 #### Post Install Considerations:
 
 * Remove the install script.
-	* $ rm /root/2.1.x.zip
-	* $ rm /root/scripts-2.1.x -R
+	* $ rm /root/2.2.x.zip
+	* $ rm /root/scripts-2.2.x -R
 * On the Raspberry Pi, you may want to disable, remove, or change the default password for the default user (pi) to something more secure.
 
 * If you are building this for your own use, please change the root password to something that is more secure and not published.
