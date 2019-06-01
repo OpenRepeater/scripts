@@ -127,7 +127,6 @@ Run script and output to log file
 		install_orp_dependancies
 		wait_for_network
 		install_orp_from_github
-		# install_orp_modules ### DEPRECIATED
 		update_versioning
 		modify_sudoers
 		
