@@ -9,8 +9,8 @@
 ################################################################################
 ORP_VERSION="2.1.2"
 
-REQUIRED_OS_VER="9"
-REQUIRED_OS_NAME="Stretch"
+REQUIRED_OS_VER="10"
+REQUIRED_OS_NAME="Buster"
 
 # File System Requirements
 MIN_PARTITION_SIZE="3000"
