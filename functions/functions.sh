@@ -304,7 +304,7 @@ function install_webserver {
 	apt-get install --assume-yes --fix-missing nginx-extras;
 	apt-get install --assume-yes --fix-missing nginx memcached ssl-cert \
 		openssl-blacklist php-common php-fpm php-common php-curl php-dev php-gd php-imagick php-mcrypt \
-		php-memcache php-pspell php-snmp php-sqlite3 php-xmlrpc php7.3-xml php-pear php-ssh2 php-cli php-zip
+		php-memcached php-pspell php-snmp php-sqlite3 php-xmlrpc php7.3-xml php-pear php-ssh2 php-cli php-zip
 	
 	apt-get clean
 	
