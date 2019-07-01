@@ -334,7 +334,7 @@ function install_webserver {
 	echo " Enabling memcache in php.ini"
 	echo "--------------------------------------------------------------"
 	cat >> "$PHP_INI" <<- DELIM 
-		extensions=memcache.so 
+		extensions=memcached.so 
 		DELIM
 	
 	echo "--------------------------------------------------------------"
@@ -376,7 +376,7 @@ function install_webserver {
 		      include snippets/fastcgi-php.conf;
 		      include fastcgi_params;
 		      fastcgi_pass unix:/var/run/php/php7.3-fpm.sock;
-		      #fastcgi_param   SCRIPT_FILENAME /var/www/openrepeater/$fastcgi_script_name;
+		      fastcgi_param   SCRIPT_FILENAME /var/www/openrepeater/$fastcgi_script_name;
 		      error_page  404   404.php;
 		      fastcgi_intercept_errors on;		
 		   }
