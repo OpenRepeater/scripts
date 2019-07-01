@@ -312,9 +312,9 @@ function install_webserver {
 	echo " Backup original config files"
 	echo "--------------------------------------------------------------"
 	cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.orig
-	cp /etc/php/7.1/fpm/php-fpm.conf /etc/php/7.1/fpm/php-fpm.conf.orig
-	cp /etc/php/7.1/fpm/php.ini /etc/php/7.1/fpm/php.ini.orig
-	cp /etc/php/7.1/fpm/pool.d/www.conf /etc/php/7.1/fpm/pool.d/www.conf.orig
+	cp /etc/php/7.3/fpm/php-fpm.conf /etc/php/7.3/fpm/php-fpm.conf.orig
+	cp /etc/php/7.3/fpm/php.ini /etc/php/7.3/fpm/php.ini.orig
+	cp /etc/php/7.3/fpm/pool.d/www.conf /etc/php/7.3/fpm/pool.d/www.conf.orig
 	
 	echo "--------------------------------------------------------------"
 	echo " Installing self signed SSL certificate"
@@ -375,8 +375,8 @@ function install_webserver {
 		   location ~ \.php$ {
 		      include snippets/fastcgi-php.conf;
 		      include fastcgi_params;
-		      fastcgi_pass unix:/var/run/php/php7.1-fpm.sock;
-		      fastcgi_param   SCRIPT_FILENAME /var/www/openrepeater/$fastcgi_script_name;
+		      fastcgi_pass unix:/var/run/php/php7.3-fpm.sock;
+		      #fastcgi_param   SCRIPT_FILENAME /var/www/openrepeater/$fastcgi_script_name;
 		      error_page  404   404.php;
 		      fastcgi_intercept_errors on;		
 		   }
