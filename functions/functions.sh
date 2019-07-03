@@ -156,7 +156,7 @@ function install_webserver {
 	apt-get install --assume-yes --fix-missing nginx-extras;
 	apt-get install --assume-yes --fix-missing nginx memcached ssl-cert \
 		openssl-blacklist php-common php-fpm php-common php-curl php-dev php-gd php-imagick php-mcrypt \
-		php-memcache php-pspell php-snmp php-sqlite3 php-xmlrpc php-xsl php-pear php-ssh2 php-cli php-zip
+		php-memcached php-pspell php-snmp php-sqlite3 php-xmlrpc php7.3-xml php-pear php-ssh2 php-cli php-zip
 	
 	apt-get clean
 	
@@ -164,9 +164,9 @@ function install_webserver {
 	echo " Backup original config files"
 	echo "--------------------------------------------------------------"
 	cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.orig
-	cp /etc/php/7.0/fpm/php-fpm.conf /etc/php/7.0/fpm/php-fpm.conf.orig
-	cp /etc/php/7.0/fpm/php.ini /etc/php/7.0/fpm/php.ini.orig
-	cp /etc/php/7.0/fpm/pool.d/www.conf /etc/php/7.0/fpm/pool.d/www.conf.orig
+	cp /etc/php/7.3/fpm/php-fpm.conf /etc/php/7.3/fpm/php-fpm.conf.orig
+	cp /etc/php/7.3/fpm/php.ini /etc/php/7.3/fpm/php.ini.orig
+	cp /etc/php/7.3/fpm/pool.d/www.conf /etc/php/7.3/fpm/pool.d/www.conf.orig
 	
 	echo "--------------------------------------------------------------"
 	echo " Installing self signed SSL certificate"
@@ -186,7 +186,7 @@ function install_webserver {
 	echo " Enabling memcache in php.ini"
 	echo "--------------------------------------------------------------"
 	cat >> "$PHP_INI" <<- DELIM 
-		extensions=memcache.so 
+		extensions=memcached.so 
 		DELIM
 	
 	echo "--------------------------------------------------------------"
@@ -227,7 +227,7 @@ function install_webserver {
 		   location ~ \.php$ {
 		      include snippets/fastcgi-php.conf;
 		      include fastcgi_params;
-		      fastcgi_pass unix:/var/run/php/php7.0-fpm.sock;
+		      fastcgi_pass unix:/var/run/php/php7.3-fpm.sock;
 		      fastcgi_param   SCRIPT_FILENAME /var/www/openrepeater/$fastcgi_script_name;
 		      error_page  404   404.php;
 		      fastcgi_intercept_errors on;		
@@ -273,7 +273,7 @@ function install_orp_dependancies {
 	apt-get install --assume-yes --fix-missing alsa-base alsa-utils bzip2 cron dialog fail2ban flite gawk \
 		git-core gpsd gpsd-clients i2c-tools inetutils-syslogd install-info libasound2 libasound2-plugin-equal \
 		libgcrypt20 libgsm1 libopus0 libpopt0 libsigc++-2.0-0v5 libsox-fmt-mp3 libxml2 libxml2-dev \
-		libxslt1-dev logrotate ntp python3-configobj python-cheetah python3-dev python-imaging \
+		libxslt1-dev logrotate ntp python3-configobj python-cheetah python3-dev \
 		python3-pip python3-usb python3-serial python3-serial resolvconf screen sox sqlite3 \
 		sudo tcl8.6 time tk8.6 usbutils uuid vim vorbis-tools watchdog wvdial
 
@@ -300,7 +300,7 @@ function install_orp_from_github {
 
 	rm -rf $WWW_PATH/$GUI_NAME/*
 	cd $WWW_PATH
-	git clone -b 2.1.x --single-branch https://github.com/OpenRepeater/openrepeater.git $WWW_PATH/$GUI_NAME
+	git clone -b 2.2.x --single-branch https://github.com/OpenRepeater/openrepeater.git $WWW_PATH/$GUI_NAME
 
 	if [ $ORP_FILE_LOCATIONS = "dev" ]; then
 		#######################################################################
