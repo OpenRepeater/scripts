@@ -9,8 +9,8 @@
 ################################################################################
 ORP_VERSION="2.2.0"
 
-REQUIRED_OS_VER="9"
-REQUIRED_OS_NAME="Stretch"
+REQUIRED_OS_VER="10"
+REQUIRED_OS_NAME="Buster"
 
 # File System Requirements
 MIN_PARTITION_SIZE="3000"
@@ -23,7 +23,7 @@ WWW_PATH="/var/www"
 GUI_NAME="openrepeater"
 
 # PHP ini config file
-PHP_INI="/etc/php/7.0/fpm/php.ini"
+PHP_INI="/etc/php/7.3/fpm/php.ini"
 
 #SVXLink
 SVXLINK_SOUNDS_DIR="/usr/share/svxlink/sounds"
