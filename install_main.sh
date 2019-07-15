@@ -116,7 +116,7 @@ Run script and output to log file
 	
 	# Need to add some settings to the config.txt file to enable interface card
 	# or they won't load up properly
-	config_ics_controllers
+#	config_ics_controllers
 	
 	# need some asound.conf tweaks to keep the channels seperated
 	set_ics_asound
