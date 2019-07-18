@@ -7,7 +7,7 @@
 ################################################################################
 # DEFINE VARIABLES (Scroll down for main script)
 ################################################################################
-ORP_VERSION="2.1.2"
+ORP_VERSION="2.1.2 (dev)"
 
 REQUIRED_OS_VER="10"
 REQUIRED_OS_NAME="Buster"
