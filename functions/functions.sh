@@ -521,6 +521,7 @@ function install_orp_from_github {
 	chown www-data:www-data "/etc/svxlink" -R
 	chown www-data:www-data "/usr/share/svxlink/events.d/" -R
 	chown www-data:www-data "/usr/share/svxlink/modules.d/" -R
+	chown www-data:www-data "/usr/share/svxlink/sounds/" -R
 
 	chown www-data:www-data "/var/lib/openrepeater/" -R
 	chmod 777 "/var/lib/openrepeater/" -R
