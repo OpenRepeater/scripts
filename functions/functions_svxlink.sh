@@ -101,12 +101,12 @@ function install_svxlink_sounds {
 	echo "--------------------------------------------------------------"
 
 	cd /root
- 	wget https://github.com/OpenRepeater/orp-sounds/archive/2.0.0.zip
-	unzip 2.0.0.zip
+	wget https://github.com/OpenRepeater/orp-sounds/archive/2019.zip
+	unzip 2019.zip
 	mkdir -p $SVXLINK_SOUNDS_DIR
-	mv orp-sounds-2.0.0/en_US $SVXLINK_SOUNDS_DIR
-	rm -R orp-sounds-2.0.0
-	rm 2.0.0.zip
+	mv orp-sounds-2019/en_US $SVXLINK_SOUNDS_DIR
+	rm -R orp-sounds-2019
+	rm 2019.zip
 	
 	ln -s "$SVXLINK_SOUNDS_DIR/en_US/Default/0.wav" "$SVXLINK_SOUNDS_DIR/en_US/Default/phonetic_0.wav"
 	ln -s "$SVXLINK_SOUNDS_DIR/en_US/Default/1.wav" "$SVXLINK_SOUNDS_DIR/en_US/Default/phonetic_1.wav"
