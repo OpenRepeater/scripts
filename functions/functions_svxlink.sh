@@ -217,3 +217,17 @@ function logic_fixup {
 }
 
 ################################################################################
+
+function install_device_permission_scripts {
+	echo "--------------------------------------------------------------"
+	echo " Copy Permissions Scripts for Hidraw/Serial Devices into place"
+	echo "--------------------------------------------------------------"
+
+	cp "$SCRIPT_DIR/install/scripts/devices.conf" "/etc/svxlink/"
+	cp "$SCRIPT_DIR/install/scripts/svxlink_devices" "/usr/sbin/"
+	cp "$SCRIPT_DIR/install/scripts/svxlink_devices.service" "/lib/systemd/system/"
+	
+	chown www-data:www-data "/etc/svxlink/devices.conf"
+}
+
+################################################################################

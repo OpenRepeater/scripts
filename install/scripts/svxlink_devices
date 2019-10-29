@@ -1,0 +1,30 @@
+#!/bin/sh
+
+##############################################################################
+#
+# Device setup script for SvxLink server. Run this script to set permission
+# for the selected device paths defined in the device specific configuration
+# file /etc/svxlink/devices.conf
+#
+##############################################################################
+
+DEVICE_CONF="/etc/svxlink/devices.conf"
+[ -r "$DEVICE_CONF" ] && . "$DEVICE_CONF"
+
+
+## Function to set permissions for the given device path.
+dev_setup()
+{
+	local DEV="$1"
+
+	[ -n "$DEV_USER" ] && chown "$DEV_USER" $DEV
+	[ -n "$DEV_GROUP" ] && chgrp "$DEV_GROUP" $DEV
+	[ -n "$DEV_MODE" ] && chmod "$DEV_MODE" $DEV
+}
+
+
+## Loop thru device list and set permissions for each
+for dev in $DEV_LIST; do
+	echo $dev
+	dev_setup "$dev"
+done

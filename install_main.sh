@@ -32,6 +32,7 @@ SVXLINK_SOUNDS_DIR="/usr/share/svxlink/sounds"
 SVXLINK_VER="19.09.1"
 ORP_RMT_RELAY_BRANCH="1.1" ### FOR DEPRECIATED FUNCTION
 
+SCRIPT_DIR=$(dirname $(realpath $0))
 
 ################################################################################
 # PRE-INSTALL
@@ -91,7 +92,7 @@ fi
 # MAIN SCRIPT - Run Functions and Save to Log
 ################################################################################
 
-Run script and output to log file
+# Run script and output to log file
 (
 	date
 	
@@ -108,6 +109,9 @@ Run script and output to log file
 	
 	# fixup a typo in the svxlink source that breaks the gpio service
 	fix_svxlink_gpio
+
+	# install scripts to set device permissions (hidraw/serial)
+	install_device_permission_scripts
 	
 	# install copy of repo with all the synthetic voice files
 	install_svxlink_sounds
