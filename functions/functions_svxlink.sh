@@ -228,6 +228,7 @@ function install_device_permission_scripts {
 	cp "$SCRIPT_DIR/install/scripts/svxlink_devices.service" "/lib/systemd/system/"
 	
 	chown www-data:www-data "/etc/svxlink/devices.conf"
+	chmod +x "/usr/sbin/svxlink_devices"
 }
 
 ################################################################################
