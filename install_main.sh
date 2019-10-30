@@ -113,6 +113,9 @@ fi
 	# install scripts to set device permissions (hidraw/serial)
 	install_device_permission_scripts
 	
+	# Enable ALSA zerofill for svxlink
+	force_async_audio_zerfill
+	
 	# install copy of repo with all the synthetic voice files
 	install_svxlink_sounds
 	
