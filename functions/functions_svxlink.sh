@@ -132,7 +132,7 @@ function install_svxlink_sounds {
 function force_async_audio_zerfill {
 	ENVIRONMENT_FILE="/etc/default/svxlink"
 	REPLACEMENT_VALUE="1"
-	sed -i "s/\($ASYNC_AUDIO_ALSA_ZEROFILL *= *\).*/\1$REPLACEMENT_VALUE/" $ENVIRONMENT_FILE
+	sed -i "s/\(ASYNC_AUDIO_ALSA_ZEROFILL *= *\).*/\1$REPLACEMENT_VALUE/" $ENVIRONMENT_FILE
 }
 
 ################################################################################
