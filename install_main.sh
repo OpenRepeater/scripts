@@ -139,6 +139,7 @@ fi
 		modify_sudoers
 		
 		### ENDING FUNCTIONS ###
+		add_orp_user
 		rpi_disables
 		set_motd
 	fi
