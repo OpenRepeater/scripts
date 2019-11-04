@@ -386,6 +386,14 @@ function install_orp_from_github {
 
 ################################################################################
 
+function add_orp_user {
+	echo "--------------------------------------------------------------"
+	echo " Adding OpenRepeater User (orp)"
+	echo "--------------------------------------------------------------"
+	useradd -m -G sudo -c "OpenRepeater" orp
+	usermod --password $(openssl passwd -1 OpenRepeater) orp
+}
+
 function modify_sudoers {
 	echo "--------------------------------------------------------------"
 	echo " Setting up sudoers permissions for OpenRepeater"
