@@ -139,8 +139,8 @@ function config_ics_controllers {
 		#Enable mcp23s17 Overlay
 		dtoverlay=mcp23017,addr=0x20,gpiopin=12
 		
-		#Enable mcp3008 adc overlay
-		dtoverlay=mcp3008:spi0-0-present,spi0-0-speed=3600000
+		#Enable mcp3208 adc overlay
+		dtoverlay=mcp3202:spi0-0-present,spi0-0-speed=3600000
 
 		# Enable UART for serial console
 		enable_uart=1
