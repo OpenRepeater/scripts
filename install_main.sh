@@ -51,6 +51,9 @@ source "${BASH_SOURCE%/*}/functions/functions_rpi.sh"
 source "${BASH_SOURCE%/*}/functions/functions_motd.sh"
 source "${BASH_SOURCE%/*}/functions/functions_ics.sh"
 
+#Include AutoHotSpot Functions
+source "${BASH_SOURCE%/*}/functions/functions_AutoHotSpot.sh"
+
 
 ### INITIAL FUNCTIONS ####
 check_root
@@ -99,49 +102,54 @@ fi
 	set_hostname $HOSTNAME
 
 	### SVXLINK FUNCTIONS ###
-	install_svxlink_source $INPUT_SVXLINK_INSTALL_TYPE $INPUT_SVXLINK_CONTRIBS
+#	install_svxlink_source $INPUT_SVXLINK_INSTALL_TYPE $INPUT_SVXLINK_CONTRIBS
 	
 	# fixup the RepeaterLogic so IDs work correctly
-	logic_fixup '../../usr/share/svxlink/events.d/RepeaterLogic.tcl' 'proc repeater_down' '/usr/share/svxlink/events.d/RepeaterLogic.tcl'
+#	logic_fixup '../../usr/share/svxlink/events.d/RepeaterLogic.tcl' 'proc repeater_down' '/usr/share/svxlink/events.d/RepeaterLogic.tcl'
 	### allow a few seconds for the file system to catch up since we are working on the same file as before
-	sleep 5s
-	logic_fixup '../../usr/share/svxlink/events.d/RepeaterLogic.tcl' 'proc repeater_up' '/usr/share/svxlink/events.d/RepeaterLogic.tcl'
+#	sleep 5s
+#	logic_fixup '../../usr/share/svxlink/events.d/RepeaterLogic.tcl' 'proc repeater_up' '/usr/share/svxlink/events.d/RepeaterLogic.tcl'
 	
 	# fixup a typo in the svxlink source that breaks the gpio service
-	fix_svxlink_gpio
+#	fix_svxlink_gpio
 
 	# install scripts to set device permissions (hidraw/serial)
-	install_device_permission_scripts
+#	install_device_permission_scripts
 	
 	# Enable ALSA zerofill for svxlink
-	force_async_audio_zerfill
+#	force_async_audio_zerfill
 	
 	# install copy of repo with all the synthetic voice files
-	install_svxlink_sounds
+#	install_svxlink_sounds
 	
 	# cards with gpio expanders will need to have the i2c bus enabled.
-	enable_i2c
+#	enable_i2c
 	
 	# Need to add some settings to the config.txt file to enable interface card
 	# or they won't load up properly
-	config_ics_controllers
+#	config_ics_controllers
 	
 	# need some asound.conf tweaks to keep the channels seperated
-	set_ics_asound
+#	set_ics_asound
 	
 	### OPEN REPEATER FUCNTIONS ###
 	if [ $INPUT_INSTALL_TYPE = "ORP" ]; then
-		install_webserver
+#		install_webserver
 		install_orp_dependancies
 		wait_for_network
-		install_orp_from_github
-		update_versioning
+#		install_orp_from_github
+#		update_versioning
 		modify_sudoers
 		
+		### autohotspot
+		AutoHotSpotScript_MoveAndExtract
+		AutoHotSpot_AutoWithoutInternet
+		AutoHotSpot_SSID_PWD
+		
 		### ENDING FUNCTIONS ###
-		add_orp_user
-		rpi_disables
-		set_motd
+#		add_orp_user
+#		rpi_disables
+#		set_motd
 	fi
 
 	date
