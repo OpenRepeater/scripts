@@ -139,8 +139,8 @@ function config_ics_controllers {
 		#Enable mcp23s17 Overlay
 		dtoverlay=mcp23017,addr=0x20,gpiopin=12
 		
-		#Enable mcp3008 adc overlay
-		dtoverlay=mcp3008:spi0-0-present,spi0-0-speed=3600000
+		#Enable mcp3208 adc overlay
+		dtoverlay=mcp3202:spi0-0-present,spi0-0-speed=3600000
 
 		# Enable UART for serial console
 		enable_uart=1
@@ -275,7 +275,7 @@ function install_orp_dependancies {
 		libgcrypt20 libgsm1 libopus0 libpopt0 libsigc++-2.0-0v5 libsox-fmt-mp3 libxml2 libxml2-dev \
 		libxslt1-dev logrotate ntp python3-configobj python-cheetah python3-dev \
 		python3-pip python3-usb python3-serial python3-serial resolvconf screen sox sqlite3 \
-		sudo tcl8.6 time tk8.6 usbutils uuid vim vorbis-tools watchdog wvdial shellinabox
+		sudo tcl8.6 time tk8.6 usbutils uuid vim vorbis-tools watchdog wvdial shellinabox remind expect
 
 	# w3rcr -> network-manager package was removed as it caused instability 
 	# particularly with wifi networks. This is a packaged geared towards laptop

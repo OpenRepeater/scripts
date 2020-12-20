@@ -1,0 +1,24 @@
+#!/usr/bin/expect -f
+
+set force_conservative 1  ;# set to 1 to force conservative mode even if
+			  ;# script wasn't run conservatively originally
+if {$force_conservative} {
+	set send_slow {1 .1}
+	proc send {ignore arg} {
+		sleep .1
+		exp_send -s -- $arg
+	}
+}
+set timeout -1
+spawn /usr/share/Autohotspot/autohotspot-setup.sh
+expect  "Select an Option:"
+sleep 0.25
+send -- "1\r"
+expect "Press any key to continue\r"
+
+sleep 0.5
+send -- "\r"
+expect "Select an Option:"
+sleep 0.25
+send -- "8\r"
+expect eof

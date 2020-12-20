@@ -51,6 +51,9 @@ source "${BASH_SOURCE%/*}/functions/functions_rpi.sh"
 source "${BASH_SOURCE%/*}/functions/functions_motd.sh"
 source "${BASH_SOURCE%/*}/functions/functions_ics.sh"
 
+#Include AutoHotSpot Functions
+source "${BASH_SOURCE%/*}/functions/functions_AutoHotSpot.sh"
+
 
 ### INITIAL FUNCTIONS ####
 check_root
@@ -137,6 +140,11 @@ fi
 		install_orp_from_github
 		update_versioning
 		modify_sudoers
+		
+		### autohotspot
+		AutoHotSpotScript_MoveAndExtract
+		AutoHotSpot_AutoWithoutInternet
+		AutoHotSpot_SSID_PWD
 		
 		### ENDING FUNCTIONS ###
 		add_orp_user
