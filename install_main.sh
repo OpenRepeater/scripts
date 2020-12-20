@@ -136,10 +136,10 @@ fi
 	if [ $INPUT_INSTALL_TYPE = "ORP" ]; then
 		install_webserver
 		install_orp_dependancies
-		#wait_for_network
+		wait_for_network
 		install_orp_from_github
 		update_versioning
-		#modify_sudoers
+		modify_sudoers
 		
 		### autohotspot
 		AutoHotSpotScript_MoveAndExtract
