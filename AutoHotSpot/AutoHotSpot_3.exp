@@ -10,7 +10,7 @@ if {$force_conservative} {
 	}
 }
 set timeout -1
-spawn /usr/share/Autohotspot/autohotspot-setup.sh
+spawn /usr/share/Autohotspot/Autohotspot/autohotspot-setup.sh
 expect  "Select an Option:"
 sleep 0.25
 send -- "3\r"

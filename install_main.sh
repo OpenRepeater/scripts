@@ -107,7 +107,7 @@ fi
 	# fixup the RepeaterLogic so IDs work correctly
 	logic_fixup '../../usr/share/svxlink/events.d/RepeaterLogic.tcl' 'proc repeater_down' '/usr/share/svxlink/events.d/RepeaterLogic.tcl'
 	### allow a few seconds for the file system to catch up since we are working on the same file as before
-	sleep 5s
+	sleep 5
 	logic_fixup '../../usr/share/svxlink/events.d/RepeaterLogic.tcl' 'proc repeater_up' '/usr/share/svxlink/events.d/RepeaterLogic.tcl'
 	
 	# fixup a typo in the svxlink source that breaks the gpio service
@@ -142,9 +142,7 @@ fi
 		modify_sudoers
 		
 		### autohotspot
-		AutoHotSpotScript_MoveAndExtract
-		AutoHotSpot_AutoWithoutInternet
-		AutoHotSpot_SSID_PWD
+		AutoHotSpot_Autosetup
 		
 		### ENDING FUNCTIONS ###
 		add_orp_user

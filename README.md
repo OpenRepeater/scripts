@@ -71,6 +71,8 @@ These directions will be geared towards the Raspberry Pi and Raspbian, but you s
 * Run the script
 	* &#35; **./install_main.sh**
 	* Please be patient, this process may take a while.
+* install the Automatic hotspot
+    * &#35; **expect /usr/share/Autohotspot/AutoConfigure_ORP.exp**
 * Be sure to reboot when done
 * Run "alsamixer" from the command prompt and make sure your input and output levels are properly set. You will need your hardware/sound card connected to set these levels.
 

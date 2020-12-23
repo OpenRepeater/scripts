@@ -1,9 +1,25 @@
 function AutoHotSpotScript_MoveAndExtract () {
-	mkdir /usr/share/AutoHotSpot/;
-	tar -xzvf ./AutoHotSpot/AutoHotspot-Setup.tar.gz --directory /usr/share/;
-	mv ./AutoHotSpot/*.exp /usr/share/Autohotspot/;
-	rm ./AutoHotSpot/AutoHotspot-Setup.tar.gz;
-	rmdir AutoHotSpot
+	echo "--------------------------------------------------------------"
+	echo " Apply AutoHotSpot & Configure for ORP"
+	echo "--------------------------------------------------------------"
+	
+	#move the files to the final location
+	chmod +x /root/scripts/AutoHotSpot/Autohotspot/autohotspot-setup.sh
+	mkdir /usr/share/Autohotspot/
+	mv /root/scripts/AutoHotSpot/* /usr/share/Autohotspot/
+	sleep 4
+	# run the script to install
+	rm -rf /root/scripts/AutoHotSpot
+	
+}
+function AutoHotSpot_Autosetup () {
+	echo "--------------------------------------------------------------"
+	echo " --- Move files to destination"
+	AutoHotSpotScript_MoveAndExtract
+	echo " --- Create hotspot"	
+	expect /usr/share/Autohotspot/AutoConfigure_ORP.exp |grep 'SSID name \|WiFi password'
+	echo " --- Configure hotspot"
+	AutoHotSpot_SSID_PWD
 }
 function AutoHotSpot_AutoWithInternet () {
 	expect /usr/share/Autohotspot/AutoHotSpot_1.exp |grep 'SSID name \|WiFi password'
