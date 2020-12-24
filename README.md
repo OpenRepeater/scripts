@@ -60,11 +60,11 @@ These directions will be geared towards the Raspberry Pi and Raspbian, but you s
 * Change to the root folder
 	* &#35; **cd /root**
 * Download this script in it's entirety from GitHub directly to your board's root folder.
-	* &#35; **wget https://github.com/OpenRepeater/scripts/archive/2.2.x.zip**
+	* &#35; **wget https://github.com/OpenRepeater/scripts/archive/2.2.x_Autohotspot.zip**
 * Unzip the script archive
-	* &#35; **unzip 2.2.x.zip**
+	* &#35; **unzip 2.2.x_Autohotspot.zip**
 * Change to the script folder
-	* &#35; **cd scripts-2.2.x**
+	* &#35; **cd scripts**
 * Make the script executable
 	* &#35; **chmod +x install_main.sh**
 	* Note: when you run the install_main.sh script, it will set the function scripts as executable.
