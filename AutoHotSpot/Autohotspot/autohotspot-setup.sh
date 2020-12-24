@@ -365,13 +365,22 @@ Hotspotssid()
 	fi
 	HSssid=($(cat "/etc/hostapd/hostapd.conf" | grep '^ssid='))
 	HSpass=($(cat "/etc/hostapd/hostapd.conf" | grep '^wpa_passphrase='))
-	echo "Change the Hotspot's SSID and Password. press enter to keep existing settings"
-	echo "The current SSID is:" "${HSssid:5}"
-	echo "The current SSID Password is:" "${HSpass:15}"
-	echo "Enter the new Hotspots SSID:"
-	read ssname
-	echo "Enter the hotspots new password. Minimum 8 characters"
-	read sspwd
+	
+	if [[ "$automated" == *"false"* ]]; then
+		echo "Change the Hotspot's SSID and Password. press enter to keep existing settings"
+		echo "The current SSID is:" "${HSssid:5}"
+		echo "The current SSID Password is:" "${HSpass:15}"
+		echo "Enter the new Hotspots SSID:"
+		read ssname
+	else
+		ssname=$automatedSSID
+	fi
+	if [[ "$automated" == *"false"* ]]; then
+		echo "Enter the hotspots new password. Minimum 8 characters"
+		read sspwd
+	else
+		sspwd=$automatedPSK
+	fi
 	if [ ! -z $ssname ] ;then
 		echo "Changing Hotspot SSID to:" "$ssname" 
 		sed -i -e "/^ssid=/c\ssid=$ssname" /etc/hostapd/hostapd.conf
@@ -384,11 +393,13 @@ Hotspotssid()
 	else
 		echo "The Hotspot Password is:"  ${HSpass: 15}
 	fi
-	echo ""
-	echo "The new setup will be available next time the hotspot is started"
-	echo "Press a key to continue"
-	read
-	menu
+	if [[ "$automated" == *"false"* ]]; then
+		echo ""
+		echo "The new setup will be available next time the hotspot is started"
+		echo "Press a key to continue"
+		read
+		menu
+	fi
 }
 
 setupssid()
@@ -642,9 +653,10 @@ go()
 		echo "The WiFi password is: ${HSpass: 15}"
 		display_HS_IP
 	fi
-	echo "Press any key to continue"
-	read
-	
+	if [[ "$automated" == *"false"* ]]; then
+		echo "Press any key to continue"
+		read
+	fi
 }
 
 menu()
@@ -703,4 +715,55 @@ fi
 check_reqfiles
 check_installed
 check_wificountry
-menu #show menu
+
+# use the 
+automated="false";
+while getopts ":ahNDSU" opt; do
+  case ${opt} in
+    a ) # automated install
+		# set a flag to disable reads
+		automated="true";
+		# configure system using option 1 in the menu
+		go "AHN";
+		
+		#Set the ssid & password
+		automatedSSID="ORP_HOTSPOT";
+		automatedPSK="OpenRepeater";
+		Hotspotssid
+		exit ;;
+    h )   #show the help list
+		echo "Autohotspot options";
+		echo " use the -a flag to run the automated use case (requires edits to the last few lines of this script";
+		echo " use the -N flag to use Autohospot Internet option";
+		echo " use the -D flag to use Autohotspot Direct option";
+		echo " use the -S flag to use Static Hotspot option";
+		echo " use the -U flag to disable the hotspot";
+		exit ;;
+    \? ) #show menu for non automated usage (default behavior)
+		menu;;
+    N ) #Autohotspot with internet
+		# set a flag to disable user interface
+		automated="true";
+		# configure system using option 1 in the menu
+		go "AHN";
+		exit ;;
+    D ) #Autohotspot Direct
+		# set a flag to disable user interface
+		automated="true";
+		# configure system using option 2 in the menu
+		go "AHD";
+		exit;;
+    S ) #Static Hotspot
+		# set a flag to disable reads
+		automated="true";
+		# configure system using option 1 in the menu
+		go "SHS";
+		exit;;
+    U ) #Unistall/disable
+		# set a flag to disable reads
+		automated="true";
+		# configure system using option 1 in the menu
+		go "REM";
+		exit;;
+  esac
+done
