@@ -24,9 +24,7 @@ While this script is primarily created to run on a Raspberry Pi, it will most li
 	* **menus.sh** - Specific functions to display menus (using whiptail) to display information and request user input.
 	* **functions_ics.sh** - This script contains functions releated to ICS Controllers support.
 * **utilities (folder)**
-	* **prep4img.sh** - This is a script that is run on the an install prior to making an image intended for distribution. It cleans up any settings and common identifiable information. 
-	* **shrink_img.sh** - (Experiemental script) This is a script that is intended to be run on on a Linux computer with the SD card in a card reader to shrink the image for ease of distribution. This script has not been fully tested and was written by others. 
-	* **pi_version.sh** - Experiemental script to detect version of Pi that script is running on.
+	* **pi_version.sh** - Experimental script to detect version of Pi that script is running on.
 
 #### Prepare your OS to Install Headless:
 These directions will be geared towards the Raspberry Pi and Raspbian, but you should be able to modify them accordingly for other Debian systems. These instructions are for doing a complete build on a headless (without a keyboard and monitor connected) system via SSH.
@@ -42,34 +40,34 @@ These directions will be geared towards the Raspberry Pi and Raspbian, but you s
 5. For now, log into the Pi using the default username and password. For Raspbian: **pi/raspberry**
 
 6. Enable SSH
-	* &#35; **sudo systemctl enable ssh**
-	* &#35; **sudo systemctl start ssh**
+	* &#35; **`sudo systemctl enable ssh`**
+	* &#35; **`sudo systemctl start ssh`**
 7. Setup Root Password
-	* &#35; **sudo passwd root**
+	* &#35; **`sudo passwd root`**
 	* Note: if you are creating a new image for a public build, use the password *OpenRepeater* as the default as that is what is documented in the ORP knowledge base, otherwise set this to something secure.
 8. Enable Root on Raspbian for SSH
-	* &#35; **sudo nano /etc/ssh/sshd_config**
-	* Then find the entry in the Authentication section of the file that says ‘PermitRootLogin’ and change it's value to ‘yes’ and make sure the line is uncommented, save and exit the file.
+	* &#35; **`sudo nano /etc/ssh/sshd_config`**
+	* Then find the entry in the Authentication section of the file that says `#PermitRootLogin ...` and change it's value to `PermitRootLogin yes` and make sure the line is uncommented, save and exit the file.
 9. Restart SSH
-	* &#35; **sudo systemctl restart ssh**
+	* &#35; **`sudo systemctl restart ssh`**
 	* You can now log out as the "pi" user and log back in as "root" user. Note when you run the script below, the "pi" user will be removed for security reasons.
 
 10. **IMPORTANT: Expand File System.** This is a must as most distro images are compacted. If the file system is not expand it is very likely that you will run out of disk space on the partition in the middle of the build process. See minimum SD card requirements above. For instructions on how to expand the file system, read this [knowledge base article](https://openrepeater.com/knowledgebase/topic/expanding-the-file-system).
 
 #### How to Use: 
 * Change to the root folder
-	* &#35; **cd /root**
+	* &#35; **`cd /root`**
 * Download this script in it's entirety from GitHub directly to your board's root folder.
-	* &#35; **wget https://github.com/OpenRepeater/scripts/archive/2.2.x.zip**
+	* &#35; **`wget https://github.com/OpenRepeater/scripts/archive/2.2.x.zip`**
 * Unzip the script archive
-	* &#35; **unzip 2.2.x.zip**
+	* &#35; **`unzip 2.2.x.zip`**
 * Change to the script folder
-	* &#35; **cd scripts-2.2.x**
+	* &#35; **`cd scripts-2.2.x`**
 * Make the script executable
-	* &#35; **chmod +x install_main.sh**
+	* &#35; **`chmod +x install_main.sh`**
 	* Note: when you run the install_main.sh script, it will set the function scripts as executable.
 * Run the script
-	* &#35; **./install_main.sh**
+	* &#35; **`./install_main.sh`**
 	* Please be patient, this process may take a while.
 * Be sure to reboot when done
 * Run "alsamixer" from the command prompt and make sure your input and output levels are properly set. You will need your hardware/sound card connected to set these levels.
@@ -77,11 +75,11 @@ These directions will be geared towards the Raspberry Pi and Raspbian, but you s
 #### Post Install Considerations:
 
 * Remove the install script.
-	* &#35; **rm /root/2.2.x.zip**
-	* &#35; **rm /root/scripts-2.2.x -R**
+	* &#35; **`rm /root/2.2.x.zip`**
+	* &#35; **`rm /root/scripts-2.2.x -R`**
 * On the Raspberry Pi, the script will remove the "pi" user for security reasons.
 
-* Be sure to set your time zone as required. On the raspberry Pi, the can be done by running "raspi-config"
+* Be sure to set your time zone as required. On the raspberry Pi, the can be done by running `raspi-config`
 
 * If you are building this for your own use, please change the root password to something that is more secure and not published.
 
