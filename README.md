@@ -58,11 +58,11 @@ These directions will be geared towards the Raspberry Pi and Raspbian, but you s
 * Change to the root folder
 	* &#35; **`cd /root`**
 * Download this script in it's entirety from GitHub directly to your board's root folder.
-	* &#35; **`wget https://github.com/OpenRepeater/scripts/archive/2.2.x.zip`**
+	* &#35; **`wget https://github.com/OpenRepeater/scripts/archive/3.0.x.zip`**
 * Unzip the script archive
-	* &#35; **`unzip 2.2.x.zip`**
+	* &#35; **`unzip 3.0.x.zip`**
 * Change to the script folder
-	* &#35; **`cd scripts-2.2.x`**
+	* &#35; **`cd scripts-3.0.x`**
 * Make the script executable
 	* &#35; **`chmod +x install_main.sh`**
 	* Note: when you run the install_main.sh script, it will set the function scripts as executable.
@@ -75,8 +75,8 @@ These directions will be geared towards the Raspberry Pi and Raspbian, but you s
 #### Post Install Considerations:
 
 * Remove the install script.
-	* &#35; **`rm /root/2.2.x.zip`**
-	* &#35; **`rm /root/scripts-2.2.x -R`**
+	* &#35; **`rm /root/3.0.x.zip`**
+	* &#35; **`rm /root/scripts-3.0.x -R`**
 * On the Raspberry Pi, the script will remove the "pi" user for security reasons.
 
 * Be sure to set your time zone as required. On the raspberry Pi, the can be done by running `raspi-config`
