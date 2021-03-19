@@ -459,7 +459,6 @@ function install_orp_from_github {
 		mkdir -p "/var/lib/openrepeater/db"
 		ln -sf "$WWW_PATH/$GUI_NAME/install/sql/openrepeater.db" "/var/lib/openrepeater/db/openrepeater.db"
 		mkdir -p "/etc/openrepeater"
-		ln -sf "$WWW_PATH/$GUI_NAME/install/sql/database.php" "/etc/openrepeater/database.php"
 	
 		# DEV LINKING: ORP Sounds (Courtesy Tones / Sample IDs)
 		ln -s "$WWW_PATH/$GUI_NAME/install/sounds" "$WWW_PATH/$GUI_NAME/sounds"
@@ -488,7 +487,6 @@ function install_orp_from_github {
 		mkdir -p "/var/lib/openrepeater/db"
 		mv "$WWW_PATH/$GUI_NAME/install/sql/openrepeater.db" "/var/lib/openrepeater/db/openrepeater.db"
 		mkdir -p "/etc/openrepeater"
-		mv "$WWW_PATH/$GUI_NAME/install/sql/database.php" "/etc/openrepeater/database.php"
 		
 		# MOVE: ORP Sounds (Courtesy Tones / Sample IDs)
 		mv "$WWW_PATH/$GUI_NAME/install/sounds" "/var/lib/openrepeater/sounds"
