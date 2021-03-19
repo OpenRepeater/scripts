@@ -7,7 +7,7 @@
 ################################################################################
 # DEFINE VARIABLES (Scroll down for main script)
 ################################################################################
-ORP_VERSION="2.1.2"
+ORP_VERSION="2.1.3"
 
 REQUIRED_OS_VER="10"
 REQUIRED_OS_NAME="Buster"
@@ -29,7 +29,7 @@ PHP_INI="/etc/php/7.3/fpm/php.ini"
 SVXLINK_SOUNDS_DIR="/usr/share/svxlink/sounds"
 
 # SVXLINK VERSION - Must match versioning at https://github.com/sm0svx/svxlink/releases
-SVXLINK_VER="17.12.2"
+SVXLINK_VER="19.09.1"
 ORP_RMT_RELAY_BRANCH="1.1" ### FOR DEPRECIATED FUNCTION
 
 
