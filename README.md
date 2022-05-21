@@ -6,7 +6,7 @@ While this script is primarily created to run on a Raspberry Pi, it will most li
 
 #### Requirements: 
 * SD card of 4GB or Larger (8GB or larger recommended)
-* You must be running Debian/Raspbian Buster OS (Ver 10) on your device
+* You must be running Debian/Raspbian Bullseye OS (Ver 11.x) on your device
 * You must run the install script as root
 * Make sure that you device is connected to the internet as it will need to download files and packages to install.
 * ***You should set a STATIC ip address*** for your device to prevent the IP changing during/after build.

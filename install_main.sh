@@ -9,8 +9,8 @@
 ################################################################################
 ORP_VERSION="2.1.3"
 
-REQUIRED_OS_VER="10"
-REQUIRED_OS_NAME="Buster"
+REQUIRED_OS_VER="11.3"
+REQUIRED_OS_NAME="Bullseye"
 
 # File System Requirements
 MIN_PARTITION_SIZE="3000"
@@ -23,13 +23,13 @@ WWW_PATH="/var/www"
 GUI_NAME="openrepeater"
 
 # PHP ini config file
-PHP_INI="/etc/php/7.3/fpm/php.ini"
+PHP_INI="/etc/php/7.4/fpm/php.ini"
 
 #SVXLink
 SVXLINK_SOUNDS_DIR="/usr/share/svxlink/sounds"
 
 # SVXLINK VERSION - Must match versioning at https://github.com/sm0svx/svxlink/releases
-SVXLINK_VER="19.09.1"
+SVXLINK_VER="19.09.2"
 ORP_RMT_RELAY_BRANCH="1.1" ### FOR DEPRECIATED FUNCTION
 
 
@@ -73,8 +73,6 @@ if [ $INPUT_EXPRESS_INSTALL = "yes" ]; then
 	INPUT_INSTALL_TYPE="ORP"
 	INPUT_SVXLINK_CONTRIBS=""
 	INPUT_SVXLINK_INSTALL_TYPE="svx_released"
-	
-	
 else
 	menu_hostname
 	menu_build_type
@@ -93,34 +91,34 @@ fi
 Run script and output to log file
 (
 	date
-	
+
 	set_hostname $HOSTNAME
 
 	### SVXLINK FUNCTIONS ###
 	install_svxlink_source $INPUT_SVXLINK_INSTALL_TYPE $INPUT_SVXLINK_CONTRIBS
-	
+
 	# fixup the RepeaterLogic so IDs work correctly
 	logic_fixup '../../usr/share/svxlink/events.d/RepeaterLogic.tcl' 'proc repeater_down' '/usr/share/svxlink/events.d/RepeaterLogic.tcl'
 	### allow a few seconds for the file system to catch up since we are working on the same file as before
 	sleep 5s
 	logic_fixup '../../usr/share/svxlink/events.d/RepeaterLogic.tcl' 'proc repeater_up' '/usr/share/svxlink/events.d/RepeaterLogic.tcl'
-	
+
 	# fixup a typo in the svxlink source that breaks the gpio service
 	fix_svxlink_gpio
-	
+
 	# install copy of repo with all the synthetic voice files
 	install_svxlink_sounds
-	
+
 	# cards with gpio expanders will need to have the i2c bus enabled.
 	enable_i2c
-	
+
 	# Need to add some settings to the config.txt file to enable interface card
 	# or they won't load up properly
 	config_ics_controllers
-	
+
 	# need some asound.conf tweaks to keep the channels seperated
 	set_ics_asound
-	
+
 	### OPEN REPEATER FUCNTIONS ###
 	if [ $INPUT_INSTALL_TYPE = "ORP" ]; then
 		install_webserver
@@ -130,7 +128,7 @@ Run script and output to log file
 		# install_orp_modules ### DEPRECIATED
 		update_versioning
 		modify_sudoers
-		
+
 		### ENDING FUNCTIONS ###
 		rpi_disables
 		set_motd

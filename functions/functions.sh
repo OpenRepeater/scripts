@@ -1,11 +1,8 @@
-#!/bin/bash
+#!/bin/bash -e
 
 ################################################################################
 # DEFINE FUNCTIONS
 ################################################################################
-
-
-		
 function check_root {
 	if [[ $EUID -ne 0 ]]; then
 		echo "--------------------------------------------------------------"
@@ -16,14 +13,14 @@ function check_root {
 		echo "--------------------------------------------------------------"
 		echo " Looks like you are running as root...Continuing!"
 		echo "--------------------------------------------------------------"
-	fi	
+	fi
 }
 
 ################################################################################
 
 function check_internet {
 	wget -q --spider http://google.com
-	
+
 	if [ $? -eq 0 ]; then
 		echo "--------------------------------------------------------------"
 		echo " INTERNET CONNECTION REQUIRED: Connection Found...Continuing!"
@@ -45,7 +42,7 @@ function check_os {
 	else
 		PROCESSOR="UNSUPPORTED"
 	fi
-	
+
 	# Detects Debian Version
 	if (grep -q "$REQUIRED_OS_VER." /etc/debian_version) ; then
 		DEBIAN_VERSION="$REQUIRED_OS_VER"
@@ -68,7 +65,7 @@ function check_os {
 
 function check_filesystem {
 	PARTITION_SIZE=$(df -m | awk '$1=="/dev/root"{print$2}')
-	
+
 	if [ $PARTITION_SIZE -ge $MIN_PARTITION_SIZE ]; then
 		# Partition is large enough
 		echo "--------------------------------------------------------------"
@@ -93,7 +90,7 @@ function wait_for_network {
 	echo "--------------------------------------------------------------"
 	echo " Waiting for network/internet connection"
 	echo "--------------------------------------------------------------"
-	
+
 	# Verify network is still up for building over wifi
 	echo "Verifying network/internet is still available, please wait..."
 	while !(wget -q --spider http://google.com >> /dev/null); do
@@ -122,15 +119,15 @@ function set_hostname () {
 # 	echo "--------------------------------------------------------------"
 # 	echo " Installing SVXLink from Package"
 # 	echo "--------------------------------------------------------------"
-# 	
+#
 # 	# Based on: https://github.com/sm0svx/svxlink/wiki/InstallBinRaspbian
-# 	echo 'deb http://mirrordirector.raspbian.org/raspbian/ buster main' | sudo tee /etc/apt/sources.list.d/svxlink.list
+# 	echo 'deb http://mirrordirector.raspbian.org/raspbian/ bullseye main' | sudo tee /etc/apt/sources.list.d/svxlink.list
 # 	apt-get update
-# 	
+#
 # 	apt-get install svxlink-server
-# 	
+#
 # 	rm /etc/apt/sources.list.d/svxlink.list
-# 	
+#
 # 	# Add svxlink user to user groups
 # 	usermod -a -G daemon,gpio,audio svxlink
 # }
@@ -141,12 +138,12 @@ function install_svxlink_source () {
 	echo "--------------------------------------------------------------"
 	echo " Compile/Install SVXLink from Source Code (ver $SVXLINK_VER)"
 	echo "--------------------------------------------------------------"
-	
+
 	# Based on: https://github.com/sm0svx/svxlink/wiki/InstallSrcDebian
 
 	# Install required packages
  	apt-get update
-	apt-get install --assume-yes --fix-missing g++ cmake make libsigc++-2.0-dev libgsm1-dev libpopt-dev tcl8.5-dev \
+	apt-get install --assume-yes --fix-missing g++ cmake make libsigc++-2.0-dev libgsm1-dev libpopt-dev tcl8.6-dev \
 		libgcrypt20-dev libspeex-dev libasound2-dev libopus-dev librtlsdr-dev doxygen \
 		groff alsa-utils vorbis-tools curl git libcurl4-openssl-dev
 
@@ -170,9 +167,9 @@ function install_svxlink_source () {
 		tar xvzf svxlink-source.tar.gz
 		cd svxlink-$SVXLINK_VER/src
 	fi
-	
+
 	# If Selected, enable the non-standard modules to be included in the build process
-	
+
 	echo "USE_CONTRIBS=$2"
 	if [ "$2" = "USE_CONTRIBS" ]; then
 		echo "Entering config to enable optional contrib modules"
@@ -181,12 +178,12 @@ function install_svxlink_source () {
 		echo "Optional contrib modules not selected"
 		Modules_Build_Cmake_switches=""
 	fi
-	
+
 	mkdir build
 	cd build
 	echo "make command: cmake -DCMAKE_INSTALL_PREFIX=/usr -DSYSCONF_INSTALL_DIR=/etc -DLOCAL_STATE_DIR=/var -DWITH_SYSTEMD=ON -DUSE_QT=no $Modules_Build_Cmake_switches .."
 	cmake -DCMAKE_INSTALL_PREFIX=/usr -DSYSCONF_INSTALL_DIR=/etc -DLOCAL_STATE_DIR=/var -DWITH_SYSTEMD=ON -DUSE_QT=no $Modules_Build_Cmake_switches ..
-	
+
 	make -j5
 	make doc
 
@@ -209,9 +206,9 @@ function fix_svxlink_gpio {
 	echo "--------------------------------------------------------------"
 	echo " Apply Fixes to SVXLink GPIO Support until corrected"
 	echo "--------------------------------------------------------------"
-	
+
 	sed -i -e 's/$GPIOPATH/$GPIO_PATH/g' /usr/sbin/svxlink_gpio_up
-	
+
 	echo "--------------------------------------------------------------"
 	echo " Apply SystemD Fixes to SVXLink GPIO Service"
 	echo "--------------------------------------------------------------"
@@ -223,7 +220,7 @@ function fix_svxlink_gpio {
 	After=network.target\n\
 	Before=sysvinit.target\n\
 	ConditionPathExists=/sys/class/i2c-adapter#"
-	
+
 }
 
 ################################################################################
@@ -240,7 +237,7 @@ function install_svxlink_sounds {
 	mv orp-sounds-2.0.0/en_US $SVXLINK_SOUNDS_DIR
 	rm -R orp-sounds-2.0.0
 	rm 2.0.0.zip
-	
+
 	ln -s "$SVXLINK_SOUNDS_DIR/en_US/Default/0.wav" "$SVXLINK_SOUNDS_DIR/en_US/Default/phonetic_0.wav"
 	ln -s "$SVXLINK_SOUNDS_DIR/en_US/Default/1.wav" "$SVXLINK_SOUNDS_DIR/en_US/Default/phonetic_1.wav"
 	ln -s "$SVXLINK_SOUNDS_DIR/en_US/Default/2.wav" "$SVXLINK_SOUNDS_DIR/en_US/Default/phonetic_2.wav"
@@ -250,13 +247,13 @@ function install_svxlink_sounds {
 	ln -s "$SVXLINK_SOUNDS_DIR/en_US/Default/6.wav" "$SVXLINK_SOUNDS_DIR/en_US/Default/phonetic_6.wav"
 	ln -s "$SVXLINK_SOUNDS_DIR/en_US/Default/7.wav" "$SVXLINK_SOUNDS_DIR/en_US/Default/phonetic_7.wav"
 	ln -s "$SVXLINK_SOUNDS_DIR/en_US/Default/8.wav" "$SVXLINK_SOUNDS_DIR/en_US/Default/phonetic_8.wav"
-	ln -s "$SVXLINK_SOUNDS_DIR/en_US/Default/9.wav" "$SVXLINK_SOUNDS_DIR/en_US/Default/phonetic_9.wav"	
+	ln -s "$SVXLINK_SOUNDS_DIR/en_US/Default/9.wav" "$SVXLINK_SOUNDS_DIR/en_US/Default/phonetic_9.wav"
 	ln -s "$SVXLINK_SOUNDS_DIR/en_US/Default/O.wav" "$SVXLINK_SOUNDS_DIR/en_US/Default/oX.wav"
 	ln -s "$SVXLINK_SOUNDS_DIR/en_US/MetarInfo/hours.wav" "$SVXLINK_SOUNDS_DIR/en_US/Default/hours.wav"
 	ln -s "$SVXLINK_SOUNDS_DIR/en_US/MetarInfo/hour.wav" "$SVXLINK_SOUNDS_DIR/en_US/Default/hour.wav"
 
 	ln -s "$SVXLINK_SOUNDS_DIR/en_US/Default/Hz.wav" "$SVXLINK_SOUNDS_DIR/en_US/Core/hz.wav"
-	
+
 	ln -s "$SVXLINK_SOUNDS_DIR/en_US/Core/repeater.wav" "$SVXLINK_SOUNDS_DIR/en_US/Default/repeater.wav"
 }
 
@@ -286,7 +283,7 @@ function config_ics_controllers {
 
 		#Enable mcp23s17 Overlay
 		dtoverlay=mcp23017,addr=0x20,gpiopin=12
-		
+
 		#Enable mcp3008 adc overlay
 		dtoverlay=mcp3008:spi0-0-present,spi0-0-speed=3600000
 
@@ -303,47 +300,47 @@ function install_webserver {
 	echo "--------------------------------------------------------------"
 	apt-get install --assume-yes --fix-missing nginx-extras;
 	apt-get install --assume-yes --fix-missing nginx memcached ssl-cert \
-		openssl-blacklist php-common php-fpm php-common php-curl php-dev php-gd php-imagick php-mcrypt \
-		php-memcached php-pspell php-snmp php-sqlite3 php-xmlrpc php7.3-xml php-pear php-ssh2 php-cli php-zip
-	
+		php7.4-common php7.4-fpm php7.4-common php7.4-curl php7.4-dev php7.4-gd php-imagick php-memcached \
+		php7.4-pspell php7.4-snmp php7.4-sqlite3 php7.4-xmlrpc php7.4-xml php-pear php-ssh2 php7.4-cli php7.4-zip
+
 	apt-get clean
-	
+
 	echo "--------------------------------------------------------------"
 	echo " Backup original config files"
 	echo "--------------------------------------------------------------"
 	cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.orig
-	cp /etc/php/7.3/fpm/php-fpm.conf /etc/php/7.3/fpm/php-fpm.conf.orig
-	cp /etc/php/7.3/fpm/php.ini /etc/php/7.3/fpm/php.ini.orig
-	cp /etc/php/7.3/fpm/pool.d/www.conf /etc/php/7.3/fpm/pool.d/www.conf.orig
-	
+	cp /etc/php/7.4/fpm/php-fpm.conf /etc/php/7.4/fpm/php-fpm.conf.orig
+	cp /etc/php/7.4/fpm/php.ini /etc/php/7.4/fpm/php.ini.orig
+	cp /etc/php/7.4/fpm/pool.d/www.conf /etc/php/7.4/fpm/pool.d/www.conf.orig
+
 	echo "--------------------------------------------------------------"
 	echo " Installing self signed SSL certificate"
 	echo "--------------------------------------------------------------"
 	cp -r /etc/ssl/private/ssl-cert-snakeoil.key /etc/ssl/private/nginx.key
 	cp -r /etc/ssl/certs/ssl-cert-snakeoil.pem /etc/ssl/certs/nginx.crt
-	
+
 	echo "--------------------------------------------------------------"
 	echo " Changing file upload size from 2M to $UPLOAD_SIZE"
 	echo "--------------------------------------------------------------"
 	sed -i "$PHP_INI" -e "s#upload_max_filesize = 2M#upload_max_filesize = $UPLOAD_SIZE#"
-	
+
 	# Changing post_max_size limit from 8M to UPLOAD_SIZE
 	sed -i "$PHP_INI" -e "s#post_max_size = 8M#post_max_size = $UPLOAD_SIZE#"
-	
+
 	echo "--------------------------------------------------------------"
 	echo " Enabling memcache in php.ini"
 	echo "--------------------------------------------------------------"
-	cat >> "$PHP_INI" <<- DELIM 
-		extensions=memcached.so 
+	cat >> "$PHP_INI" <<- DELIM
+		extensions=memcached.so
 		DELIM
-	
+
 	echo "--------------------------------------------------------------"
 	echo " Setup NGINX Site Config File for OpenRepeater UI"
 	echo "--------------------------------------------------------------"
 
 	rm -rf /etc/nginx/sites-enabled/default
 	ln -sf /etc/nginx/sites-available/"$GUI_NAME" /etc/nginx/sites-enabled/"$GUI_NAME"
-	
+
 	# Nginx Config File
 	cat > /etc/nginx/sites-available/$GUI_NAME  <<- 'DELIM'
 		server {
@@ -352,35 +349,34 @@ function install_webserver {
 		   if ($ssl_protocol = "") {
 		      rewrite     ^   https://$server_addr$request_uri? permanent;
 		   }
-		}
-		
+
 		server {
 		   listen 443;
 		   listen [::]:443 default_server ipv6only=on;
-		   
+
 		   include snippets/snakeoil.conf;
 		   ssl  on;
-		   
+
 		   root /var/www/openrepeater;
 		   index index.php;
-		   
+
 		   error_page 404 /404.php;
-		   
+
 		   client_max_body_size 25M;
 		   client_body_buffer_size 128k;
-		   
+
 		   access_log /var/log/nginx/access.log;
 		   error_log /var/log/nginx/error.log;
-		   
+
 		   location ~ \.php$ {
 		      include snippets/fastcgi-php.conf;
 		      include fastcgi_params;
 		      fastcgi_pass unix:/var/run/php/php7.3-fpm.sock;
 		      fastcgi_param   SCRIPT_FILENAME /var/www/openrepeater/$fastcgi_script_name;
 		      error_page  404   404.php;
-		      fastcgi_intercept_errors on;		
+		      fastcgi_intercept_errors on;
 		   }
-		   
+
 		   # Disable viewing .htaccess & .htpassword & .db
 		   location ~ .htaccess {
 		      deny all;
@@ -404,11 +400,11 @@ function install_webserver {
 
 	# Change permissions
 	chown -R www-data:www-data "$WWW_PATH/$GUI_NAME"
-	
+
 	echo "--------------------------------------------------------------"
 	echo " Restarting NGINX and PHP"
 	echo "--------------------------------------------------------------"
-	for i in nginx php-fpm ;do service "${i}" restart > /dev/null 2>&1 ; done	
+	for i in nginx php-fpm ;do service "${i}" restart > /dev/null 2>&1 ; done
 }
 
 ################################################################################
@@ -418,14 +414,14 @@ function install_orp_dependancies {
 	echo " Installing OpenRepeater/SVXLink Dependencies"
 	echo "--------------------------------------------------------------"
 
-	apt-get install --assume-yes --fix-missing alsa-base alsa-utils bzip2 cron dialog fail2ban flite gawk \
-		git-core gpsd gpsd-clients i2c-tools inetutils-syslogd install-info libasound2 libasound2-plugin-equal \
+	apt-get install --assume-yes --fix-missing alsa-utils bzip2 cron dialog fail2ban flite gawk \
+		git gpsd gpsd-clients i2c-tools inetutils-syslogd install-info libasound2 libasound2-plugin-equal \
 		libgcrypt20 libgsm1 libopus0 libpopt0 libsigc++-2.0-0v5 libsox-fmt-mp3 libxml2 libxml2-dev \
-		libxslt1-dev logrotate ntp python3-configobj python-cheetah python3-dev \
+		libxslt1-dev logrotate ntp python3-configobj python3-dev \
 		python3-pip python3-usb python3-serial python3-serial resolvconf screen sox sqlite3 \
 		sudo tcl8.6 time tk8.6 usbutils uuid vim vorbis-tools watchdog wvdial
 
-	# w3rcr -> network-manager package was removed as it caused instability 
+	# w3rcr -> network-manager package was removed as it caused instability
 	# particularly with wifi networks. This is a packaged geared towards laptop
         # users who constant change their connection
 	# This fixes issues:
@@ -459,21 +455,21 @@ function install_orp_from_github {
 		mkdir -p "/var/lib/openrepeater/db"
 		ln -sf "$WWW_PATH/$GUI_NAME/install/sql/openrepeater.db" "/var/lib/openrepeater/db/openrepeater.db"
 		mkdir -p "/etc/openrepeater"
-	
+
 		# DEV LINKING: ORP Sounds (Courtesy Tones / Sample IDs)
 		ln -s "$WWW_PATH/$GUI_NAME/install/sounds" "$WWW_PATH/$GUI_NAME/sounds"
 		ln -s "$WWW_PATH/$GUI_NAME/install/sounds" "/var/lib/openrepeater/sounds"
-	
+
 		# DEV LINKING: ORP Helper Bash Script
 		ln -s "$WWW_PATH/$GUI_NAME/install/scripts/orp_helper" "/usr/sbin/orp_helper"
-		
+
 		# DEV LINKING: Link ORP into SVXLink directories
 		ln -s "/etc/svxlink" "/etc/openrepeater/svxlink"
-		mkdir -p "/etc/openrepeater/svxlink/local-events.d"	
-	
+		mkdir -p "/etc/openrepeater/svxlink/local-events.d"
+
 		#Link ORP to SVXLink log
 		ln -s "/var/log/svxlink" "/var/www/openrepeater/log"
-	
+
 		# DEV LINKING: Dev Test Folder
 		ln -s "$WWW_PATH/$GUI_NAME/install/dev" "$WWW_PATH/$GUI_NAME/dev"
 
@@ -487,21 +483,21 @@ function install_orp_from_github {
 		mkdir -p "/var/lib/openrepeater/db"
 		mv "$WWW_PATH/$GUI_NAME/install/sql/openrepeater.db" "/var/lib/openrepeater/db/openrepeater.db"
 		mkdir -p "/etc/openrepeater"
-		
+
 		# MOVE: ORP Sounds (Courtesy Tones / Sample IDs)
 		mv "$WWW_PATH/$GUI_NAME/install/sounds" "/var/lib/openrepeater/sounds"
 		ln -s "/var/lib/openrepeater/sounds" "$WWW_PATH/$GUI_NAME/sounds"
-		
+
 		# MOVE: ORP Helper Bash Script
 		mv "$WWW_PATH/$GUI_NAME/install/scripts/orp_helper" "/usr/sbin/orp_helper"
-		
+
 		# LINKING: Link ORP into SVXLink directories
 		ln -s "/etc/svxlink" "/etc/openrepeater/svxlink"
-		mkdir -p "/etc/openrepeater/svxlink/local-events.d"	
-		
+		mkdir -p "/etc/openrepeater/svxlink/local-events.d"
+
 		# LINKING: Link ORP to SVXLink log
 		ln -s "/var/log/svxlink" "/var/www/openrepeater/log"
-		
+
 		# REMOVE: Cleanup install folders/files
 		rm -R "$WWW_PATH/$GUI_NAME/debian"
 		rm -R "$WWW_PATH/$GUI_NAME/install"
@@ -582,16 +578,16 @@ function logic_fixup {
 
 	# change to the top level directory
 	cd /
-	
+
 	#find the desired function
-	
+
 	InputFileName=$1
 	if [ -z "$InputFileName" ]; then
 	  echo "parameter 'InputFileName' was not entered"
 	  echo "Usage= ./Logic_fixup.sh <input file path> \"proc <function name>\" <output file path>"
 	  echo "it is assumed the input file path is an absolute path"
 	  return -1
-	fi  
+	fi
 	if  ! [ -f $InputFileName  ]; then
 	  echo "parameter \'InputFileName\' is not a valid file path"
 	  echo "it is assumed the input file path is an absolute path"
@@ -622,7 +618,7 @@ function logic_fixup {
 	while IFS= read -r line
 	do
 	#echo $line
-	  
+
 	  if [[ $line == *"$FunctionName"* ]]; then
 		break
 	  fi
@@ -657,12 +653,10 @@ function logic_fixup {
 	  else
 		echo "$line" >> "$OutputFileName"".tmp"
 	  fi
-	  
-	  ((CurrentLine++))
+
+	((CurrentLine++))
 	done <"$file"
-	
+
 	mv "$OutputFileName"".tmp" "$OutputFileName"
 
 }
-
-
