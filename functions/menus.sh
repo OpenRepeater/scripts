@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 DIALOG_TITLE="OpenRepeater $ORP_VERSION Setup"
 
