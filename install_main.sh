@@ -47,15 +47,10 @@ source "${BASH_SOURCE%/*}/functions/menus.sh"
 # Include Main Functions File & RPI functions
 source "${BASH_SOURCE%/*}/functions/functions.sh"
 source "${BASH_SOURCE%/*}/functions/functions_svxlink.sh"
-source "${BASH_SOURCE%/*}/functions/functions_rpi.sh"
-source "${BASH_SOURCE%/*}/functions/functions_motd.sh"
-source "${BASH_SOURCE%/*}/functions/functions_ics.sh"
 
 
 ### INITIAL FUNCTIONS ####
 check_root
-check_os
-check_filesystem
 check_network
 check_internet
 
