@@ -9,8 +9,8 @@
 ################################################################################
 ORP_VERSION="2.2.0 (dev)"
 
-REQUIRED_OS_VER="10"
-REQUIRED_OS_NAME="Buster"
+REQUIRED_OS_VER="11"
+REQUIRED_OS_NAME="Bullseye"
 
 # File System Requirements
 MIN_PARTITION_SIZE="3000"
@@ -29,7 +29,7 @@ PHP_INI="/etc/php/7.3/fpm/php.ini"
 SVXLINK_SOUNDS_DIR="/usr/share/svxlink/sounds"
 
 # SVXLINK VERSION - Must match versioning at https://github.com/sm0svx/svxlink/releases
-SVXLINK_VER="19.09.1"
+SVXLINK_VER="19.09.2"
 ORP_RMT_RELAY_BRANCH="1.1" ### FOR DEPRECIATED FUNCTION
 
 SCRIPT_DIR=$(dirname $(realpath $0))

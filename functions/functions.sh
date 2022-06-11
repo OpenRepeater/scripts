@@ -150,23 +150,24 @@ function config_ics_controllers {
 ################################################################################
 
 function install_webserver {
-	echo "--------------------------------------------------------------"
-	echo " Installing NGINX and PHP"
-	echo "--------------------------------------------------------------"
-	apt-get install --assume-yes --fix-missing nginx-extras;
-	apt-get install --assume-yes --fix-missing nginx memcached ssl-cert \
-		openssl-blacklist php-common php-fpm php-common php-curl php-dev php-gd php-imagick php-mcrypt \
-		php-memcached php-pspell php-snmp php-sqlite3 php-xmlrpc php7.3-xml php-pear php-ssh2 php-cli php-zip
-	
-	apt-get clean
-	
-	echo "--------------------------------------------------------------"
-	echo " Backup original config files"
-	echo "--------------------------------------------------------------"
-	cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.orig
-	cp /etc/php/7.3/fpm/php-fpm.conf /etc/php/7.3/fpm/php-fpm.conf.orig
-	cp /etc/php/7.3/fpm/php.ini /etc/php/7.3/fpm/php.ini.orig
-	cp /etc/php/7.3/fpm/pool.d/www.conf /etc/php/7.3/fpm/pool.d/www.conf.orig
+    echo "--------------------------------------------------------------"
+    echo " Installing NGINX and PHP"
+    echo "--------------------------------------------------------------"
+    apt-get install --assume-yes --fix-missing nginx-extras;
+    apt-get install --assume-yes --fix-missing nginx memcached ssl-cert \
+        php7.4-common php7.4-fpm php7.4-curl php7.4-dev php7.4-gd php-imagick \
+        php-memcached php7.4-pspell php7.4-snmp php7.4-sqlite3 php7.4-xmlrpc \
+        php7.4-xml php-pear php-ssh2 php7.4-cli php7.7-zip
+    
+    apt-get clean
+    
+    echo "--------------------------------------------------------------"
+    echo " Backup original config files"
+    echo "--------------------------------------------------------------"
+    cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.orig
+    cp /etc/php/7.4/fpm/php-fpm.conf /etc/php/7.4/fpm/php-fpm.conf.orig
+    cp /etc/php/7.4/fpm/php.ini /etc/php/7.4/fpm/php.ini.orig
+    cp /etc/php/7.4/fpm/pool.d/www.conf /etc/php/7.4/fpm/pool.d/www.conf.orig
 	
 	echo "--------------------------------------------------------------"
 	echo " Installing self signed SSL certificate"
@@ -273,8 +274,8 @@ function install_orp_dependancies {
 	apt-get install --assume-yes --fix-missing alsa-base alsa-utils bzip2 cron dialog fail2ban flite gawk \
 		git-core gpsd gpsd-clients i2c-tools inetutils-syslogd install-info libasound2 libasound2-plugin-equal \
 		libgcrypt20 libgsm1 libopus0 libpopt0 libsigc++-2.0-0v5 libsox-fmt-mp3 libxml2 libxml2-dev \
-		libxslt1-dev logrotate ntp python3-configobj python-cheetah python3-dev \
-		python3-pip python3-usb python3-serial python3-serial resolvconf screen sox sqlite3 \
+		libxslt1-dev logrotate ntp python3-configobj python3-cheetah python3-dev \
+		python3-pip python3-usb python3-serial resolvconf screen sox sqlite3 \
 		sudo tcl8.6 time tk8.6 usbutils uuid vim vorbis-tools watchdog wvdial shellinabox
 
 	# w3rcr -> network-manager package was removed as it caused instability 
