@@ -23,7 +23,7 @@ WWW_PATH="/var/www"
 GUI_NAME="openrepeater"
 
 # PHP ini config file
-PHP_INI="/etc/php/7.3/fpm/php.ini"
+PHP_INI="/etc/php/7.4/fpm/php.ini"
 
 #SVXLink
 SVXLINK_SOUNDS_DIR="/usr/share/svxlink/sounds"
