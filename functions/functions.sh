@@ -157,7 +157,7 @@ function install_webserver {
     apt-get install --assume-yes --fix-missing nginx memcached ssl-cert \
         php7.4-common php7.4-fpm php7.4-curl php7.4-dev php7.4-gd php-imagick \
         php-memcached php7.4-pspell php7.4-snmp php7.4-sqlite3 php7.4-xmlrpc \
-        php7.4-xml php-pear php-ssh2 php7.4-cli php7.7-zip
+        php7.4-xml php-pear php-ssh2 php7.4-cli php7.4-zip
     
     apt-get clean
     
