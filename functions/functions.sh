@@ -228,7 +228,7 @@ function install_webserver {
 		   location ~ \.php$ {
 		      include snippets/fastcgi-php.conf;
 		      include fastcgi_params;
-		      fastcgi_pass unix:/var/run/php/php7.3-fpm.sock;
+		      fastcgi_pass unix:/var/run/php/php7.4-fpm.sock;
 		      fastcgi_param   SCRIPT_FILENAME /var/www/openrepeater/$fastcgi_script_name;
 		      error_page  404   404.php;
 		      fastcgi_intercept_errors on;		
