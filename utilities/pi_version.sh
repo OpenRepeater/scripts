@@ -115,6 +115,14 @@ case $CPU_REV in
 		DATE="Q1 2018"
 		;;
 
+	a02042)
+		MODEL="2B (with BCM2837)"
+		REV="1.2"
+		RAM="1GB"
+		MFG="Sony UK"
+		DATE="2016"
+		;;
+
 	a21041)
 		MODEL="2B"
 		REV="1.1"
@@ -191,12 +199,60 @@ case $CPU_REV in
 		DATE="Q2 2019"
 		;;
 
+	b03112)
+		MODEL="4B"
+		REV="1.2"
+		RAM="2GB"
+		MFG="Sony UK"
+		DATE="2019"
+		;;
+
+	b03114)
+		MODEL="4B"
+		REV="1.4"
+		RAM="2GB"
+		MFG="Sony UK"
+		DATE="2019"
+		;;
+
 	c03111)
 		MODEL="4B"
 		REV="1.1"
 		RAM="4GB"
 		MFG="Sony UK"
 		DATE="Q2 2019"
+		;;
+
+	c03112)
+		MODEL="4B"
+		REV="1.2"
+		RAM="4GB"
+		MFG="Sony UK"
+		DATE="2019"
+		;;
+
+	c03114)
+		MODEL="4B"
+		REV="1.4"
+		RAM="8GB"
+		MFG="Sony UK"
+		DATE="2019"
+		;;
+
+	d03114)
+		MODEL="4B"
+		REV="1.4"
+		RAM="8GB"
+		MFG="Sony UK"
+		DATE="2019"
+		;;
+
+	c03130)
+		MODEL="Pi 400"
+		REV="1.0"
+		RAM="4GB"
+		MFG="Sony UK"
+		DATE="Q4 2020"
 		;;
 
 	*)
