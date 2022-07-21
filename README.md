@@ -1,4 +1,4 @@
-OpenRepeater Build Script
+OpenRepeater/SvxLink Build Script
 =======
 This is the repository for the install/build script for the OpenRepeater project. With this script you can install OpenRepeater on your system or use it to build a complete system to image for download by others. The script will install the OpenRepeater UI, SVXLink, and other packages and dependancies required by OpenRepeater. It will also make some other system adjustments as well.
 
@@ -6,23 +6,32 @@ While this script is primarily created to run on a Raspberry Pi, it will most li
 
 #### Requirements: 
 * SD card of 4GB or Larger (8GB or larger recommended)
+
 * You must be running Debian/Raspbian Bullseye OS (Ver 11) on your device
+
 * You must run the install script as sudo or root
+
 * Make sure that you device is connected to the internet as it will need to download files and packages to install.
-* ***You should set a STATIC ip address*** for your device to prevent the IP changing during/after build. The simplest way to do this is in your router. Map and IP address to the MAC address of the ethernet adapter. 
-* It's **HIGHLY RECOMMNED NOT TO BUILD OVER WIFI**. If your device does not have onboard ethernet, it is advised to use a USB to ethernet adapter during the build process.
+
+* **You should set a STATIC ip address**
+    for your device to prevent the IP changing during/after build. The simplest way to do this is in your router. Map and IP address to the MAC address of the ethernet adapter.
+
 * You should have a working knowledge of Linux. This guide/script is not intended for beginners.
 
 #### Overview of the files:
 * **README.md** - This file. You are reading it right now.
+
 * **install_main.sh** - This is main script that you run. It contains some variables defined for install, and the main order of functions to be executed. It may prompt for some user input. It also requires and calls the external function scripts described below.
+
 * **functions (folder)** - Contains any functions required by the main script. Board specific functions also live here.
 	* **functions.sh** - This script contains the all the main functions required by all boards for building an ORP installation.
-	*  **functions_svxlink.sh** - This script contains the functions to install/compile SVXLink and it's related dependancies.
-	*  **functions_motd.sh** - This script contains the function to build the MOTD (Message of the Day) when logging in via SSH
+	* **functions_svxlink.sh** - This script contains the functions to install/compile SVXLink and it's related dependancies.
+	* **functions_motd.sh** - This script contains the function to build the MOTD (Message of the Day) when logging in via SSH
 	* **functions_rpi.sh** - This script contains functions specific to the Raspberry Pi.
 	* **menus.sh** - Specific functions to display menus (using whiptail) to display information and request user input.
 	* **functions_ics.sh** - This script contains functions releated to ICS Controllers support.
+    * **functions_autohotspot.sh** - This script installs and configures a local hotspot Orp_Hotspot.
+    
 * **utilities (folder)**
 	* **pi_version.sh** - Experimental script to detect version of Pi that script is running on.
 
@@ -31,7 +40,7 @@ These directions will be geared towards the Raspberry Pi and Raspbian, but you s
 
 1. Start by downloading a fresh version of Debian / Raspbian Lite (desktop GUI not needed). For Raspbian that can be found [here](https://www.raspberrypi.org/downloads/raspbian/).
 
-2. Write the IMG file that you downloaded to your SD card. (Instructions: [Windows](https://openrepeater.com/knowledgebase/topic/writing-img-file-on-windows) | [Mac](https://openrepeater.com/knowledgebase/topic/writing-img-file-on-a-mac))
+2. Write the IMG file that you downloaded to your SD card. 
 
 4. Insert the SD card in the Pi and boot it up.
 

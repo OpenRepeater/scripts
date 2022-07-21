@@ -17,11 +17,6 @@ function rpi_disables {
 	# dtparam=audio=on
 	# /etc/modules
 	sed -i /etc/modules -e"s#snd-bcm2835#\#snd-bcm2835#"
-
-	# echo "--------------------------------------------------------------"
-	# echo " Disable PI user for security"
-	# echo "--------------------------------------------------------------"
-	deluser -remove-home pi
 }
 
 ################################################################################

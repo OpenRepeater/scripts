@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # SCRIPT CONTRIBUTORS:
-# Aaron Crawford (N3MBH), Richard Neese (KB3VGW), Dan Loranger (KG7PAR),
+# Aaron Crawford (N3MBH), Richard Neese (N4CNR), Dan Loranger (KG7PAR),
 # Dana Rawding (N1OFZ), John Tetreault (KC1KVT), Bob Ruddy (W3RCR)
 
 ################################################################################
@@ -30,7 +30,6 @@ SVXLINK_SOUNDS_DIR="/usr/share/svxlink/sounds"
 
 # SVXLINK VERSION - Must match versioning at https://github.com/sm0svx/svxlink/releases
 SVXLINK_VER="19.09.2"
-ORP_RMT_RELAY_BRANCH="1.1" ### FOR DEPRECIATED FUNCTION
 
 SCRIPT_DIR=$(dirname $(realpath $0))
 

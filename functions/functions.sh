@@ -64,22 +64,6 @@ function check_os {
 
 ################################################################################
 
-function check_filesystem {
-	PARTITION_SIZE=$(df -m | awk '$1=="/dev/root"{print$2}')
-	
-	if [ $PARTITION_SIZE -ge $MIN_PARTITION_SIZE ]; then
-		# Partition is large enough
-		echo "--------------------------------------------------------------"
-		echo " Partition Size Looks Good...Continuing!"
-		echo "--------------------------------------------------------------"
-	else
-		# Partition is too small. Show Message
-		menu_expand_file_system $MIN_DISK_SIZE
-	fi
-}
-
-################################################################################
-
 function check_network {
 	# Get Eth0 IP for later display
 	IP_ADDRESS=$(ip addr show eth0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1);
@@ -271,25 +255,14 @@ function install_orp_dependancies {
 	echo " Installing OpenRepeater/SVXLink Dependencies"
 	echo "--------------------------------------------------------------"
 
-	apt-get install --assume-yes --fix-missing alsa-base alsa-utils bzip2 cron dialog fail2ban flite gawk \
-		git-core gpsd gpsd-clients i2c-tools inetutils-syslogd install-info libasound2 libasound2-plugin-equal \
-		libgcrypt20 libgsm1 libopus0 libpopt0 libsigc++-2.0-0v5 libsox-fmt-mp3 libxml2 libxml2-dev \
-		libxslt1-dev logrotate ntp python3-configobj python3-cheetah python3-dev python3-pip python3-usb \
-        python3-serial resolvconf screen sox sqlite3 sudo tcl8.6 time tk8.6 usbutils uuid vim vorbis-tools \
-        watchdog wvdial shellinabox libhamlib-utils
-        
-	# w3rcr -> network-manager package was removed as it caused instability 
-	# particularly with wifi networks. This is a packaged geared towards laptop
-        # users who constant change their connection
-	# This fixes issues:
-	#   https://github.com/OpenRepeater/scripts/issues/20
-	#   https://github.com/OpenRepeater/scripts/issues/21
-	#
-	# If this is needed down the road prior to the installation put entry in
-	# config file in /etc/NetworkManager/conf.d.
-	# [device]
-	# wifi.scan-rand-mac-address=no
-	# ethernet.scan-rand-mac-address=no
+	apt install --assume-yes --fix-missing ack alsa-utils bzip2 chrony cron dialog ethtool fail2ban \
+        flite gawk git-core git gpsd gpsd-clients i2c-tools inetutils-syslogd install-info jqlibasound2 \
+        libasound2-plugin-equal libgcrypt20 libgsm1 libopus0 libpopt0 libsigc++-2.0-0v5 libsox-fmt-mp3 \
+        libxml2 libxml2-dev libxslt1-dev logrotate network-manager neofetch neovim pps-tools python3-configobj python3-cheetah \
+        python3-dev python3-pip python3-usb python3-serial resolvconf screen sox sqlite3 sudo tcl8.6 time \
+        tk8.6 tmate usbutils uuid vim vorbis-tools watchdog wvdial shellinabox libhamlib4 libhamlib-utils \
+        tcl-hamlib libhamlib2-tcl python3-hamlib python3-libhamlib2 libhamlib-perl libhamlib2-perl 
+
 }
 
 ################################################################################
@@ -364,7 +337,6 @@ function install_orp_from_github {
 
 	fi
 
-
 	# FIX PERMISSIONS/OWNERSHIP
 	chown www-data:www-data "$WWW_PATH/$GUI_NAME" -R
 
@@ -380,7 +352,6 @@ function install_orp_from_github {
 	# Reset database...just in case it contains callsign info.
 	sqlite3 "/var/lib/openrepeater/db/openrepeater.db" "UPDATE settings SET value='' WHERE keyID='callSign'"
 	sqlite3 "/var/lib/openrepeater/db/openrepeater.db" "UPDATE modules SET moduleEnabled='0', moduleOptions='' WHERE svxlinkName='EchoLink'"
-
 }
 
 ################################################################################
