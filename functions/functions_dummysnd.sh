@@ -1,8 +1,8 @@
 function dummysnd_setup () {
-modprobe snd-dummy fake_buffer=0
+modprobe snd-dummy
 
 cat >> /etc/modules << DELIM
-snd-dummy fake_buffer=0
+snd-dummy
 DELIM
     
 touch /etc/asound.conf
