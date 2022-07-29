@@ -119,7 +119,7 @@ function enable_i2c {
 	echo " Enable I2C bus and I2C Devices"
 	echo "--------------------------------------------------------------"
 
-	apt-get install --assume-yes --fix-missing i2c-tools
+	apt install --assume-yes --fix-missing i2c-tools
 
 	sed -i /boot/config.txt -e "s#\#dtparam=i2c_arm=on#dtparam=i2c_arm=on#"
 	echo "i2c-dev" >> /etc/modules
@@ -153,12 +153,12 @@ function install_webserver {
 	echo "--------------------------------------------------------------"
 	echo " Installing NGINX and PHP"
 	echo "--------------------------------------------------------------"
-	apt-get install --assume-yes --fix-missing nginx-extras;
-	apt-get install --assume-yes --fix-missing nginx memcached ssl-cert \
+	apt install --assume-yes --fix-missing nginx-extras;
+	apt install --assume-yes --fix-missing nginx memcached ssl-cert \
 		openssl-blacklist php-common php-fpm php-common php-curl php-dev php-gd php-imagick php-mcrypt \
 		php-memcached php-pspell php-snmp php-sqlite3 php-xmlrpc php7.3-xml php-pear php-ssh2 php-cli php-zip
 	
-	apt-get clean
+	apt clean
 	
 	echo "--------------------------------------------------------------"
 	echo " Backup original config files"
@@ -270,7 +270,7 @@ function install_orp_dependancies {
 	echo " Installing OpenRepeater/SVXLink Dependencies"
 	echo "--------------------------------------------------------------"
 
-	apt-get install --assume-yes --fix-missing alsa-base alsa-utils bzip2 cron dialog fail2ban flite gawk \
+	apt install --assume-yes --fix-missing alsa-base alsa-utils bzip2 cron dialog fail2ban flite gawk \
 		git-core gpsd gpsd-clients i2c-tools inetutils-syslogd install-info libasound2 libasound2-plugin-equal \
 		libgcrypt20 libgsm1 libopus0 libpopt0 libsigc++-2.0-0v5 libsox-fmt-mp3 libxml2 libxml2-dev \
 		libxslt1-dev logrotate ntp python3-configobj python-cheetah python3-dev \
