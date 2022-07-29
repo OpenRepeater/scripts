@@ -113,9 +113,7 @@ fi
 	install_svxlink_sounds
 	
     #install and enable dummy-snd   
-    if [ -! /dev/snd/pcm* ]; then
-        dummysnd_setup
-    fi
+    dummysnd_setup
     
    	### OPEN REPEATER FUCNTIONS ###
 	if [ $INPUT_INSTALL_TYPE = "ORP" ]; then
