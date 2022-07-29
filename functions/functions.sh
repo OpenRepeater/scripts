@@ -274,9 +274,9 @@ function install_orp_dependancies {
 	apt install --assume-yes --fix-missing alsa-utils bzip2 chrony cron dialog fail2ban flite gawk \
 		git gpiod gpsd gpsd-clients i2c-tools inetutils-syslogd install-info libasound2 libasound2-plugin-equal \
 		libgcrypt20 libgsm1 libopus0 libpopt0 libsigc++-2.0-0v5 libsox-fmt-mp3 libxml2 libxml2-dev \
-		libxslt1-dev logrotate ntp python3-configobj python3-cheetah python3-dev \
-		python3-pip python3-usb python3-serial python3-serial resolvconf screen sox sqlite3 \
-		sudo tcl8.6 time tk8.6 usbutils uuid vim vorbis-tools watchdog wvdial shellinabox libhamlib-utils
+		libxslt1-dev logrotate python3-configobj python3-cheetah python3-dev python3-pip python3-usb \
+        python3-serial python3-serial resolvconf screen sox sqlite3 sudo tcl8.6 time tk8.6 usbutils uuid vim \
+        vorbis-tools watchdog wvdial shellinabox libhamlib-utils
         
 	# w3rcr -> network-manager package was removed as it caused instability 
 	# particularly with wifi networks. This is a packaged geared towards laptop
