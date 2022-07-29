@@ -7,7 +7,7 @@
 ################################################################################
 # DEFINE VARIABLES (Scroll down for main script)
 ################################################################################
-ORP_VERSION="2.2.1"
+ORP_VERSION="3.0.x"
 
 REQUIRED_OS_VER="11"
 REQUIRED_OS_NAME="Bullseye"
