@@ -47,7 +47,7 @@ source "${BASH_SOURCE%/*}/functions/menus.sh"
 source "${BASH_SOURCE%/*}/functions/functions.sh"
 source "${BASH_SOURCE%/*}/functions/functions_svxlink.sh"
 source "${BASH_SOURCE%/*}/functions/functions_motd.sh"
-source "${BASH_SOURCE%/*}/functions/function_dummysnd.sh"
+source "${BASH_SOURCE%/*}/functions/functions_dummysnd.sh"
 
 ### INITIAL FUNCTIONS ####
 check_root
