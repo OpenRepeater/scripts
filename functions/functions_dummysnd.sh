@@ -7,7 +7,7 @@ DELIM
     
 touch /etc/asound.conf
  
-cat >> /ect/asound.conf << DELIM
+cat >> /etc/asound.conf << DELIM
 pcm.card0 {
     type hw
     card 0
