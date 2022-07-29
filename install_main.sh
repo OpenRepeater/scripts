@@ -49,6 +49,7 @@ source "${BASH_SOURCE%/*}/functions/functions_svxlink.sh"
 source "${BASH_SOURCE%/*}/functions/functions_rpi.sh"
 source "${BASH_SOURCE%/*}/functions/functions_motd.sh"
 source "${BASH_SOURCE%/*}/functions/functions_ics.sh"
+source "${BASH_SOURCE%/*}/functions/function_dummysnd.sh"
 
 #Include AutoHotSpot Functions
 source "${BASH_SOURCE%/*}/functions/functions_AutoHotSpot.sh"
@@ -130,8 +131,11 @@ fi
 	
 	# need some asound.conf tweaks to keep the channels seperated
 	set_ics_asound
-	
-	### OPEN REPEATER FUCNTIONS ###
+ 
+    #install and enable dummy-snd   
+	dummysnd_setup
+ 
+   	### OPEN REPEATER FUCNTIONS ###
 	if [ $INPUT_INSTALL_TYPE = "ORP" ]; then
 		install_webserver
 		install_orp_dependancies
