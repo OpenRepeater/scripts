@@ -133,8 +133,10 @@ fi
 	set_ics_asound
  
     #install and enable dummy-snd   
-	dummysnd_setup
- 
+    if [ -! /dev/snd/pcm* ]; then
+        dummysnd_setup
+    fi
+    
    	### OPEN REPEATER FUCNTIONS ###
 	if [ $INPUT_INSTALL_TYPE = "ORP" ]; then
 		install_webserver
