@@ -22,10 +22,10 @@ function rpi_disables {
     sed -i /boot/config.txt -e"s#display_auto_detect=1#\#display_auto_detect=1#"
     sed -i /boot/config.txt -e"s#disable_overscan=1#\#disable_overscan=1#"
     
-    echo "--------------------------------------------------------------"
-    echo " Disable onboard Broadcom sound card not used in OpenRepeater"
-    echo "--------------------------------------------------------------"
-	sed -i /etc/modules -e"s#snd-bcm2835#\#snd-bcm2835#"
+    #echo "--------------------------------------------------------------"
+    #echo " Disable onboard Broadcom sound card not used in OpenRepeater"
+    #echo "--------------------------------------------------------------"
+	#sed -i /etc/modules -e"s#snd-bcm2835#\#snd-bcm2835#"
 
 }
 
