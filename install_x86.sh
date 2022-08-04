@@ -7,7 +7,7 @@
 ################################################################################
 # DEFINE VARIABLES (Scroll down for main script)
 ################################################################################
-ORP_VERSION="3.0.x"
+ORP_VERSION="2.2.1"
 
 REQUIRED_OS_VER="11"
 REQUIRED_OS_NAME="Bullseye"
@@ -130,7 +130,7 @@ fi
 
 	date
 
-) 2> >(tee /root/orp_error.log) | tee /root/orp_install.log
+) 2> >(tee /usr/src/orp_error.log) | tee //usr/src/orp_install.log
 
 ################################################################################
 # POST INSTALL

@@ -7,7 +7,7 @@
 ################################################################################
 # DEFINE VARIABLES (Scroll down for main script)
 ################################################################################
-ORP_VERSION="3.0.x"
+ORP_VERSION="2.2.1"
 
 REQUIRED_OS_VER="11"
 REQUIRED_OS_NAME="Bullseye"
@@ -49,7 +49,6 @@ source "${BASH_SOURCE%/*}/functions/functions_svxlink.sh"
 source "${BASH_SOURCE%/*}/functions/functions_rpi.sh"
 source "${BASH_SOURCE%/*}/functions/functions_motd.sh"
 source "${BASH_SOURCE%/*}/functions/functions_ics.sh"
-source "${BASH_SOURCE%/*}/functions/function_dummysnd.sh"
 
 #Include AutoHotSpot Functions
 source "${BASH_SOURCE%/*}/functions/functions_AutoHotSpot.sh"
@@ -131,12 +130,7 @@ fi
 	
 	# need some asound.conf tweaks to keep the channels seperated
 	set_ics_asound
- 
-    #install and enable dummy-snd   
-    if [ -! /dev/snd/pcm* ]; then
-        dummysnd_setup
-    fi
-    
+  
    	### OPEN REPEATER FUCNTIONS ###
 	if [ $INPUT_INSTALL_TYPE = "ORP" ]; then
 		install_webserver
@@ -157,7 +151,7 @@ fi
 
 	date
 
-) 2> >(tee /root/orp_error.log) | tee /root/orp_install.log
+) 2> >(tee /usr/src/orp_error.log) | tee /usr/src/orp_install.log
 
 ################################################################################
 # POST INSTALL
