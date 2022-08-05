@@ -50,6 +50,9 @@ source "${BASH_SOURCE%/*}/functions/functions_rpi.sh"
 source "${BASH_SOURCE%/*}/functions/functions_motd.sh"
 source "${BASH_SOURCE%/*}/functions/functions_ics.sh"
 
+#enable console on otg port
+source "${BASH_SOURCE%/*}/functions/functions_otg.sh"
+
 #Include AutoHotSpot Functions
 source "${BASH_SOURCE%/*}/functions/functions_AutoHotSpot.sh"
 
@@ -130,6 +133,9 @@ fi
 	
 	# need some asound.conf tweaks to keep the channels seperated
 	set_ics_asound
+ 
+    #Enable OTG erial Console
+    otg_console
   
    	### OPEN REPEATER FUCNTIONS ###
 	if [ $INPUT_INSTALL_TYPE = "ORP" ]; then
