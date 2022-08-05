@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/usr/bin/env bash -e
 
 # SCRIPT CONTRIBUTORS:
 # Aaron Crawford (N3MBH), Richard Neese (N4CNR), Dan Loranger (KG7PAR),
@@ -7,7 +7,7 @@
 ################################################################################
 # DEFINE VARIABLES (Scroll down for main script)
 ################################################################################
-ORP_VERSION="2.2.x"
+ORP_VERSION="3.0.x (Dev)"
 
 REQUIRED_OS_VER="11"
 REQUIRED_OS_NAME="Bullseye"
@@ -36,6 +36,18 @@ SCRIPT_DIR=$(dirname $(realpath $0))
 ################################################################################
 # PRE-INSTALL
 ################################################################################
+
+if [ "$(id -u)" -eq 0 ]
+then
+    if [ -n "$SUDO_USER" ]
+    then
+        printf "This scriptcan be run as sudo.\n" >&2
+    fi
+    printf "OK, script run as sudo \n"
+else
+    printf "This script has to run as root.(sudo su)\n" >&2
+    exit 1
+fi
 
 # Make sure function scripts are executable.
 chmod +x functions/*
