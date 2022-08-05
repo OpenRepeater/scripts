@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 # SCRIPT CONTRIBUTORS:
 # Aaron Crawford (N3MBH), Richard Neese (N4CNR), Dan Loranger (KG7PAR),
@@ -7,7 +7,7 @@
 ################################################################################
 # DEFINE VARIABLES (Scroll down for main script)
 ################################################################################
-ORP_VERSION="3.0.x"
+ORP_VERSION="2.2.x"
 
 REQUIRED_OS_VER="11"
 REQUIRED_OS_NAME="Bullseye"
@@ -46,23 +46,31 @@ source "${BASH_SOURCE%/*}/functions/menus.sh"
 # Include Main Functions File & RPI functions
 source "${BASH_SOURCE%/*}/functions/functions.sh"
 source "${BASH_SOURCE%/*}/functions/functions_svxlink.sh"
-source "${BASH_SOURCE%/*}/functions/functions_rpi.sh"
 source "${BASH_SOURCE%/*}/functions/functions_motd.sh"
-source "${BASH_SOURCE%/*}/functions/functions_ics.sh"
 
-#enable console on otg port
-source "${BASH_SOURCE%/*}/functions/functions_otg.sh"
+if [[ "$dpkg --print-architecture" == "armhf"* ]] || [[ "$dpkg --print-architecture" == "arm64"* ]]; then
+    source "${BASH_SOURCE%/*}/functions/functions_rpi.sh"
+    source "${BASH_SOURCE%/*}/functions/functions_ics.sh"
+
+    #enable otg serial console zero/w/w2
+    source "${BASH_SOURCE%/*}/functions/functions_otg.sh"
+fi
 
 #Include AutoHotSpot Functions
 source "${BASH_SOURCE%/*}/functions/functions_AutoHotSpot.sh"
 
+if [[ "$dpkg --print-architecture" == "armhf"* ]] || [[ "$dpkg --print-architecture" == "arm64"* ]]; then
+    ### INITIAL FUNCTIONS ####
+    check_root
+    check_os
+    check_filesystem
+    check_network
+    check_internet
+fi
 
-### INITIAL FUNCTIONS ####
-check_root
-check_os
-check_filesystem
-check_network
-check_internet
+if [[ "$dpkg --print-architecture" == "amd64"* ]] || [[ "$dpkg --print-architecture" == "X86_64"* ]]; then
+    check_root
+fi
 
 # Start Time
 START_TIME=`date +%s`
@@ -123,19 +131,21 @@ fi
 	
 	# install copy of repo with all the synthetic voice files
 	install_svxlink_sounds
+
+    if [[ "$dpkg --print-architecture" == "armhf"* ]] || [[ "$dpkg --print-architecture" == "arm64"* ]] ; then	
+        # cards with gpio expanders will need to have the i2c bus enabled.
+        enable_i2c
 	
-	# cards with gpio expanders will need to have the i2c bus enabled.
-	enable_i2c
+        # Need to add some settings to the config.txt file to enable interface card
+        # or they won't load up properly
+        config_ics_controllers
 	
-	# Need to add some settings to the config.txt file to enable interface card
-	# or they won't load up properly
-	config_ics_controllers
-	
-	# need some asound.conf tweaks to keep the channels seperated
-	set_ics_asound
+        # need some asound.conf tweaks to keep the channels seperated
+        set_ics_asound
  
-    #Enable OTG erial Console
-    otg_console
+        #add serial consile to allow access where no network avaible.
+        otg_console
+    fi
   
    	### OPEN REPEATER FUCNTIONS ###
 	if [ $INPUT_INSTALL_TYPE = "ORP" ]; then
@@ -151,7 +161,11 @@ fi
 		
 		### ENDING FUNCTIONS ###
 		add_orp_user
-		rpi_disables
+        
+        if [[ "$dpkg --print-architecture" == "armhf"* ]] || [[ "$dpkg --print-architecture" == "arm64"* ]] ; then 
+            rpi_disables
+        fi
+        
 		set_motd
 	fi
 
