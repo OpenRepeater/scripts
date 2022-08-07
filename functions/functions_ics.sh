@@ -71,9 +71,9 @@ function set_ics_asound {
 				0.1 = 1
 			}
 		}
-		Ctl. Equal  {
-			type equal ;
-			Controls "/home/pi/.alsaequal.bin"
-		}
+#		Ctl. Equal  {
+#			type equal ;
+#			Controls "/home/pi/.alsaequal.bin"
+#		}
 	DELIM
 }
