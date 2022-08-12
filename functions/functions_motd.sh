@@ -1,11 +1,9 @@
 #!/bin/bash
-
 ################################################################################
 #
 # DEFINE MOTD FUNCTION
 #
 ################################################################################
-
 function set_motd {
 	echo "--------------------------------------------------------------"
 	echo " Setting OpenRepeater Message of the Day (MOTD)"
@@ -27,34 +25,30 @@ function set_motd {
 	LtBL="\033[01;34m"   # LIGHT BLUE
 	LtP="\033[01;35m"    # LIGHT PURPLE
 	LtC="\033[01;36m"    # LIGHT CYAN
-
-
 	W="\033[01;37m"      # WHITE
 	GRN="\033[00;32m"    # GREEN
 	C="\033[00;36m"      # CYAN
 	LtR="\033[01;31m"    # LIGHT RED
 	RESET="\033[0m"
 
-	clear > $MOTD        # removes all text from /etc/motd
+	clear > "$MOTD"        # removes all text from /etc/motd
 
-	echo -e $GRN"╔═══════════════════════════════════════════════════════════════════════╗" >> $MOTD
-	echo -e "║"$W"     ____                   ____                        __             "$GRN"║" >> $MOTD
-	echo -e "║"$W"    / __ \____  ___  ____  / __ \___  ____  ___  ____  / /____  _____  "$GRN"║" >> $MOTD
-	echo -e "║"$W"   / / / / __ \/ _ \/ __ \/ /_/ / _ \/ __ \/ _ \/ __ \/ __/ _ \/ ___/  "$GRN"║" >> $MOTD
-	echo -e "║"$W"  / /_/ / /_/ /  __/ / / / _, _/  __/ /_/ /  __/ /_/ / /_/  __/ /      "$GRN"║" >> $MOTD
-	echo -e "║"$W"  \____/ ____/\___/_/ /_/_/ |_|\___/ ____/\___/\__,_/\__/\___/_/       "$GRN"║" >> $MOTD
-	echo -e "║"$W"      /_/                         /_/                                  "$GRN"║" >> $MOTD                                                                                          
-	echo -e "╚═══════════════════════════════════════════════════════════════════════╝" >> $MOTD
-	echo -e "" >> $MOTD
+	echo -e $GRN"╔═══════════════════════════════════════════════════════════════════════╗" >> "$MOTD"
+	echo -e "║"$W"     ____                   ____                        __             "$GRN"║" >> "$MOTD"
+	echo -e "║"$W"    / __ \____  ___  ____  / __ \___  ____  ___  ____  / /____  _____  "$GRN"║" >> "$MOTD"
+	echo -e "║"$W"   / / / / __ \/ _ \/ __ \/ /_/ / _ \/ __ \/ _ \/ __ \/ __/ _ \/ ___/  "$GRN"║" >> "$MOTD"
+	echo -e "║"$W"  / /_/ / /_/ /  __/ / / / _, _/  __/ /_/ /  __/ /_/ / /_/  __/ /      "$GRN"║" >> "$MOTD"
+	echo -e "║"$W"  \____/ ____/\___/_/ /_/_/ |_|\___/ ____/\___/\__,_/\__/\___/_/       "$GRN"║" >> "$MOTD"
+	echo -e "║"$W"      /_/                         /_/                                  "$GRN"║" >> "$MOTD"                                                                                          
+	echo -e "╚═══════════════════════════════════════════════════════════════════════╝" >> "$MOTD"
+	echo -e "" >> "$MOTD"
 
-	echo -e $C"OpenRepeater is offered free of charge. Help support the project." >> $MOTD
-	echo -e "DONATE at: https://openrepeater.com/donate" >> $MOTD
-	echo -e "" >> $MOTD
+	echo -e "$C""OpenRepeater is offered free of charge. Help support the project." >> "$MOTD"
+	echo -e "DONATE at: https://openrepeater.com/donate" >> "$MOTD"
+	echo -e "" >> "$MOTD"
 
-	echo -e $LtR"WARNING: Do not run updates/upgrades on this system without first making" >> $MOTD
-	echo -e "  a backup image of your card...just in case the updates break something." >> $MOTD
-	echo -e "" >> $MOTD
-	echo -e $RESET >> $MOTD
+	echo -e "$LtR""WARNING: Do not run updates/upgrades on this system without first making" >> "$MOTD"
+	echo -e "  a backup image of your card...just in case the updates break something." >> "$MOTD"
+	echo -e "" >> "$MOTD"
+	echo -e "$RESET" >> "$MOTD"
 }
-
-################################################################################

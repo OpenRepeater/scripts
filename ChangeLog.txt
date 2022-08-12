@@ -1,0 +1,24 @@
+Rich Neese (N4CNR) 
+
+OpenRepeater Install Script Changes.
+
+New Functions:
+1) Hardware Platform detection for armhf/arm64/x86_64/AMD64
+2) split out functions into more function files for better editing and updating.
+3) added otg serial console pi zero/w/w2
+4) moved uart to its own function 
+5) moved i2c enable own function
+5) added dummy snd for server dev installs
+6) added hotspot function (Dan Loranger)
+7) fixed 7 issues in the scripts detected by shellchek.net
+8) cleaned up install_orp.sh formerly install_main.sh Update Documentation.
+9) removed the rm pi user function no longer needed in bullseye.
+10) Updated the readme for use with new bullseye images.
+11) disabled the add orp user not needed but still there.
+12) added cleanup at end
+13) enabled neofetch for system info
+
+
+
+
+
