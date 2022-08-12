@@ -27,7 +27,7 @@ log_dir="/usr/src"
 # DEFINE VARIABLES (Scroll down for main script)
 ################################################################################
 #Dispaled Version on Login Page
-ORP_VERSION="2.2.0_1"
+ORP_VERSION="2.2.x"
 
 #ORP Gui Install Version (New)
 ORP_GUI_VERSION="2.2.x"
