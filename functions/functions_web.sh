@@ -25,7 +25,7 @@ function install_webserver {
     echo " Installing self signed SSL certificate"
     echo "--------------------------------------------------------------"
     #####################################################################
-    cp -r "/etc/ssl/private/ssl-cert-snakeoil.key /etc/ssl/private/nginx.key"
+    cp -r "/etc/ssl/private/ssl-cert-snakeoil.key" "/etc/ssl/private/nginx.key"
     cp -r "/etc/ssl/certs/ssl-cert-snakeoil.pem" "/etc/ssl/certs/nginx.crt"
 	#####################################################################
     echo "--------------------------------------------------------------"
