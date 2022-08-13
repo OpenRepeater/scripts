@@ -52,7 +52,7 @@ function check_os {
     if [ "$PROCESSOR" != "ARM" ] && [ "$PROCESSOR" != "INTEL" ] || [ "$DEBIAN_VERSION" != "$REQUIRED_OS_VER" ] ; then
 		echo
 		echo "**** ERROR ****"
-		echo "This script will only work on Debian $REQUIRED_OS_VER ($REQUIRED_OS_NAME) images at this time."
+		echo "This script will only work on Debian ($REQUIRED_OS_VER) ($REQUIRED_OS_NAME) images at this time."
 		echo "No other version of Debian is supported at this time. "
 		echo "**** EXITING ****"
 		exit 1

@@ -21,7 +21,7 @@ function menu_expand_file_system {
 # WELCOME MESSAGE
 ################################################################################
 function menu_welcome_message {
-	WELCOME_MESSAGE="WELCOME TO OPENREPEATER\n\nThis script is meant to be run on a fresh install of Debian $REQUIRED_OS_VER ($REQUIRED_OS_NAME)\n\nTHIS SCRIPT IS NOT INTENDED TO BE RUN MORE THAN ONCE"
+	WELCOME_MESSAGE="WELCOME TO OPENREPEATER\n\nThis script is meant to be run on a fresh install of Debian ($REQUIRED_OS_VER) ($REQUIRED_OS_NAME)\n\nTHIS SCRIPT IS NOT INTENDED TO BE RUN MORE THAN ONCE"
 	
 	whiptail --title "$DIALOG_TITLE" --msgbox "$WELCOME_MESSAGE" 15 60
 }
