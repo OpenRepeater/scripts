@@ -33,8 +33,8 @@ ORP_VERSION="3.0.x"
 ORP_GUI_VERSION="3.0.x"
 
 #Set Debian OS Release
-REQUESTED_OS_VER="11"
-REQUESTED_OS_NAME="Bullseye"
+REQUIRED_OS_VER="11"
+REQUIRED_OS_NAME="Bullseye"
 
 # File System Requirements
 MIN_PARTITION_SIZE="3000"
