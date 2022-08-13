@@ -27,10 +27,10 @@ log_dir="/usr/src"
 # DEFINE VARIABLES (Scroll down for main script)
 ################################################################################
 #Dispaled Version on Login Page
-ORP_VERSION="2.2.x"
+ORP_VERSION="3.0.x"
 
 #ORP Gui Install Version (New)
-ORP_GUI_VERSION="2.2.x"
+ORP_GUI_VERSION="3.0.x"
 
 #Set Debian OS Release
 REQUIRED_OS_VER="11"
@@ -115,6 +115,10 @@ source "${BASH_SOURCE%/*}/functions/functions_orp.sh"
 #Install Nginx and Php  
 ########################################################
 source "${BASH_SOURCE%/*}/functions/functions_web.sh"
+########################################################
+#Cleanup
+########################################################
+source "${BASH_SOURCE%/*}/functions/functions_cleanup.sh"
 
 ### INITIAL FUNCTIONS ####
 check_root
@@ -261,18 +265,9 @@ fi
         ####################################################
     fi
     ####################################################
-    #Cleanup
+    #Post Build Cleanup
     ####################################################
-	apt clean && apt autoclean
-    ####################################################
-    #Enable neofetch
-    ####################################################	
-	cat >> /etc/bash.bashrc <<- DELIM
-		####################################################
-		#Enable neofetch
-		####################################################
-		neofetch
-		DELIM
+    do_cleanup
     ########################################################
     #grab date for build date/finish build time
     ########################################################
