@@ -1,85 +1,108 @@
-OpenRepeater Build Script
+Developer OpenRepeater Build Script
 =======
-This is the repository for the install/build script for the OpenRepeater project. With this script you can install OpenRepeater on your system or use it to build a complete system to image for download by others. The script will install the OpenRepeater UI, SVXLink, and other packages and dependancies required by OpenRepeater. It will also make some other system adjustments as well.
+*This is the repository for the install/build script for the OpenRepeater project. With this script you can install OpenRepeater on your system 
+ or use it to build a complete system to image for download by others. The script will install the OpenRepeater UI, SVXLink, and other packages 
+ and dependancies required by OpenRepeater. It will also make some other system adjustments as well.
 
-While this script is primarily created to run on a Raspberry Pi, it will most likely work on other Debian based systems, but will need modified accordingly or you may have to manually figure out and make these adjustments on your own. 
+*While this script is primarily created to run on a Raspberry Pi, it will most likely work on other Debian based systems, but will need modified 
+ accordingly or you may have to manually figure out and make these adjustments on your own. 
 
 #### Requirements: 
-* SD card of 4GB or Larger (8GB or larger recommended)
-* You must be running Debian/Raspbian Stretch OS (Ver 9) on your device
-* You must run the install script as root
+* SD card of 8GB or Larger (8GB or larger recommended)
+* You must be running Debian/Raspbian Bullseye OS (Ver 11) on your device
+* You must run the install script as root 
 * Make sure that you device is connected to the internet as it will need to download files and packages to install.
-* ***You should set a STATIC ip address*** for your device to prevent the IP changing during/after build.
-* It's **HIGHLY RECOMMNED NOT TO BUILD OVER WIFI**. If your device does not have onboard ethernet, it is advised to use a USB to ethernet adapter.
-* You should have a working knowledge of Linux. This guide/script is not intended for beginners.
+* ***It is suggested you should set a STATIC ip address*** for your device to prevent the IP changing during/after build. 
+    The simplest way to do this is in your router. Map and IP address to the MAC address of the ethernet adapter. 
+* It's **HIGHLY RECOMMNED NOT TO BUILD OVER WIFI**. If your device does not have onboard ethernet, it is advised 
+    to use a USB to ethernet adapter during the build process where possible.
+* Developers and Users should have a basic working knowledge of Linux. This guide/script is not intended for beginners.
 
 #### Overview of the files:
 * **README.md** - This file. You are reading it right now.
-* **install_main.sh** - This is main script that you run. It contains some variables defined for install, and the main order of functions to be executed. It may prompt for some user input. It also requires and calls the external function scripts described below.
+* **install_main.sh** - This is main script that you run. It contains some variables defined for install, and the main order 
+    of functions to be executed. It may prompt for some user input. It also requires and calls the external function scripts 
+    described below.
 * **functions (folder)** - Contains any functions required by the main script. Board specific functions also live here.
 	* **functions.sh** - This script contains the all the main functions required by all boards for building an ORP installation.
+	* **functions_svxlink.sh** - This script contains the functions to install/compile SVXLink and it's related dependancies.
+	* **functions_motd.sh** - This script contains the function to build the MOTD (Message of the Day) when logging in via SSH
 	* **functions_rpi.sh** - This script contains functions specific to the Raspberry Pi.
 	* **menus.sh** - Specific functions to display menus (using whiptail) to display information and request user input.
-* **utilities (folder)**
-	* **shrink_img.sh** - This is a script that is intended to be run on on a Linux computer with the SD card in a card read to shrink the image for ease of distribution. This script has not been fully tested and was written by others. 
+	* **functions_ics.sh** - This script contains functions releated to ICS Controllers support.
+    * **functions_AutohotSpot.sh*** This script install hotspot settings so you can login to the repeater gui when you have no local internet. (Post Install)
+**utilities (folder)**
+	* **pi_version.sh** - Experimental script to detect version of Pi that script is running on.
+**AutoHotSpot (folder)** this dir contains the hotspot scripts and install files.
 
-#### Prepare your OS:
-These directions will be geared a little more towards the Raspberry Pi and Raspbian, but you should be able to modify them accordingly for other Debian systems.
+#### Prepare your OS to Install Headless:
+These directions will be geared towards the Raspberry Pi and raspi-lite, but you should be able to modify them accordingly for other Debian systems. 
+These instructions are for doing a complete build on a headless (without a keyboard and monitor connected) system via SSH.
 
-1. Start by downloading a fresh version of Debian / Raspbian Lite (desktop GUI not needed). For Raspbian that can be found [here](https://www.raspberrypi.org/downloads/raspbian/).
+1. Download the raspi img tool. (Mac/Linux/Windows) [Here] (https://www.raspberrypi.com/software/). Install it on your system. 
 
-2. Write the IMG file that you downloaded to your SD card. (Instructions: [Windows](https://openrepeater.com/knowledgebase/topic/writing-img-file-on-windows) | [Mac](https://openrepeater.com/knowledgebase/topic/writing-img-file-on-a-mac))
+2. Launch the Raspberry pi imager. 
+   1. Use the Choose OS and scroll to Raspberry PI OS (other). Select Raspberry Pi OS Light 32 or 64 bit . 
+   2. Then select the sd card your going to write to. 
+   3. Next select the gear in the lower right corner. If it ask you for a user/password ignore and hit escape. 
+   4. Now select and enter following info : set hostname openrepeater. 
+   5. Next select enable ssh, and select use password. 
+   6. Nest select add user . Add a custom user/password used for first login. 
+   7. Next if using wifi select the Configure wireless Lan, Enter your routers ssid and password. (if Ethernet dont use)
+   8. Next select your country. 
+   9. Next select set locale timezone and choose yours. Also choose your keyboard type. 
+   10. Now hit save and flash the image to your sd card
 
-3. Boot and log into using default username and password. For Raspbian: pi/raspberry
+4. Insert the SD card in the Pi and boot it up.
+5. For now, log into the openrepeater via ssh using your user/password you set before flashing.
+7. sudo su and you have root.
 
-4. Enable SSH (via keyboard/console)
-	* $ sudo systemctl enable ssh
-	* $ sudo systemctl start ssh
-5. Setup Root Password (via keyboard/console)
-	* $ sudo passwd root
-	* Note: if you are creating a new image for a public build, use the password *OpenRepeater* as the default as that is what is documented in the ORP knowledge base.
-6. Enable Root on Raspbian for SSH
-	* $ sudo nano /etc/ssh/sshd_config
-	* Then find the entry in the Authentication section of the file that says ‘PermitRootLogin’ and change to ‘yes’ and make sure the line is uncommented, save and exit the file.
-7. Restart SSH
-	* $ sudo systemctl restart ssh
-	* You should now be able to use the board headless, You can disconnect the keyboard and monitor and SSH in as root
+### Getting Scripts ######
 
-8. **IMPORTANT: Expand File System.** This is a must as most distro images are compacted. If the file system is not expand it is very likely that you will run out of disk space on the partition in the middle of the build process. See minimum SD card requirements above. For instructions on how to expand the file system, read this [knowledge base article](https://openrepeater.com/knowledgebase/topic/expanding-the-file-system).
-
-#### How to Use: 
-* Boot up your board and login as root
-
-* Change to the root folder
-	* $ cd /root
-* Download this script in it's entirety from GitHub directly to your board's root folder.
-	* $ wget https://github.com/OpenRepeater/scripts/archive/2.1.x.zip
-* Unzip the script archive
-	* $ unzip 2.1.x.zip
+8. Down load the scripts 1 of 2 ways:
+    git:
+    * First apt install git , Not installed on os image by default. Then:
+    * &#35; **`git clone -b X.x.x https://github.com/OpenRepeater/scripts.git /usr/src/scripts`** X=2/3 x=x/0/1/2/3
+    or
+    wget: 
+    * &#35; **`cd /usr/src && wget https://github.com/OpenRepeater/scripts/archive/X.x.x.zip `** X=2/3 x=x/0/1/2/3
+* Unzip the script archive if you got the zip file.
+	* &#35; **`unzip X.x.x.zip`**
+* else    
 * Change to the script folder
-	* $ cd scripts-2.1.x
+	* &#35; **`cd /usr/src/scripts dir`**
 * Make the script executable
-	* $ chmod +x install_main.sh
-	* Note: when you run the install_main.sh script, it will set the function scripts as executable.
+	* &#35; **`chmod +x install_orp.sh`** This will make the install script executable.
 * Run the script
-	* $ ./install_main.sh
+	* &#35; **`./install_orp.sh`**
 	* Please be patient, this process may take a while.
+
+* Remove the install script.
+    * &#35; **`rm -rf /usr/src/*`**
+
 * Be sure to reboot when done
-* Run "alsamixer" from the command prompt and make sure your input and output levels are properly set. You will need your hardware/sound card connected to set these levels.
 
 #### Post Install Considerations:
 
-* Remove the install script.
-	* $ rm /root/2.1.x.zip
-	* $ rm /root/scripts-2.1.x -R
-* On the Raspberry Pi, you may want to disable, remove, or change the default password for the default user (pi) to something more secure.
+* Run "alsamixer" from the command prompt and make sure your input and output levels are properly set. You will need your hardware/sound card connected to set these levels.
+    sudo su : user/pwd alsamixer.
 
-* If you are building this for your own use, please change the root password to something that is more secure and not published.
-* CAUTION: You are responsible for securing your own device and this will largely depend on your installation and particular needs. 
+* HotSpot Login:
+    HotSpot allows you to work on the repeater if there is no internet where its located. The HotSpot will not load if you have ethernet connected. or wpa_supplicant.conf installed on the /boot before boot up.
 
+    Hotspot IP Address for HTTP,SSH and VNC: 192.168.50.5 or openrepeater.local
+    Hotspot SSID: ORP_HOTSPOT
+    Hotspot Password: OpenRepeater
 
+    HotSpot allows you to work on the repeater if there is no internet where its located.
+    You can still login via WebGui at 192.168.50.5 or openrepeater.local.
 
-***Some common courtesies:*** This is a Work-In-Progress. If a script is broken, please report it via GitHub Issues but be polite about it. If you are capable, make the corrections and submit a pull request. This is an open source project and the developers are unpaid. We do this purely out of our desire to make ham radio Awesome.
+* Be sure to set your time zone as required. On the raspberry Pi, the can be done by running `raspi-config`
+
+* CAUTION: You are responsible for securing your own device and this will largely depend on your installation and particular needs.
+
+***Some common courtesies:*** This is a Work-In-Progress. If a script is broken, please report it via GitHub Issues but be polite about it. If you are capable, make the corrections 
+    and submit a pull request. We do this purely out of our desire to make ham radio Awesome. If you found this helpful, [consider supporting the project](https://openrepeater.com/donate)
 
 Thanks & Enjoy,
 
