@@ -1,5 +1,5 @@
 #!/bin/bash
-function build_cleanup() {
+function build_cleanup {
     ####################################################
     #Post Build Cleanup
     ####################################################
