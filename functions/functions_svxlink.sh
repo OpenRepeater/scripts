@@ -46,8 +46,8 @@ function install_svxlink_source () {
 	mkdir build
 
 	cd build
-	echo "make command: cmake -DCMAKE_INSTALL_PREFIX=/usr -DSYSCONF_INSTALL_DIR=/etc -DLOCAL_STATE_DIR=/var -DWITH_SYSTEMD=ON -DUSE_QT=no "$Modules_Build_Cmake_switches" .."
-	cmake -DCMAKE_INSTALL_PREFIX=/usr -DSYSCONF_INSTALL_DIR=/etc -DLOCAL_STATE_DIR=/var -DWITH_SYSTEMD=ON -DUSE_QT=no "$Modules_Build_Cmake_switches" ..
+	echo "make command: cmake -DCMAKE_INSTALL_PREFIX=/usr -DSYSCONF_INSTALL_DIR=/etc -DLOCAL_STATE_DIR=/var -DWITH_SYSTEMD=ON -DUSE_QT=no $Modules_Build_Cmake_switches .."
+	cmake -DCMAKE_INSTALL_PREFIX=/usr -DSYSCONF_INSTALL_DIR=/etc -DLOCAL_STATE_DIR=/var -DWITH_SYSTEMD=ON -DUSE_QT=no $Modules_Build_Cmake_switches ..
 	
 	make -j5
 	make doc
@@ -124,9 +124,10 @@ function force_async_audio_zerfill {
 function logic_fixup {
 
 	# change to the top level directory
-	cd /
+	cd / || return
 	
 	#find the desired function
+	
 	InputFileName="$1"
 	if [ -z "$InputFileName" ]; then
 	  echo "parameter 'InputFileName' was not entered"
@@ -157,6 +158,7 @@ function logic_fixup {
 	  echo "OutputFileName is $OutputFileName"
 	fi
 
+
 	#Locate the begining of the function
 	file="$InputFileName"
 	StartLine=1
@@ -176,7 +178,7 @@ function logic_fixup {
 	while IFS= read -r line
 	do
 	  #make sure we are not looking in the wrong place
-	  if ((NextStart > (StartLine ))) && [[ "$line" == *"proc "* ]]; then
+	  if (($NextStart > (($StartLine )))) && [[ $line == *"proc "* ]]; then
 		break;
 	  fi
 	  ((NextStart++))
@@ -192,7 +194,7 @@ function logic_fixup {
 	while IFS= read -r line
 	do
 	  #echo $CurrentLine
-	  if  (( CurrentLine >= StartLine )) && [[ "$line" != '}' ]] && [[ "$line" != "" ]] && [[ ${line:0:1} != '#' ]] && [[ ((CurrentLine < NextStart)) ]]; then   
+	  if  (( $CurrentLine >= $StartLine )) && [[ $line != '}' ]] && [[ $line != "" ]] && [[ ${line:0:1} != '#' ]] && [[ (($CurrentLine < $NextStart)) ]]; then   
 
 		echo "#$line" >> "$OutputFileName"".tmp"
 	  else
@@ -203,6 +205,7 @@ function logic_fixup {
 	done <"$file"
 	
 	mv "$OutputFileName"".tmp" "$OutputFileName"
+
 }
 ################################################################################
 function install_device_permission_scripts {
