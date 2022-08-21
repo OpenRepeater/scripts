@@ -27,10 +27,10 @@ log_dir="/usr/src"
 # DEFINE VARIABLES (Scroll down for main script)
 ################################################################################
 #Dispaled Version on Login Page
-ORP_VERSION="3.0.x"
+ORP_VERSION="2.1.x"
 
 #ORP Gui Install Version (New)
-ORP_GUI_VERSION="3.0.x"
+ORP_GUI_VERSION="2.1.x"
 
 #Set Debian OS Release
 REQUIRED_OS_VER="11"
