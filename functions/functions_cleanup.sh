@@ -30,5 +30,5 @@ function build_cleanup {
 		# Enable neofetch System info Reporting
 		###############################################
 		neofetch
-		DELIM    
+		DELIM
 }
