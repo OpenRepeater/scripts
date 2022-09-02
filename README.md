@@ -1,4 +1,4 @@
-Developer OpenRepeater Build Script
+Developer OpenRepeater Build Script Debian (11) Bullseye
 =======
 *This is the repository for the install/build script for the OpenRepeater project. With this script you can install OpenRepeater on your system 
  or use it to build a complete system to image for download by others. The script will install the OpenRepeater UI, SVXLink, and other packages 
