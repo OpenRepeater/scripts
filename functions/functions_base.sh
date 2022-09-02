@@ -33,7 +33,7 @@ function check_os {
 	# Detects ARM processor
 	if [ "$system_arch" == "armhf" ] || [ "$system_arch" == "arm64" ]; then
 		PROCESSOR="ARM"
-    elif [ "$system_arch" == "arm64" ] || [ "$system_arch" == "X86_64" ]; then
+    elif [ "$system_arch" == "amd64" ] || [ "$system_arch" == "X86_64" ]; then
         PROCESSOR="INTEL"
     else
         PROCESSOR=UNSUPPORTED
