@@ -33,8 +33,10 @@ function check_os {
 	# Detects ARM processor
 	if [ "$system_arch" == "armhf" ] || [ "$system_arch" == "arm64" ]; then
 		PROCESSOR="ARM"
-    elif [ "$system_arch" == "amd64" ] || [ "$system_arch" == "X86_64" ]; then
+    elif [ "$system_arch" == "amd64" ] || [ "$system_arch" == "X86_64" ] || [ "$system_arch" == "X86_32" ]; then
         PROCESSOR="INTEL"
+	elif [ "$system_arch" == "amd64" ]
+		PROCESSOR="RISCV"
     else
         PROCESSOR=UNSUPPORTED
 	fi
@@ -49,7 +51,7 @@ function check_os {
     #####################################################################
     # Abort if there is a mismatch
     #####################################################################
-    if [ "$PROCESSOR" != "ARM" ] && [ "$PROCESSOR" != "INTEL" ] || [ "$DEBIAN_VERSION" != "$REQUIRED_OS_VER" ] ; then
+    if [ "$PROCESSOR" != "ARM" ] && [ "$PROCESSOR" != "INTEL" ] && [ "$PROCESSOR" != "RISCV" ] || [ "$DEBIAN_VERSION" != "$REQUIRED_OS_VER" ] ; then
 		echo
 		echo "**** ERROR ****"
 		echo "This script will only work on Debian ($REQUIRED_OS_VER) ($REQUIRED_OS_NAME) images at this time."
