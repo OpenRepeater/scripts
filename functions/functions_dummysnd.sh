@@ -1,6 +1,6 @@
 #!/bin/bash
 ################################################################################
-# DEFINE DUMMY SOUND X*^/AMD64 FUNCTIONS
+# DEFINE DUMMY SOUND X86/AMD64 FUNCTIONS
 ################################################################################
 function dummysnd_setup () {
 if [ "$system_arch" == "amd64" ] || [ "$system_arch" == "X86_64" ]; then
