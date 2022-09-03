@@ -35,7 +35,7 @@ function check_os {
 		PROCESSOR="ARM"
     elif [ "$system_arch" == "amd64" ] || [ "$system_arch" == "X86_64" ] || [ "$system_arch" == "X86_32" ]; then
         PROCESSOR="INTEL"
-	elif [ "$system_arch" == "RISCV" ]
+	elif [ "$system_arch" == "RISCV" ]; then
 		PROCESSOR="RISCV"
     else
         PROCESSOR=UNSUPPORTED
