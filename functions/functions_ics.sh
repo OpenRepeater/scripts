@@ -11,8 +11,8 @@ function config_ics_controllers {
 			################################
 			#ICS Required Drivers/Overlays
 			################################
-            #Enable FE-Pi Overlay
-            ################################
+			#Enable FE-Pi Overlay
+			################################
 			dtoverlay=fe-pi-audio
 			dtoverlay=i2s-mmap
 			################################
