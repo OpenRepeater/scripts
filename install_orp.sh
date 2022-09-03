@@ -119,7 +119,7 @@ source "${BASH_SOURCE%/*}/functions/functions_web.sh"
 #Cleanup
 ########################################################
 source "${BASH_SOURCE%/*}/functions/functions_cleanup.sh"
-
+########################################################
 ### INITIAL FUNCTIONS ####
 check_root
 check_os
