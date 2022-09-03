@@ -17,7 +17,7 @@ wrk_dir="/usr/src/scripts"
 ############################
 #set build log dir (New)
 ############################
-log_dir="/usr/src"
+log_dir="/home/orp"
 
 # SCRIPT CONTRIBUTORS:
 # Aaron Crawford (N3MBH), Richard Neese (N4CNR), Dan Loranger (KG7PAR),
