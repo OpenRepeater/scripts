@@ -70,7 +70,7 @@ These instructions are for doing a complete build on a headless (without a keybo
 	* &#35; **`unzip X.x.x.zip`**
 * else    
 * Change to the script folder
-	* &#35; **`cd /usr/src/scripts dir`**
+	* &#35; **`cd /usr/src/scripts`**
 * Make the script executable
 	* &#35; **`chmod +x install_orp.sh`** This will make the install script executable.
 * Run the script
