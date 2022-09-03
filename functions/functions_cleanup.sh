@@ -30,7 +30,7 @@ function build_cleanup {
 	rm -rf /var/www/openrepeater/debian
 	####################################################
     #Enable neofetch
-    ####################################################	
+    ####################################################
 	cat >> /etc/bash.bashrc <<- DELIM
 		###############################################
 		# Enable neofetch System info Reporting
