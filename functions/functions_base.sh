@@ -62,7 +62,7 @@ function check_os {
 }
 ################################################################################
 function check_filesystem {
-if [ "$system_arch" == "armhf" ] || [ "$system_arch" == "arm64" ]; then
+if [ "$system_arch" == "armhf" ] || [ "$system_arch" == "arm64" ] || [ "$system_arch" == "riscv" ]; then
     PARTITION_SIZE=$(df -m | awk '$1=="/dev/root"{print$2}')
     if [ $PARTITION_SIZE -ge $MIN_PARTITION_SIZE ]; then
         #####################################################################
@@ -102,7 +102,7 @@ function wait_for_network {
 	echo "Network connected.  Proceeding..."
 }
 ################################################################################
-function set_hostname () {
+function set_hostname {
     #####################################################################
     ### SET HOSTNAME 
     #####################################################################

@@ -22,13 +22,13 @@ function build_cleanup {
 	echo "" > /etc/svxlink/svxlink.conf
 	echo "" > /etc/svxlink/svxlink.d/ModuleEchoLink.conf
 	echo "" > /var/log/svxlink
-    ####################################################
-    echo "----------------------------------------------"
-    echo " Remove Debian dir from openrepeater dir"
-    echo "----------------------------------------------"
-    ####################################################
-    rm -rf /var/www/openrepeater/debian
-    ####################################################
+	####################################################
+	echo "----------------------------------------------"
+	echo " Remove Debian dir from openrepeater dir"
+	echo "----------------------------------------------"
+	####################################################
+	rm -rf /var/www/openrepeater/debian
+	####################################################
     #Enable neofetch
     ####################################################	
 	cat >> /etc/bash.bashrc <<- DELIM
