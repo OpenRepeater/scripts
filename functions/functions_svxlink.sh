@@ -13,7 +13,7 @@ function install_svxlink_source () {
     libgsm1-dev libpopt-dev tcl8.6-dev libgcrypt20-dev libspeex-dev libasound2-dev \
     libopus-dev librtlsdr-dev doxygen groff alsa-utils vorbis-tools curl git \
     libcurl4-openssl-dev unzip zip libpigpiod-if-dev libpigpiod-if2-1 libgpiod-dev \
-    libgpiod2 pigpiod gpiod libjsoncpp-dev libjsoncpp24
+    libgpiod2 pigpiod gpiod libjsoncpp-dev libjsoncpp24 libogg-dev
     
 	# Add svxlink user and add to user groups
 	useradd -r svxlink
