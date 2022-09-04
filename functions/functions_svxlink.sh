@@ -12,7 +12,8 @@ function install_svxlink_source () {
 	apt install --assume-yes --fix-missing g++ cmake make libsigc++-2.0-dev \
     libgsm1-dev libpopt-dev tcl8.6-dev libgcrypt20-dev libspeex-dev libasound2-dev \
     libopus-dev librtlsdr-dev doxygen groff alsa-utils vorbis-tools curl git \
-    libcurl4-openssl-dev unzip zip gpiod
+    libcurl4-openssl-dev unzip zip libpigpiod-if-dev libpigpiod-if2-1 libgpiod-dev \
+    libgpiod2 gpiod2 pigpiod gpiod libjsoncpp-dev libjsoncpp24
     
 	# Add svxlink user and add to user groups
 	useradd -r svxlink
