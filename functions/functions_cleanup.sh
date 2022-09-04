@@ -13,7 +13,7 @@ function build_cleanup {
 	echo " Stopping SVXLink "
 	echo "----------------------------------------------"
 	####################################################
-	orp_helper svxlink stop
+	systemctrl stop svxlink
 	####################################################
 	echo "----------------------------------------------"
 	echo " Reset/Clearing SVXLink logs"
