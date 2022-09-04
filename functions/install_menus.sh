@@ -1,6 +1,6 @@
 #!/bin/bash
 ################################################################################
-# DEFINE OTG SERIAL CONSOLE FUNCTIONS
+# define install type / version
 ################################################################################
 DIALOG_TITLE="OpenRepeater $ORP_VERSION Setup"
 
