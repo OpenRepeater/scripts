@@ -24,7 +24,6 @@ function install_svxlink_source () {
 	echo "svx_trunk=$1"
 	if [ "$1" = "svx_trunk" ]; then
 		echo "Building SVXLINK from Trunk"
-		cd svxlink
 		git clone https://github.com/sm0svx/svxlink.git
 		cd svxlink/src
 	else
