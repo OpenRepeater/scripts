@@ -15,30 +15,8 @@ function check_root {
     fi
 }
 ################################################################################
-function check_internet_spider {
-    wget -q --spider http://google.com
-    if [ $? -eq 0 ]; then
-        echo "--------------------------------------------------------------"
-        echo " INTERNET CONNECTION REQUIRED: Connection Found...Continuing!"
-        echo "--------------------------------------------------------------"
-    else
-        echo "--------------------------------------------------------------"
-        echo " INTERNET CONNECTION REQUIRED: Not Connection...Aborting!"
-        echo "--------------------------------------------------------------"
-        exit 1
-    fi
-}
-################################################################################
 function check_internet {
-	if [!(check_internet_spider) && !(check_internet_ping)]; then
-		echo "--------------------------------------------------------------"
-		echo " Failed all internet check methods"
-		echo "--------------------------------------------------------------"
-	fi
-}
-################################################################################
-function check_internet_ping {
-    ping 8.8.8.8 -c 2
+    wget -q --spider http://google.com
     if [ $? -eq 0 ]; then
         echo "--------------------------------------------------------------"
         echo " INTERNET CONNECTION REQUIRED: Connection Found...Continuing!"
