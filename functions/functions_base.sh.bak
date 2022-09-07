@@ -29,15 +29,7 @@ function check_internet_spider {
     fi
 }
 ################################################################################
-function check_internet {
-	if [!(check_internet_spider) && !(check_internet_ping)]; then
-		echo "--------------------------------------------------------------"
-		echo " Failed all internet check methods"
-		echo "--------------------------------------------------------------"
-	fi
-}
-################################################################################
-function check_internet_ping {
+function check_internet_ping{
     ping 8.8.8.8 -c 2
     if [ $? -eq 0 ]; then
         echo "--------------------------------------------------------------"
