@@ -1,6 +1,6 @@
 #!/bin/bash
 ################################################################################
-# DEFINE OTG SERIAL CONSOLE FUNCTIONS
+# DEFINE OTG SERIAL Console / Ethernet FUNCTIONS
 ################################################################################
 function otg_console () {
     if [ "$system_arch" == "armhf" ] || [ "$system_arch" == "arm64" ]; then
@@ -16,8 +16,9 @@ function otg_console () {
         #Post end of line cmdline.txt
         ##############################
         sed -i 's/^/dwc_otg.lpm_enable=0 /' /boot/cmdline.txt
-        sed -i 's/$/ modules-load=dwc2,g_serial/' /boot/cmdline.txt
+       	sed -i 's/$/ modules-load=dwc2,g_cdc/' /boot/cmdline.txt
 
+		
 		##############################
         #Disabe otg for serial console
         ##############################
@@ -28,22 +29,35 @@ function otg_console () {
         ##############################
 		cat >> /boot/config.txt <<- DELIM
 			#####################################################
-			#Enable USB Serial Port Pi Zero, Zero W, A and A+ OTG
+			# Enable USB Serial Port Pi Zero, Zero W, A and A+ OTG
 			#####################################################
 			dtoverlay=dwc2
 			DELIM
- 
+
  		##############################
         #Add the kernel module to load
         ##############################
-        modprobe g_serial
+        modprobe g_cdc
 		cat >> /etc/modules <<- DELIM
 			#####################################################
-			#Enable USB Serial Port Pi Zero, Zero W, A and A+ OTG
+			#	Enable USB Serial / Ethernet Port Pi Zero, Zero W, 
+			# A and A+ OTG
 			#####################################################
-			g_serial
+			g_cdc
 			DELIM
- 
+
+ 		##############################
+        #Add usb interface for boot 172.16.0.1
+        ##############################
+		cat >> /etc/network/interfaces.d/usb0 <<- DELIM
+			auto usb0
+			iface usb0 inet static
+			address 172.16.0.1
+			netmask 255.255.0.0
+			gateway 172.16.0.1
+			DELIM
+
+ 		
  		##############################
         #enable otg serial service
         ##############################
