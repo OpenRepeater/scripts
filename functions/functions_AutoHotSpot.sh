@@ -8,6 +8,10 @@ function AutoHotSpot_Autosetup () {
         echo " Install ORP_HotSpot & Configure "
         echo "---------------------------------"
         ##############################
+        # sed setup script
+        ##############################
+        sed -i "$wrk_dir"/AutoHotSpot/Autohotspot/autohotspot-setup.sh -e's/=($(cat "/etc/wpa_supplicant/wpa_supplicant.conf" | grep "country="))/=($(cat "/etc/default/crda" | grep "REGDOMAIN="))/g'  
+        ##############################
         #Copy the files to the final location
         ##############################
         echo "---------------------------------"
