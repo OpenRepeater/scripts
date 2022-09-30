@@ -1,4 +1,10 @@
 #!/usr/bin/bash
+################################################################################
+# SCRIPT CONTRIBUTORS:
+# Aaron Crawford (N3MBH), Richard Neese (N4CNR), Dan Loranger (KG7PAR),
+# Dana Rawding (N1OFZ), John Tetreault (KC1KVT), Bob Ruddy (W3RCR)
+################################################################################
+
 ############################
 #Sysem arch checking (New)
 ############################
@@ -9,57 +15,96 @@ system_arch="$(dpkg --print-architecture)"
 ############################
 rpi_board="$(cat /proc/cpuinfo | grep -i Revision)"
 
+################################################################################
+# DEFINABLE VARIABLES EDIT (start)
+################################################################################
 ############################
-#set build work dir (New)
+# set build work base dir (New)
+############################
+base_dir="/usr/src/"
+
+############################
+# set build work dir (New)
 ############################
 wrk_dir="/usr/src/scripts"
 
 ############################
-#set build log dir (New)
+# set build log dir (New)
 ############################
 log_dir="/home/orp"
 
-# SCRIPT CONTRIBUTORS:
-# Aaron Crawford (N3MBH), Richard Neese (N4CNR), Dan Loranger (KG7PAR),
-# Dana Rawding (N1OFZ), John Tetreault (KC1KVT), Bob Ruddy (W3RCR)
-
-################################################################################
-# DEFINE VARIABLES (Scroll down for main script)
-################################################################################
-#Dispaled Version on Login Page
+############################
+# Version Displayed on Login Page
+############################
 ORP_VERSION="3.0.x (Dev)"
 
-#ORP Gui Install Version (New)
+############################
+# ORP Gui Install Version (New)
+# What version to pull from git
+############################
 ORP_GUI_VERSION="3.0.x"
 
-#Set Debian OS Release
+############################
+# Set Debian OS Release
+############################
 REQUIRED_OS_VER="11"
 REQUIRED_OS_NAME="Bullseye"
 
+############################
 # File System Requirements
+############################
 MIN_PARTITION_SIZE="3000"
 MIN_DISK_SIZE="4GB"
 
+############################
 # Upload size limit for php
+############################
 UPLOAD_SIZE="25M"
 
+############################
+# path to install web gui in
+############################
 WWW_PATH="/var/www"
+
+############################
+# set gui name for db_archive
+############################
 GUI_NAME="openrepeater"
 
+############################
 # PHP ini config file
+############################
 PHP_INI="/etc/php/7.4/fpm/php.ini"
 
-#SVXLink
-SVXLINK_SOUNDS_DIR="/usr/share/svxlink/sounds"
-
-# SVXLINK VERSION - Must match versioning at https://github.com/sm0svx/svxlink/releases
+############################
+# SVXLink Settings
+############################
+# SVXLINK VERSION - Must match versioning 
+# at https://github.com/sm0svx/svxlink/releases
+############################
 SVXLINK_VER="19.09.2"
 
 SCRIPT_DIR="$(dirname $(realpath "$0"))"
 
+############################
+# Set path for svxlink sound files
+############################
+SVXLINK_SOUNDS_DIR="/usr/share/svxlink/sounds"
+
+############################
+# SET Default WIFI Regional Domain 
+# Used to set what wifi channels available in your region
+# Used for wifi hotspot setup/configuration at install
+############################
+WIFI_DOMAIN="US"
+
+################################################################################
+# DEFINABLE VARIABLES EDIT (stop)
+################################################################################
 ################################################################################
 # PRE-INSTALL configuration
 ################################################################################
+########################################################
 # Make sure function scripts are executable.
 ########################################################
 chmod +x functions/*
@@ -124,7 +169,7 @@ source "${BASH_SOURCE%/*}/functions/functions_cleanup.sh"
 check_root
 check_os
 check_filesystem
-check_network
+retrieve_system_ip
 check_internet
 
 # Start Time
@@ -158,16 +203,23 @@ fi
     ########################################################
 	date
     ########################################################
+    # Update system locales
+    ########################################################	
+	config_locale
+    ########################################################
     # Update system hostname
     ########################################################
 	set_hostname "$HOSTNAME"
+    ########################################################
+    # Update system hostname
+    ########################################################	
+	set_wifi_domain
 	####################################################
     #add serial consile to allow access where no 
     #network avaible. Rpi zero/w/w2 (New)
     ####################################################
     otg_console        
-    #################################################### 
-    ########################################################
+	########################################################
     ### SVXLINK FUNCTIONS 
     ########################################################
     install_svxlink_source "$INPUT_SVXLINK_INSTALL_TYPE" "$INPUT_SVXLINK_CONTRIBS"
@@ -217,7 +269,7 @@ fi
     ####################################################
     enable_uart
     ########################################################
-   	### OPEN REPEATER FUCNTIONS
+   	### OPEN REPEATER INSTALL FUCNTIONS
     ########################################################
 	if [ "$INPUT_INSTALL_TYPE" = "ORP" ]; then
         ####################################################
@@ -268,6 +320,10 @@ fi
     #Post Build Cleanup
     ####################################################
     build_cleanup
+    ####################################################
+    #Post SYSTEM IP
+    ####################################################
+	post_system_ip
     ########################################################
     #grab date for build date/finish build time
     ########################################################

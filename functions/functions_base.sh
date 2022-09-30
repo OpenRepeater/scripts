@@ -80,11 +80,18 @@ if [ "$system_arch" == "armhf" ] || [ "$system_arch" == "arm64" ] || [ "$system_
 fi
 }
 ################################################################################
-function check_network {
+function retrieve_system_ip {
     #####################################################################
-	# Get Eth0 IP for later display
+	# Get System IP WLAN / ETH0 for later display
     #####################################################################
-	IP_ADDRESS="$(ip addr show eth0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1)";
+    # check wlan0 on zero/w/w2 No eth0 with out usb/eth hat.
+    if [ "$rpi_board" == 900092 ] || [ "$rpi_board" == 900093 ] || [ "$rpi_board" == 920092 ] || [ "$rpi_board" == 920093 ] || [ "$rpi_board" == 9000c1 ] || [ "$rpi_board" == 9000c1 ] || [ "$rpi_board" == 902120 ]; then
+		IP_ADDRESS_WLAN0="$(ip addr show wlan0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1)";
+    else
+    #check ip wlan0/eth0 other boards that have onboard eth0 and wlan0
+    	IP_ADDRESS_ETH0="$(ip addr show eth0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1)";
+    	IP_ADDRESS_WLAN0="$(ip addr show wlan0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1)";
+	fi
 }
 ################################################################################
 function wait_for_network {
@@ -118,4 +125,36 @@ function add_orp_user {
     echo "--------------------------------------------------------------"
     useradd -m -G sudo -c "OpenRepeater" orp
     usermod --password $(openssl passwd -1 OpenRepeater) orp
+}
+################################################################################
+function set_wifi_domain {
+    #####################################################################
+    ### SET WIFI Regional Domain 
+    #####################################################################
+    echo "--------------------------------------------------------------"
+    echo " Adding Wifi Regional Domain "
+    echo "--------------------------------------------------------------"
+	sed -i /etc/default/crda -e"s/=/=$WIFI_DOMAIN/g"
+	iw reg set $WIFI_DOMAIN
+}
+################################################################################
+function config_locale {
+    #####################################################################
+    ### SET system locale 
+    #####################################################################
+    echo "--------------------------------------------------------------"
+    echo " Setting proper locale "
+    echo "--------------------------------------------------------------"
+	dpkg-reconfigure locales
+}
+
+function post_system_ip {
+    #####################################################################
+	# Post System IP WLAN / ETH0 
+    #####################################################################
+    if [ "$rpi_board" == 900092 ] || [ "$rpi_board" == 900093 ] || [ "$rpi_board" == 920092 ] || [ "$rpi_board" == 920093 ] || [ "$rpi_board" == 9000c1 ] || [ "$rpi_board" == 9000c1 ] || [ "$rpi_board" == 902120 ]; then
+		echo wlan0=$IP_ADDRESS_WLAN0
+    else
+    	echo eth0=$IP_ADDRESS_ETH0 $IP wlan0=$IP_ADDRESS_WLAN0
+	fi
 }
