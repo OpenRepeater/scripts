@@ -4,6 +4,11 @@
 # Aaron Crawford (N3MBH), Richard Neese (N4CNR), Dan Loranger (KG7PAR),
 # Dana Rawding (N1OFZ), John Tetreault (KC1KVT), Bob Ruddy (W3RCR)
 ################################################################################
+############################
+# Set Debian OS Release
+############################
+REQUIRED_OS_VER="11"
+REQUIRED_OS_NAME="Bullseye"
 
 ############################
 #Sysem arch checking (New)
@@ -19,13 +24,7 @@ rpi_board="$(cat /proc/cpuinfo | grep -i Revision)"
 # DEFINABLE VARIABLES EDIT (start)
 ################################################################################
 ############################
-# Set Debian OS Release
-############################
-REQUIRED_OS_VER="11"
-REQUIRED_OS_NAME="Bullseye"
-
-############################
-# Version Displayed on Login Page
+# ORP Version Displayed on Login Page
 ############################
 ORP_VERSION="3.0.x (Dev)"
 
