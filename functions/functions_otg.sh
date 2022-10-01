@@ -71,7 +71,7 @@ function otg_console () {
 				# Enable USB Serial / Ethernet Port Pi Zero, 
 				# Zero W, Zero W2, A and A+ OTG , 4B
 				#####################################################
-				g_cdc
+				g_serial
 				DELIM
  		fi
  		
