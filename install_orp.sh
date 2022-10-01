@@ -92,6 +92,13 @@ SCRIPT_DIR="$(dirname $(realpath "$0"))"
 SVXLINK_SOUNDS_DIR="/usr/share/svxlink/sounds"
 
 ############################
+# Enable the g_cdc ethernet/usb console 
+# otg_gcdc_enable=yes uses g_cdc usb ethernet/ usb serial console
+# otg_gcdc_enable=no uses g_serial usb serial console only
+# 
+otg_gcdc_enable=no
+
+############################
 # SET Default WIFI Regional Domain 
 # Used to set what wifi channels available in your region
 # Used for wifi hotspot setup/configuration at install

@@ -136,6 +136,7 @@ function set_wifi_domain {
     echo "--------------------------------------------------------------"
 	sed -i /etc/default/crda -e"s/=/=$WIFI_DOMAIN/g"
 	iw reg set $WIFI_DOMAIN
+	raspi-config nonint do_wifi_country $WIFI_DOMAIN
 }
 ################################################################################
 function config_locale {
