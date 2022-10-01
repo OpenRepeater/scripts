@@ -10,7 +10,7 @@ function AutoHotSpot_Autosetup () {
         ##############################
         # sed setup script
         ##############################
-        sed -i "$wrk_dir"/AutoHotSpot/Autohotspot/autohotspot-setup.sh -e's/=($(cat "/etc/wpa_supplicant/wpa_supplicant.conf" | grep "country="))/=($(cat "/etc/default/crda" | grep "REGDOMAIN="))/g'  
+        sed -i "$wrk_dir"/AutoHotSpot/Autohotspot/autohotspot-setup.sh -e"s/wpa=($(cat "/etc/wpa_supplicant/wpa_supplicant.conf" | grep "country="))/wpa=($(cat "/etc/default/crda" | grep "REGDOMAIN="))/g"  
         ##############################
         #Copy the files to the final location
         ##############################
