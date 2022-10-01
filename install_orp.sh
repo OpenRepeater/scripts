@@ -19,19 +19,10 @@ rpi_board="$(cat /proc/cpuinfo | grep -i Revision)"
 # DEFINABLE VARIABLES EDIT (start)
 ################################################################################
 ############################
-# set build work base dir (New)
+# Set Debian OS Release
 ############################
-base_dir="/usr/src/"
-
-############################
-# set build work dir (New)
-############################
-wrk_dir="/usr/src/scripts"
-
-############################
-# set build log dir (New)
-############################
-log_dir="/home/orp"
+REQUIRED_OS_VER="11"
+REQUIRED_OS_NAME="Bullseye"
 
 ############################
 # Version Displayed on Login Page
@@ -45,10 +36,19 @@ ORP_VERSION="3.0.x (Dev)"
 ORP_GUI_VERSION="3.0.x"
 
 ############################
-# Set Debian OS Release
+# set build / install log dir (New)
 ############################
-REQUIRED_OS_VER="11"
-REQUIRED_OS_NAME="Bullseye"
+log_dir="/home/orp"
+
+############################
+# set build work base dir (New)
+############################
+base_dir="/usr/src/"
+
+############################
+# set build work dir (New)
+############################
+wrk_dir="/usr/src/scripts"
 
 ############################
 # File System Requirements
@@ -92,14 +92,14 @@ SCRIPT_DIR="$(dirname $(realpath "$0"))"
 SVXLINK_SOUNDS_DIR="/usr/share/svxlink/sounds"
 
 ############################
-# Enable the g_cdc ethernet/usb console 
-# otg_gcdc_enable=yes uses g_cdc usb ethernet/ usb serial console
+# Enable the g_cdc ethernet/usb console
+# otg_gcdc_enable=yes uses g_cdc usb ethernet/usb serial console
 # otg_gcdc_enable=no uses g_serial usb serial console only
-# 
+############################
 otg_gcdc_enable=no
 
 ############################
-# SET Default WIFI Regional Domain 
+# SET Default WIFI Regional Domain
 # Used to set what wifi channels available in your region
 # Used for wifi hotspot setup/configuration at install
 ############################
