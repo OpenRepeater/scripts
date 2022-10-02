@@ -20,7 +20,7 @@ function otg_console () {
     	
         cp /boot/cmdline.txt /boot/cmdline.txt.bak
         
-        echo "complete"
+        echo "Completed"
 
 		############################################
     	echo "-------------------------------------"
@@ -31,7 +31,7 @@ function otg_console () {
     	
         sed -i 's/^/dwc_otg.lpm_enable=0 /' /boot/cmdline.txt
         
-        echo "complete"
+        echo "Completed"
         
         
         if [ otg_gcdc_enable == yes ]; then
@@ -44,7 +44,7 @@ function otg_console () {
     		
 	       	sed -i 's/$/ modules-load=dwc2,g_cdc/' /boot/cmdline.txt
 	       	
-	       	echo "complete"
+	       	echo "Completed"
 		else
 			############################################
     		echo "-------------------------------------"
@@ -55,7 +55,7 @@ function otg_console () {
     		
 			sed -i 's/$/ modules-load=dwc2,g_serial/' /boot/cmdline.txt
 			
-			echo "complete"
+			echo "Completed"
 		fi
 
 		##########################################
@@ -66,7 +66,7 @@ function otg_console () {
     	
         sed -i /boot/config.txt -e"s#otg_mode=1#\#otg_mode=1#"
         
-        echo "complete"
+        echo "Completed"
 
 		############################################
     	echo "-------------------------------"
@@ -83,7 +83,7 @@ function otg_console () {
 			dtoverlay=dwc2
 			DELIM
 			
-		echo "complete"
+		echo "Completed"
 			
 		 if [ otg_gcdc_enable == yes ]; then
 		 	############################################
@@ -101,7 +101,7 @@ function otg_console () {
 				g_cdc
 				DELIM
 				
-				echo "complete"
+				echo "Completed"
 				
 			######################################
     		echo "-------------------------------"
@@ -118,7 +118,7 @@ function otg_console () {
 				gateway 172.16.0.1
 				DELIM
 				
-			echo "complete"
+			echo "Completed"
  		else
  		
  			###############################################	
@@ -135,7 +135,7 @@ function otg_console () {
 				g_serial
 				DELIM
 				
-			echo "complete"
+			echo "Completed"
  		fi
 
 		####################################### 		
@@ -145,6 +145,6 @@ function otg_console () {
     	#######################################
         systemctl enable getty@ttyGS0.service
         
-        echo "complete"
+        echo "Completed"
     fi
 }

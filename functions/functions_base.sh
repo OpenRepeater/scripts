@@ -60,7 +60,7 @@ function check_os {
 		echo "**** EXITING ****"
 		exit 1
 	fi
-	echo "complete"
+	echo "Completed"
 }
 
 function check_filesystem {
@@ -114,7 +114,7 @@ function set_hostname {
 	echo " Setting Hostname to $1"
 	echo "--------------------------------------------------------------"
 	sudo hostnamectl set-hostname "$1"
-	echo "complete"
+	echo "Completed"
 }
 
 function set_wifi_domain {
@@ -127,7 +127,7 @@ function set_wifi_domain {
 	sed -i /etc/default/crda -e"s/=/=$WIFI_DOMAIN/g"
 	iw reg set $WIFI_DOMAIN
 	raspi-config nonint do_wifi_country $WIFI_DOMAIN
-	echo "complete"
+	echo "Completed"
 }
 
 function config_locale {
@@ -138,7 +138,7 @@ function config_locale {
     echo " Setting proper locale "
     echo "--------------------------------------------------------------"
 	dpkg-reconfigure locales
-	echo "complete"
+	echo "Completed"
 }
 
 function post_system_ip {
@@ -149,5 +149,5 @@ function post_system_ip {
     echo " Current Network IP'S "
     echo "--------------------------------------------------------------"    
     echo eth0=$IP_ADDRESS_ETH0 $IP wlan0=$IP_ADDRESS_WLAN0
-    echo "complete"
+    echo "Completed"
 }

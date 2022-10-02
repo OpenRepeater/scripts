@@ -13,7 +13,7 @@ function build_cleanup {
 	
 	apt clean && apt autoclean
 	
-	echo "complete"
+	echo "Completed"
 	
 	#########################
 	echo "------------------"
@@ -23,7 +23,7 @@ function build_cleanup {
 
 	systemctl stop svxlink
 
-	echo "complete"
+	echo "Completed"
 
 	###################################
 	echo "----------------------------"
@@ -35,7 +35,7 @@ function build_cleanup {
 	echo "" > /etc/svxlink/svxlink.d/ModuleEchoLink.conf
 	echo "" > /var/log/svxlink
 	
-	echo "complete"
+	echo "Completed"
 	
 	###############################################
 	echo "----------------------------------------"
@@ -45,7 +45,7 @@ function build_cleanup {
 	
 	rm -rf /var/www/openrepeater/debian
 	
-	echo "complete"
+	echo "Completed"
 	
 	######################
 	echo "---------------"
@@ -60,5 +60,5 @@ function build_cleanup {
 		neofetch
 		DELIM
 		
-	echo "complete"
+	echo "Completed"
 }

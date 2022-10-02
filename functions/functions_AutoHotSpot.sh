@@ -21,7 +21,7 @@ function AutoHotSpot_Autosetup () {
 
         sed -i "$wrk_dir"/AutoHotSpot/Autohotspot/autohotspot-setup.sh -e"s/wpa=($(cat "/etc/wpa_supplicant/wpa_supplicant.conf" | grep "country="))/wpa=($(cat "/etc/default/crda" | grep "REGDOMAIN="))/g"  
 
-		echo "complete"
+		echo "Completed"
 
         #################################
         echo "--------------------------"
@@ -33,7 +33,7 @@ function AutoHotSpot_Autosetup () {
         mkdir /usr/share/Autohotspot
         mv "$wrk_dir"/AutoHotSpot/* /usr/share/Autohotspot
 
-        echo "complete"
+        echo "Completed"
 
         ####################################
     	echo "-----------------------------"  
@@ -43,7 +43,7 @@ function AutoHotSpot_Autosetup () {
 
         apt-get install --assume-yes --fix-missing expect dnsmasq hostapd
 
-        echo "complete"
+        echo "Completed"
 
         #############################
         echo "----------------------"      
@@ -53,7 +53,7 @@ function AutoHotSpot_Autosetup () {
         
         /usr/share/Autohotspot/Autohotspot/autohotspot-setup.sh -a
         
-        echo "complete"
+        echo "Completed"
         
     fi
 }

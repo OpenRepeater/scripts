@@ -16,7 +16,7 @@ function install_orp_dependancies {
         python3-serial python3-serial resolvconf screen sox sqlite3 sudo tcl8.6 time tk8.6 usbutils uuid vim \
         vorbis-tools watchdog wvdial shellinabox libhamlib-utils neofetch neovim
         
-    echo "complete"
+    echo "Completed"
 }
 
 function install_orp_from_github {
@@ -217,7 +217,7 @@ function install_orp_from_github {
     chown -R www-data:www-data "/var/lib/openrepeater/"
     chmod -R 777 "/var/lib/openrepeater/"
 
-	echo "complete"
+	echo "Completed"
 	  
  	#####################################################################
     echo "--------------------------------------------------------------"
@@ -228,7 +228,7 @@ function install_orp_from_github {
     sqlite3 "/var/lib/openrepeater/db/openrepeater.db" "UPDATE settings SET value='' WHERE keyID='callSign'"
     sqlite3 "/var/lib/openrepeater/db/openrepeater.db" "UPDATE modules SET moduleEnabled='0', moduleOptions='' WHERE svxlinkName='EchoLink'"
   
-    echo "complete"
+    echo "Completed"
 }
 
 function modify_www-data {
@@ -244,7 +244,7 @@ function modify_www-data {
 			www-data    ALL=(ALL) NOPASSWD: /usr/sbin/orp_helper
 			DELIM
 			
-	echo "complete"
+	echo "Completed"
 }
 
 function update_versioning {
@@ -262,5 +262,5 @@ function update_versioning {
 
     sqlite3 "/var/lib/openrepeater/db/openrepeater.db" "UPDATE version_info SET version_num='$ORP_VERSION'"
     
-    echo "complete"
+    echo "Completed"
 }

@@ -30,6 +30,6 @@ if [ "$system_arch" == "amd64" ] || [ "$system_arch" == "X86_64" ]; then
 		}
 		DELIM
 		
-		echo "complete"
+		echo "Completed"
 fi
 }
