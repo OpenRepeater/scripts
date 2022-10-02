@@ -36,8 +36,8 @@ function check_os {
 		PROCESSOR="ARM"
     elif [ "$system_arch" == "amd64" ] || [ "$system_arch" == "X86_64" ] || [ "$system_arch" == "X86_32" ]; then
         PROCESSOR="INTEL"
-	elif [ "$system_arch" == "RISCV" ]; then
-		PROCESSOR="RISCV"
+	elif [ "$system_arch" == "riscv64" ]; then
+		PROCESSOR="RISCV64"
     else
         PROCESSOR=UNSUPPORTED
 	fi
@@ -52,7 +52,7 @@ function check_os {
     #####################################################################
     # Abort if there is a mismatch
     #####################################################################
-    if [ "$PROCESSOR" != "ARM" ] && [ "$PROCESSOR" != "INTEL" ] && [ "$PROCESSOR" != "RISCV" ] || [ "$DEBIAN_VERSION" != "$REQUIRED_OS_VER" ] ; then
+    if [ "$PROCESSOR" != "ARM" ] && [ "$PROCESSOR" != "INTEL" ] && [ "$PROCESSOR" != "RISCV64" ] || [ "$DEBIAN_VERSION" != "$REQUIRED_OS_VER" ] ; then
 		echo
 		echo "**** ERROR ****"
 		echo "This script will only work on Debian ($REQUIRED_OS_VER) ($REQUIRED_OS_NAME) images at this time."
@@ -64,7 +64,7 @@ function check_os {
 }
 
 function check_filesystem {
-if [ "$system_arch" == "armhf" ] || [ "$system_arch" == "arm64" ] || [ "$system_arch" == "riscv" ]; then
+if [ "$system_arch" == "armhf" ] || [ "$system_arch" == "arm64" ] || [ "$system_arch" == "riscv64" ]; then
     PARTITION_SIZE=$(df -m | awk '$1=="/dev/root"{print$2}')
     if [ $PARTITION_SIZE -ge $MIN_PARTITION_SIZE ]; then
         #####################################################################

@@ -42,6 +42,7 @@ function rpi_disables {
         echo " Disable CSI Camera port onboard not used in OpenRepeater     "
         echo "--------------------------------------------------------------"        
         ######################################################################
+        
         sed -i /boot/config.txt -e"s#camera_auto_detect=1#\#camera_auto_detect=1#"
         
         echo "Completed"
