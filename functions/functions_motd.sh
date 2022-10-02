@@ -1,13 +1,14 @@
 #!/bin/bash
 ################################################################################
-#
 # DEFINE MOTD FUNCTION
-#
 ################################################################################
+
 function set_motd {
+	#####################################################################
 	echo "--------------------------------------------------------------"
 	echo " Setting OpenRepeater Message of the Day (MOTD)"
 	echo "--------------------------------------------------------------"
+	#####################################################################
 
 	# Message of the Day filename
 	MOTD="/etc/motd"
@@ -51,4 +52,6 @@ function set_motd {
 	echo -e "  a backup image of your card...just in case the updates break something." >> "$MOTD"
 	echo -e "" >> "$MOTD"
 	echo -e "$RESET" >> "$MOTD"
+	
+	echo "Complete"
 }

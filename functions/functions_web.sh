@@ -11,6 +11,9 @@ function install_webserver {
         php7.4-common php7.4-fpm php7.4-curl php7.4-dev php7.4-gd php-imagick \
         php-memcached php7.4-pspell php7.4-snmp php7.4-sqlite3 php7.4-xmlrpc \
         php7.4-xml php-pear php-ssh2 php7.4-cli php7.4-zip sqlite3
+        
+     echo "Completed"
+        
 	#####################################################################
     echo "--------------------------------------------------------------"
     echo " Backup original config files"
@@ -20,6 +23,9 @@ function install_webserver {
     cp "/etc/php/7.4/fpm/php-fpm.conf" "/etc/php/7.4/fpm/php-fpm.conf.orig"
     cp "/etc/php/7.4/fpm/php.ini" "/etc/php/7.4/fpm/php.ini.orig"
     cp "/etc/php/7.4/fpm/pool.d/www.conf" "/etc/php/7.4/fpm/pool.d/www.conf.orig"
+
+    echo "Completed"
+
 	#####################################################################
     echo "--------------------------------------------------------------"
     echo " Installing self signed SSL certificate"
@@ -27,16 +33,27 @@ function install_webserver {
     #####################################################################
     cp -r "/etc/ssl/private/ssl-cert-snakeoil.key" "/etc/ssl/private/nginx.key"
     cp -r "/etc/ssl/certs/ssl-cert-snakeoil.pem" "/etc/ssl/certs/nginx.crt"
+
+    echo "Completed"
+
 	#####################################################################
     echo "--------------------------------------------------------------"
     echo " Changing file upload size from 2M to $UPLOAD_SIZE"
     echo "--------------------------------------------------------------"
     #####################################################################
     sed -i "$PHP_INI" -e "s#upload_max_filesize = 2M#upload_max_filesize = $UPLOAD_SIZE#"
+
+    echo "Completed"
+
     #####################################################################
-       # Changing post_max_size limit from 8M to UPLOAD_SIZE
+    echo "--------------------------------------------------------------"
+    echo " Changing post_max_size limit from 8M to UPLOAD_SIZE "
+    echo "--------------------------------------------------------------"
     #####################################################################
     sed -i "$PHP_INI" -e "s#post_max_size = 8M#post_max_size = $UPLOAD_SIZE#"
+
+    echo "Completed"
+
 	#####################################################################
     echo "--------------------------------------------------------------"
     echo " Enabling memcache in php.ini"
@@ -45,16 +62,26 @@ function install_webserver {
 	cat >> "$PHP_INI" <<- DELIM 
 			extensions=memcached.so 
 			DELIM
+			
+	echo "Completed"
+
 	#####################################################################
     echo "--------------------------------------------------------------"
     echo " Setup NGINX Site Config File for OpenRepeater UI"
     echo "--------------------------------------------------------------"
     #####################################################################
+    
     rm -rf "/etc/nginx/sites-enabled/default"
     ln -sf "/etc/nginx/sites-available/$GUI_NAME" "/etc/nginx/sites-enabled/$GUI_NAME"
+
+
+	echo "Completed"    
+	#####################################################################
+    echo "--------------------------------------------------------------"
+    echo "Cat Nginx Config File Into Place                 "
+    echo "--------------------------------------------------------------"
     #####################################################################
-       # Nginx Config File
-    #####################################################################
+
     cat > "/etc/nginx/sites-available/$GUI_NAME"  <<- 'DELIM'
 		server {
 			listen  80;
@@ -103,25 +130,37 @@ function install_webserver {
 			}
 		}
 		DELIM
-	#####################################################################
+
+	echo "Completed"
+	
+    #####################################################################
     echo "--------------------------------------------------------------"
-    echo " Make sure WWW dir is owned by web server"
+    echo " Create WWW Folder UI. "
     echo "--------------------------------------------------------------"
     #####################################################################
-    # Create Temp Folder UI. Will later be replaced.
-    #####################################################################
+    
     mkdir "$WWW_PATH/$GUI_NAME"
+    
+    echo "Completed"
+     
     #####################################################################
-    echo "Future home of ORP" > "$WWW_PATH/$GUI_NAME/index.php"
+    echo "--------------------------------------------------------------"
+    echo " Change Web User File Permissions "
+    echo "--------------------------------------------------------------"
     #####################################################################
-    # Change permissions
-    #####################################################################
+    
     chown -R www-data:www-data "$WWW_PATH/$GUI_NAME"
+    
+    echo "Completed"
+    
     #####################################################################
     echo "--------------------------------------------------------------"
     echo " Restarting NGINX and PHP"
     echo "--------------------------------------------------------------"
     #####################################################################
-    for i in nginx php-fpm ;do service "${i}" restart > /dev/null 2>&1 ; done    
+    
+    for i in nginx php-fpm ;do service "${i}" restart > /dev/null 2>&1 ; done  
+    
+    echo "Completed"
 }
 

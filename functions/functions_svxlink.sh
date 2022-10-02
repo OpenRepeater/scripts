@@ -2,47 +2,108 @@
 ################################################################################
 # DEFINE SVXLINK FUNCTIONS
 ################################################################################
+#####################################################################
+# Based on: https://github.com/sm0svx/svxlink/wiki/InstallSrcDebian
+#####################################################################
+
 function install_svxlink_source () {
+	#####################################################################
 	echo "--------------------------------------------------------------"
 	echo " Compile/Install SVXLink from Source Code (ver $SVXLINK_VER)"
 	echo "--------------------------------------------------------------"
-	# Based on: https://github.com/sm0svx/svxlink/wiki/InstallSrcDebian
-	# Install required packages
+	#####################################################################
+
+	##################################	
+	echo "--------------------------"
+	echo " Install required packages"
+	echo "--------------------------"
+	##################################
+		
  	apt update && apt upgrade -y --fix-missing
 	apt install --assume-yes --fix-missing g++ cmake make libsigc++-2.0-dev \
     libgsm1-dev libpopt-dev tcl8.6-dev libgcrypt20-dev libspeex-dev libasound2-dev \
     libopus-dev librtlsdr-dev doxygen groff alsa-utils vorbis-tools curl git \
     libcurl4-openssl-dev unzip zip libpigpiod-if-dev libpigpiod-if2-1 libgpiod-dev \
     libgpiod2 pigpiod gpiod libjsoncpp-dev libjsoncpp24 libogg-dev
-    
-	# Add svxlink user and add to user groups
+
+	################################################
+    echo "----------------------------------------"
+	echo " Add svxlink user and add to user groups"
+	echo "----------------------------------------"
+	###############################################
+	
 	useradd -r svxlink
 	usermod -a -G daemon,gpio,audio svxlink
 
-	# Download and compile from source, either the trunk or latest package
+	##########################################
+	echo "-----------------------------------"
+	echo " Download and compile from source, "
+	echo " either the trunk or latest package"
+	echo "-----------------------------------"
+	##########################################
+
 	cd "/usr/src"
 	echo "svx_trunk=$1"
+	
 	if [ "$1" = "svx_trunk" ]; then
+		##########################################
+		echo "---------------------------"
 		echo "Building SVXLINK from Trunk"
+		echo "---------------------------"
+		##########################################
+
 		git clone https://github.com/sm0svx/svxlink.git
 		cd svxlink/src
+
+		echo "Completed"
 	else
+		############################################
+		echo "-------------------------------------"	
 		echo "building svxlink from release version"
+		echo "-------------------------------------"
+		############################################
+		
 		curl -Lo svxlink-source.tar.gz "https://github.com/sm0svx/svxlink/archive/$SVXLINK_VER.tar.gz"
 		tar xvzf svxlink-source.tar.gz
 		cd svxlink-"$SVXLINK_VER"/src
+		
+		echo "Completed"
 	fi
-    
-	# If Selected, enable the non-standard modules to be included in the build process
+
+	############################################
+	echo "-------------------------------------"	
+	echo " If Selected, enable the non-standard"
+	echo " modulesto be included in the build "
+	echo " process"
+	echo "-------------------------------------"
+	############################################
+	
 	echo "USE_CONTRIBS=$2"
 	if [ "$2" = "USE_CONTRIBS" ]; then
 		echo "Entering config to enable optional contrib modules"
 		Modules_Build_Cmake_switches=' -DWITH_CONTRIB_MODULE_REMOTE_RELAY=ON -DWITH_CONTRIB_MODULE_SITE_STATUS=ON -DWITH_CONTRIB_MODULE_TCLSSTV=ON -DWITH_CONTRIB_MODULE_TXFAN=ON '
+
+		echo "Completed"
+		
 	else
+	
+		############################################
+		echo "-------------------------------------"
 		echo "Optional contrib modules not selected"
+		echo "-------------------------------------"
+		############################################
+				
 		Modules_Build_Cmake_switches=""
+
+		echo "Completed"
 	fi
 
+	############################################
+	echo "-------------------------------------"	
+	echo "building svxlink "
+	echo "-------------------------------------"
+	############################################
+	
 	mkdir build
 
 	cd build
@@ -52,29 +113,56 @@ function install_svxlink_source () {
 	make -j5
 	make doc
 
+	echo "Completed"
+
+	############################################
+	echo "-------------------------------------"	
+	echo "Installing SVXLink "
+	echo "-------------------------------------"
+	############################################
+	
 	make install
 	ldconfig
 
- 	# Enable/Disable Services
+	echo "Completed"
+
+	############################################
+	echo "-------------------------------------"	
+	echo "Enable/Disable SVXLink Services "
+	echo "-------------------------------------"
+	############################################
+
 	systemctl enable svxlink
 	systemctl disable remotetrx
+	
+		echo "Completed"
 
-	# Clean Up
-	#rm /root/svxlink-source.tar.gz
-	#rm /root/svxlink-$SVXLINK_VER -R
+	############################################
+	echo "-------------------------------------"	
+	echo "Clean Up Build Dir                   "
+	echo "-------------------------------------"
+	############################################
+
 	rm -rf /usr/src/svxlink*
+
+	echo "Completed"
 }
-################################################################################
+
 function fix_svxlink_gpio {
+	#####################################################################
 	echo "--------------------------------------------------------------"
-	echo " Apply Fixes to SVXLink GPIO Support until corrected"
+	echo " Apply Fixes to SVXLink GPIO Support until corrected          "
 	echo "--------------------------------------------------------------"
-	
+	#####################################################################
+
 	sed -i -e 's/$GPIOPATH/$GPIO_PATH/g' /usr/sbin/svxlink_gpio_up
+
+	#####################################################################
+	echo "--------------------------------------------------------------"
+	echo " Apply SystemD Fixes to SVXLink GPIO Service                  "
+	echo "--------------------------------------------------------------"
+	#####################################################################
 	
-	echo "--------------------------------------------------------------"
-	echo " Apply SystemD Fixes to SVXLink GPIO Service"
-	echo "--------------------------------------------------------------"
 	sed -i /lib/systemd/system/svxlink_gpio_setup.service -e "s#Documentation=man:svxlink(1)#\
 	Documentation=man:svxlink(1)\n\
 	\#fix to address the gpio not exporting at boot\n\
@@ -83,12 +171,16 @@ function fix_svxlink_gpio {
 	After=network.target\n\
 	Before=sysvinit.target\n\
 	ConditionPathExists=/sys/class/i2c-adapter#"
+
+	echo "Completed"
 }
 ################################################################################
 function install_svxlink_sounds {
+	#####################################################################
 	echo "--------------------------------------------------------------"
-	echo " Installing ORP Version of SVXLink Sounds (US English)"
+	echo " Installing ORP Version of SVXLink Sounds (US English)        "
 	echo "--------------------------------------------------------------"
+	#####################################################################
 
 	cd "$wrk_dir"
 	wget https://github.com/OpenRepeater/orp-sounds/archive/2019.zip
@@ -113,21 +205,30 @@ function install_svxlink_sounds {
 	ln -s "$SVXLINK_SOUNDS_DIR/en_US/MetarInfo/hour.wav" "$SVXLINK_SOUNDS_DIR/en_US/Default/hour.wav"
 	ln -s "$SVXLINK_SOUNDS_DIR/en_US/Default/Hz.wav" "$SVXLINK_SOUNDS_DIR/en_US/Core/hz.wav"
 	ln -s "$SVXLINK_SOUNDS_DIR/en_US/Core/repeater.wav" "$SVXLINK_SOUNDS_DIR/en_US/Default/repeater.wav"
+	
+	echo "Completed"
 }
-################################################################################
+
 function force_async_audio_zerfill {
 	ENVIRONMENT_FILE="/etc/default/svxlink"
 	REPLACEMENT_VALUE="1"
 	sed -i "s/\(ASYNC_AUDIO_ALSA_ZEROFILL *= *\).*/\1$REPLACEMENT_VALUE/" "$ENVIRONMENT_FILE"
+	
+	echo "Completed"
 }
-################################################################################
+
 function logic_fixup {
+
+	#####################################################################
+    echo "--------------------------------------------------------------"
+    echo " SVXLink Logic Fix Up                                         "
+    echo "--------------------------------------------------------------"
+    #####################################################################
 
 	# change to the top level directory
 	cd / || return
 	
 	#find the desired function
-	
 	InputFileName="$1"
 	if [ -z "$InputFileName" ]; then
 	  echo "parameter 'InputFileName' was not entered"
@@ -157,7 +258,6 @@ function logic_fixup {
 	else
 	  echo "OutputFileName is $OutputFileName"
 	fi
-
 
 	#Locate the begining of the function
 	file="$InputFileName"
@@ -205,16 +305,22 @@ function logic_fixup {
 	done <"$file"
 	
 	mv "$OutputFileName"".tmp" "$OutputFileName"
-
+	
+	echo "Completed"
 }
-################################################################################
+
 function install_device_permission_scripts {
+	#####################################################################
 	echo "--------------------------------------------------------------"
 	echo " Copy Permissions Scripts for Hidraw/Serial Devices into place"
 	echo "--------------------------------------------------------------"
+	#####################################################################
+	
 	cp "$SCRIPT_DIR/install/scripts/devices.conf" "/etc/svxlink/"
 	cp "$SCRIPT_DIR/install/scripts/svxlink_devices" "/usr/sbin/"
 	cp "$SCRIPT_DIR/install/scripts/svxlink_devices.service" "/lib/systemd/system/"
 	chown www-data:www-data "/etc/svxlink/devices.conf"
 	chmod +x "/usr/sbin/svxlink_devices"
+	
+	echo "Completed"
 }

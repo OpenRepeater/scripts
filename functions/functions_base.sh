@@ -2,6 +2,7 @@
 ################################################################################
 # DEFINE CORE FUNCTIONS
 ################################################################################
+
 function check_root {
     if [[ $EUID -ne 0 ]]; then
         echo "--------------------------------------------------------------"
@@ -14,7 +15,7 @@ function check_root {
         echo "--------------------------------------------------------------"
     fi
 }
-################################################################################
+
 function check_internet {
     wget -q --spider http://google.com
     if [ $? -eq 0 ]; then
@@ -28,7 +29,7 @@ function check_internet {
         exit 1
     fi
 }
-################################################################################
+
 function check_os {
 	# Detects ARM processor
 	if [ "$system_arch" == "armhf" ] || [ "$system_arch" == "arm64" ]; then
@@ -59,8 +60,9 @@ function check_os {
 		echo "**** EXITING ****"
 		exit 1
 	fi
+	echo "complete"
 }
-################################################################################
+
 function check_filesystem {
 if [ "$system_arch" == "armhf" ] || [ "$system_arch" == "arm64" ] || [ "$system_arch" == "riscv" ]; then
     PARTITION_SIZE=$(df -m | awk '$1=="/dev/root"{print$2}')
@@ -79,21 +81,16 @@ if [ "$system_arch" == "armhf" ] || [ "$system_arch" == "arm64" ] || [ "$system_
     fi
 fi
 }
-################################################################################
+
 function retrieve_system_ip {
     #####################################################################
 	# Get System IP WLAN / ETH0 for later display
     #####################################################################
-    # check wlan0 on zero/w/w2 No eth0 with out usb/eth hat.
-    if [ "$rpi_board" == 900092 ] || [ "$rpi_board" == 900093 ] || [ "$rpi_board" == 920092 ] || [ "$rpi_board" == 920093 ] || [ "$rpi_board" == 9000c1 ] || [ "$rpi_board" == 9000c1 ] || [ "$rpi_board" == 902120 ]; then
-		IP_ADDRESS_WLAN0="$(ip addr show wlan0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1)";
-    else
     #check ip wlan0/eth0 other boards that have onboard eth0 and wlan0
-    	IP_ADDRESS_ETH0="$(ip addr show eth0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1)";
-    	IP_ADDRESS_WLAN0="$(ip addr show wlan0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1)";
-	fi
+    IP_ADDRESS_ETH0="$(ip addr show eth0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1)";
+    IP_ADDRESS_WLAN0="$(ip addr show wlan0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1)";
 }
-################################################################################
+
 function wait_for_network {
 	echo "--------------------------------------------------------------"
 	echo " Waiting for network/internet connection"
@@ -108,7 +105,7 @@ function wait_for_network {
 	done
 	echo "Network connected.  Proceeding..."
 }
-################################################################################
+
 function set_hostname {
     #####################################################################
     ### SET HOSTNAME 
@@ -117,16 +114,9 @@ function set_hostname {
 	echo " Setting Hostname to $1"
 	echo "--------------------------------------------------------------"
 	sudo hostnamectl set-hostname "$1"
+	echo "complete"
 }
-################################################################################
-function add_orp_user {
-    echo "--------------------------------------------------------------"
-    echo " Adding OpenRepeater User (orp)"
-    echo "--------------------------------------------------------------"
-    useradd -m -G sudo -c "OpenRepeater" orp
-    usermod --password $(openssl passwd -1 OpenRepeater) orp
-}
-################################################################################
+
 function set_wifi_domain {
     #####################################################################
     ### SET WIFI Regional Domain 
@@ -137,8 +127,9 @@ function set_wifi_domain {
 	sed -i /etc/default/crda -e"s/=/=$WIFI_DOMAIN/g"
 	iw reg set $WIFI_DOMAIN
 	raspi-config nonint do_wifi_country $WIFI_DOMAIN
+	echo "complete"
 }
-################################################################################
+
 function config_locale {
     #####################################################################
     ### SET system locale 
@@ -147,15 +138,16 @@ function config_locale {
     echo " Setting proper locale "
     echo "--------------------------------------------------------------"
 	dpkg-reconfigure locales
+	echo "complete"
 }
 
 function post_system_ip {
     #####################################################################
 	# Post System IP WLAN / ETH0 
     #####################################################################
-    if [ "$rpi_board" == 900092 ] || [ "$rpi_board" == 900093 ] || [ "$rpi_board" == 920092 ] || [ "$rpi_board" == 920093 ] || [ "$rpi_board" == 9000c1 ] || [ "$rpi_board" == 9000c1 ] || [ "$rpi_board" == 902120 ]; then
-		echo wlan0=$IP_ADDRESS_WLAN0
-    else
-    	echo eth0=$IP_ADDRESS_ETH0 $IP wlan0=$IP_ADDRESS_WLAN0
-	fi
+    echo "--------------------------------------------------------------"
+    echo " Current Network IP'S "
+    echo "--------------------------------------------------------------"    
+    echo eth0=$IP_ADDRESS_ETH0 $IP wlan0=$IP_ADDRESS_WLAN0
+    echo "complete"
 }

@@ -94,21 +94,24 @@ SVXLINK_SOUNDS_DIR="/usr/share/svxlink/sounds"
 # Enable the g_cdc ethernet/usb console
 # otg_gcdc_enable=yes uses g_cdc usb ethernet/usb serial console
 # otg_gcdc_enable=no uses g_serial usb serial console only
+# default = no = g_serial
 ############################
 otg_gcdc_enable=no
+
+#############################
+# Enable hotspot.d
+# set you yes to enable hotspot support
+# default =  yes
+#############################
+enable_hotspot=yes
 
 ############################
 # SET Default WIFI Regional Domain
 # Used to set what wifi channels available in your region
 # Used for wifi hotspot setup/configuration at install
+# Default = US
 ############################
 WIFI_DOMAIN="US"
-
-#############################
-# Enable hotspot.d
-# set you yes to enable hotspot support
-#############################
-enable_hotspot=no
 
 ################################################################################
 # DEFINABLE VARIABLES EDIT (stop)
@@ -344,6 +347,7 @@ fi
     date
     #Reporting Output Log Files
 ) 2> >(tee "$log_dir"/orp_error.log) | tee "$log_dir"/orp_install.log
+
 ################################################################################
 # POST INSTALL REPORT
 ################################################################################

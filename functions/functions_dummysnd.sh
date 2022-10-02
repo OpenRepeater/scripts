@@ -1,12 +1,16 @@
 #!/bin/bash
 ################################################################################
-# DEFINE DUMMY SOUND X86/AMD64 FUNCTIONS
+# DEFINE DUMMY SOUND CARD SETUP FUNCTIONS
 ################################################################################
+
 function dummysnd_setup () {
 if [ "$system_arch" == "amd64" ] || [ "$system_arch" == "X86_64" ]; then
-    echo "--------------------------------------------------------------"
+
+	###########################################
+    echo "------------------------------------"
     echo " Enable Dummy Sound X86/AMD64 Server"
-    echo "--------------------------------------------------------------"
+    echo "------------------------------------"
+    ###########################################
     modprobe snd-dummy
 
 	cat >> "/etc/modules" <<- DELIM
@@ -25,5 +29,7 @@ if [ "$system_arch" == "amd64" ] || [ "$system_arch" == "X86_64" ]; then
 			card 0
 		}
 		DELIM
-fi        
+		
+		echo "complete"
+fi
 }
