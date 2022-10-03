@@ -205,86 +205,86 @@ fi
 # MAIN SCRIPT - Run Functions and Save to Log
 ################################################################################
 (
-    ########################################################
-    # grab date for build date/start build time
-    ########################################################
+	########################################################
+	# grab date for build date/start build time
+	########################################################
 	date
-    ########################################################
-    # Update system locales
-    ########################################################	
+	########################################################
+	# Update system locales
+	########################################################
 	config_locale
-    ########################################################
-    # Update system hostname
-    ########################################################
+	########################################################
+	# Update system hostname
+	########################################################
 	set_hostname "$HOSTNAME"
-    ########################################################
-    # Update system hostname
-    ########################################################	
+	########################################################
+	# Update system hostname
+	########################################################	
 	set_wifi_domain
 	####################################################
-    #add serial consile to allow access where no 
-    #network avaible. Rpi zero/w/w2 (New)
-    ####################################################
-    otg_console        
+	# add serial consile to allow access where no 
+	# network avaible. Rpi zero/w/w2 (New)
+	####################################################
+	otg_console
 	########################################################
-    ### SVXLINK FUNCTIONS 
-    ########################################################
-    install_svxlink_source "$INPUT_SVXLINK_INSTALL_TYPE" "$INPUT_SVXLINK_CONTRIBS"
-    ########################################################
+	### SVXLINK FUNCTIONS 
+	########################################################
+	install_svxlink_source "$INPUT_SVXLINK_INSTALL_TYPE" "$INPUT_SVXLINK_CONTRIBS"
+	########################################################
 	# fixup the RepeaterLogic so IDs work correctly
-    ########################################################
+	########################################################
 	logic_fixup '../../../usr/share/svxlink/events.d/RepeaterLogic.tcl' 'proc repeater_down' '/usr/share/svxlink/events.d/RepeaterLogic.tcl'
 	### allow a few seconds for the file system to catch up since we are working on the same file as before
 	sleep 5
 	logic_fixup '../../../usr/share/svxlink/events.d/RepeaterLogic.tcl' 'proc repeater_up' '/usr/share/svxlink/events.d/RepeaterLogic.tcl'
-    ########################################################
+	########################################################
 	# fixup a typo in the svxlink source that breaks the gpio service
-    ########################################################
+	########################################################
 	fix_svxlink_gpio
-    ########################################################    
+	########################################################    
 	# install scripts to set device permissions (hidraw/serial)
-    ########################################################
+	########################################################
 	install_device_permission_scripts
-    ########################################################
+	########################################################
 	# Enable ALSA zerofill for svxlink
-    ########################################################
+	########################################################
 	force_async_audio_zerfill
-    ########################################################
+	########################################################
 	# install copy of repo with all the synthetic voice files
-    ########################################################
+	########################################################
 	install_svxlink_sounds
-    ########################################################
-    # cards with gpio expanders will need to have the i2c bus enabled.
-    ########################################################
-    enable_i2c
-    ########################################################
-    # Need to add some settings to the config.txt file to enable 
-    # interface card or they won't load up properly.
-    ########################################################
-    config_ics_controllers
-    ########################################################
-    # need some asound.conf tweaks to keep the channels seperated
-    ########################################################
-    set_ics_asound
-    ####################################################
-    #Enable dummy sound drive x86/amd64 (new)
-    ####################################################
-    dummysnd_setup        
-    ####################################################
-    #Enable raspi serial console uart pins
-    #(moved to its own function)
-    ####################################################
-    enable_uart
-    ########################################################
-   	### OPEN REPEATER INSTALL FUCNTIONS
-    ########################################################
+	########################################################
+	# cards with gpio expanders will need to have the i2c bus enabled.
+	########################################################
+	enable_i2c
+	########################################################
+	# Need to add some settings to the config.txt file to enable 
+	# interface card or they won't load up properly.
+	########################################################
+	config_ics_controllers
+	########################################################
+	# need some asound.conf tweaks to keep the channels seperated
+	########################################################
+	set_ics_asound
+	####################################################
+	#Enable dummy sound drive x86/amd64 (new)
+	####################################################
+	dummysnd_setup        
+	####################################################
+	#Enable raspi serial console uart pins
+	#(moved to its own function)
+	####################################################
+	enable_uart
+	########################################################
+	### OPEN REPEATER INSTALL FUCNTIONS
+	 ########################################################
 	if [ "$INPUT_INSTALL_TYPE" = "ORP" ]; then
 		####################################################
 		#install Nginx and Dependencies
 		####################################################
 		install_webserver
 		####################################################
-        #install Extra Dependencies
+		# install Extra Dependencies
 		####################################################
 		install_orp_dependancies
 		####################################################
@@ -317,7 +317,7 @@ fi
 		####################################################
 		#AutoHotSpot_Autosetup (New)
 		####################################################
-		AutoHotSpot_Autosetup		
+		AutoHotSpot_Autosetup
 	fi
     ####################################################
     #Post Build Cleanup

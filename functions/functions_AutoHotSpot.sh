@@ -13,15 +13,15 @@ function AutoHotSpot_Autosetup () {
         #################################################
 
         ########################################
-        echo "---------------------------------"
-        echo " Edit autohotspot-setup.sh to get"
-        echo " correct Wifi Regional Domain "
-        echo "---------------------------------"
+    	#echo "---------------------------------"
+        #echo " Edit autohotspot-setup.sh to get"
+        #echo " correct Wifi Regional Domain "
+        #echo "---------------------------------"
         ########################################
 
-        sed -i "$wrk_dir"/AutoHotSpot/Autohotspot/autohotspot-setup.sh -e"s/wpa=($(cat "/etc/wpa_supplicant/wpa_supplicant.conf" | grep "country="))/wpa=($(cat "/etc/default/crda" | grep "REGDOMAIN="))/g"  
+        #sed -i "$wrk_dir"/AutoHotSpot/Autohotspot/autohotspot-setup.sh -e"s/wpa=($(cat "/etc/wpa_supplicant/wpa_supplicant.conf" | grep "country="))/wpa=($(cat "/etc/default/crda" | grep "REGDOMAIN="))/g"  
 
-		echo "Completed"
+		#echo "Completed"
 
         #################################
         echo "--------------------------"
