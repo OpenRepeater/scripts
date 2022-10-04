@@ -781,4 +781,4 @@ while getopts ":ahNDSU" opt; do
 		exit;;
   esac
 done
-DELIM
+
