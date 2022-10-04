@@ -2,6 +2,7 @@
 ################################################################################
 # DEFINE CORE FUNCTIONS
 ################################################################################
+
 function check_root {
     if [[ $EUID -ne 0 ]]; then
         echo "--------------------------------------------------------------"
@@ -14,7 +15,7 @@ function check_root {
         echo "--------------------------------------------------------------"
     fi
 }
-################################################################################
+
 function check_internet {
     wget -q --spider http://google.com
     if [ $? -eq 0 ]; then
@@ -28,15 +29,15 @@ function check_internet {
         exit 1
     fi
 }
-################################################################################
+
 function check_os {
 	# Detects ARM processor
 	if [ "$system_arch" == "armhf" ] || [ "$system_arch" == "arm64" ]; then
 		PROCESSOR="ARM"
     elif [ "$system_arch" == "amd64" ] || [ "$system_arch" == "X86_64" ] || [ "$system_arch" == "X86_32" ]; then
         PROCESSOR="INTEL"
-	elif [ "$system_arch" == "RISCV" ]; then
-		PROCESSOR="RISCV"
+	elif [ "$system_arch" == "riscv64" ]; then
+		PROCESSOR="RISCV64"
     else
         PROCESSOR=UNSUPPORTED
 	fi
@@ -51,7 +52,7 @@ function check_os {
     #####################################################################
     # Abort if there is a mismatch
     #####################################################################
-    if [ "$PROCESSOR" != "ARM" ] && [ "$PROCESSOR" != "INTEL" ] && [ "$PROCESSOR" != "RISCV" ] || [ "$DEBIAN_VERSION" != "$REQUIRED_OS_VER" ] ; then
+    if [ "$PROCESSOR" != "ARM" ] && [ "$PROCESSOR" != "INTEL" ] && [ "$PROCESSOR" != "RISCV64" ] || [ "$DEBIAN_VERSION" != "$REQUIRED_OS_VER" ] ; then
 		echo
 		echo "**** ERROR ****"
 		echo "This script will only work on Debian ($REQUIRED_OS_VER) ($REQUIRED_OS_NAME) images at this time."
@@ -59,10 +60,11 @@ function check_os {
 		echo "**** EXITING ****"
 		exit 1
 	fi
+	echo "Completed"
 }
-################################################################################
+
 function check_filesystem {
-if [ "$system_arch" == "armhf" ] || [ "$system_arch" == "arm64" ] || [ "$system_arch" == "riscv" ]; then
+if [ "$system_arch" == "armhf" ] || [ "$system_arch" == "arm64" ] || [ "$system_arch" == "riscv64" ]; then
     PARTITION_SIZE=$(df -m | awk '$1=="/dev/root"{print$2}')
     if [ $PARTITION_SIZE -ge $MIN_PARTITION_SIZE ]; then
         #####################################################################
@@ -79,14 +81,16 @@ if [ "$system_arch" == "armhf" ] || [ "$system_arch" == "arm64" ] || [ "$system_
     fi
 fi
 }
-################################################################################
-function check_network {
+
+function retrieve_system_ip {
     #####################################################################
-	# Get Eth0 IP for later display
+	# Get System IP WLAN / ETH0 for later display
     #####################################################################
-	IP_ADDRESS="$(ip addr show eth0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1)";
+    #check ip wlan0/eth0 other boards that have onboard eth0 and wlan0
+    IP_ADDRESS_ETH0="$(ip addr show eth0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1)";
+    IP_ADDRESS_WLAN0="$(ip addr show wlan0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1)";
 }
-################################################################################
+
 function wait_for_network {
 	echo "--------------------------------------------------------------"
 	echo " Waiting for network/internet connection"
@@ -101,7 +105,7 @@ function wait_for_network {
 	done
 	echo "Network connected.  Proceeding..."
 }
-################################################################################
+
 function set_hostname {
     #####################################################################
     ### SET HOSTNAME 
@@ -110,12 +114,40 @@ function set_hostname {
 	echo " Setting Hostname to $1"
 	echo "--------------------------------------------------------------"
 	sudo hostnamectl set-hostname "$1"
+	echo "Completed"
 }
-################################################################################
-function add_orp_user {
+
+function set_wifi_domain {
+    #####################################################################
+    ### SET WIFI Regional Domain 
+    #####################################################################
     echo "--------------------------------------------------------------"
-    echo " Adding OpenRepeater User (orp)"
+    echo " Adding Wifi Regional Domain "
     echo "--------------------------------------------------------------"
-    useradd -m -G sudo -c "OpenRepeater" orp
-    usermod --password $(openssl passwd -1 OpenRepeater) orp
+	sed -i /etc/default/crda -e"s/=/=$WIFI_DOMAIN/g"
+	iw reg set $WIFI_DOMAIN
+	raspi-config nonint do_wifi_country $WIFI_DOMAIN
+	echo "Completed"
+}
+
+function config_locale {
+    #####################################################################
+    ### SET system locale 
+    #####################################################################
+    echo "--------------------------------------------------------------"
+    echo " Setting proper locale "
+    echo "--------------------------------------------------------------"
+	dpkg-reconfigure locales
+	echo "Completed"
+}
+
+function post_system_ip {
+    #####################################################################
+	# Post System IP WLAN / ETH0 
+    #####################################################################
+    echo "--------------------------------------------------------------"
+    echo " Current Network IP'S "
+    echo "--------------------------------------------------------------"    
+    echo eth0=$IP_ADDRESS_ETH0 $IP wlan0=$IP_ADDRESS_WLAN0
+    echo "Completed"
 }

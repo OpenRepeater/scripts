@@ -1,4 +1,15 @@
 #!/usr/bin/bash
+################################################################################
+# SCRIPT CONTRIBUTORS:
+# Aaron Crawford (N3MBH), Richard Neese (N4CNR), Dan Loranger (KG7PAR),
+# Dana Rawding (N1OFZ), John Tetreault (KC1KVT), Bob Ruddy (W3RCR)
+################################################################################
+############################
+# Set Debian OS Release
+############################
+REQUIRED_OS_VER="11"
+REQUIRED_OS_NAME="Bullseye"
+
 ############################
 #Sysem arch checking (New)
 ############################
@@ -9,57 +20,99 @@ system_arch="$(dpkg --print-architecture)"
 ############################
 rpi_board="$(cat /proc/cpuinfo | grep -i Revision)"
 
+################################################################################
+# DEFINABLE VARIABLES EDIT (start)
+################################################################################
 ############################
-#set build work dir (New)
+# ORP Version Displayed on Login Page
+############################
+ORP_VERSION="3.0.x (Dev)"
+
+############################
+# ORP Gui Install Version (New)
+# What version to pull from git
+############################
+ORP_GUI_VERSION="3.0.x"
+
+############################
+# set build / install log dir (New)
+############################
+log_dir="/home/orp"
+
+############################
+# set build work base dir (New)
+############################
+base_dir="/usr/src/"
+
+############################
+# set build work dir (New)
 ############################
 wrk_dir="/usr/src/scripts"
 
 ############################
-#set build log dir (New)
-############################
-log_dir="/home/orp"
-
-# SCRIPT CONTRIBUTORS:
-# Aaron Crawford (N3MBH), Richard Neese (N4CNR), Dan Loranger (KG7PAR),
-# Dana Rawding (N1OFZ), John Tetreault (KC1KVT), Bob Ruddy (W3RCR)
-
-################################################################################
-# DEFINE VARIABLES (Scroll down for main script)
-################################################################################
-#Dispaled Version on Login Page
-ORP_VERSION="3.0.x (Dev)"
-
-#ORP Gui Install Version (New)
-ORP_GUI_VERSION="3.0.x"
-
-#Set Debian OS Release
-REQUIRED_OS_VER="11"
-REQUIRED_OS_NAME="Bullseye"
-
 # File System Requirements
+############################
 MIN_PARTITION_SIZE="3000"
 MIN_DISK_SIZE="4GB"
 
+############################
 # Upload size limit for php
+############################
 UPLOAD_SIZE="25M"
 
+############################
+# path to install web gui in
+############################
 WWW_PATH="/var/www"
+
+############################
+# set gui name for db_archive
+############################
 GUI_NAME="openrepeater"
 
+############################
 # PHP ini config file
+############################
 PHP_INI="/etc/php/7.4/fpm/php.ini"
 
-#SVXLink
-SVXLINK_SOUNDS_DIR="/usr/share/svxlink/sounds"
-
-# SVXLINK VERSION - Must match versioning at https://github.com/sm0svx/svxlink/releases
+############################
+# SVXLink Settings
+############################
+# SVXLINK VERSION - Must match versioning 
+# at https://github.com/sm0svx/svxlink/releases
+############################
 SVXLINK_VER="19.09.2"
 
 SCRIPT_DIR="$(dirname $(realpath "$0"))"
 
+############################
+# Set path for svxlink sound files
+############################
+SVXLINK_SOUNDS_DIR="/usr/share/svxlink/sounds"
+
+############################
+# Enable the g_cdc ethernet/usb console
+# otg_gcdc_enable=yes uses g_cdc usb ethernet/usb serial console
+# otg_gcdc_enable=no uses g_serial usb serial console only
+# default = no = g_serial
+############################
+otg_gcdc_enable=no
+
+############################
+# SET Default WIFI Regional Domain
+# Used to set what wifi channels available in your region
+# Used for wifi hotspot setup/configuration at install
+# Default = US
+############################
+WIFI_DOMAIN="US"
+
+################################################################################
+# DEFINABLE VARIABLES EDIT (stop)
+################################################################################
 ################################################################################
 # PRE-INSTALL configuration
 ################################################################################
+########################################################
 # Make sure function scripts are executable.
 ########################################################
 chmod +x functions/*
@@ -123,8 +176,7 @@ source "${BASH_SOURCE%/*}/functions/functions_cleanup.sh"
 ### INITIAL FUNCTIONS ####
 check_root
 check_os
-check_filesystem
-check_network
+retrieve_system_ip
 check_internet
 
 # Start Time
@@ -153,127 +205,135 @@ fi
 # MAIN SCRIPT - Run Functions and Save to Log
 ################################################################################
 (
-    ########################################################
-    # grab date for build date/start build time
-    ########################################################
+	########################################################
+	# grab date for build date/start build time
+	########################################################
 	date
-    ########################################################
-    # Update system hostname
-    ########################################################
+	########################################################
+	# Update system locales
+	########################################################
+	config_locale
+	########################################################
+	# Update system hostname
+	########################################################
 	set_hostname "$HOSTNAME"
+	########################################################
+	# Update system hostname
+	########################################################	
+	set_wifi_domain
 	####################################################
-    #add serial consile to allow access where no 
-    #network avaible. Rpi zero/w/w2 (New)
-    ####################################################
-    otg_console        
-    #################################################### 
-    ########################################################
-    ### SVXLINK FUNCTIONS 
-    ########################################################
-    install_svxlink_source "$INPUT_SVXLINK_INSTALL_TYPE" "$INPUT_SVXLINK_CONTRIBS"
-    ########################################################
+	# add serial consile to allow access where no 
+	# network avaible. Rpi zero/w/w2 (New)
+	####################################################
+	otg_console
+	########################################################
+	### SVXLINK FUNCTIONS 
+	########################################################
+	install_svxlink_source "$INPUT_SVXLINK_INSTALL_TYPE" "$INPUT_SVXLINK_CONTRIBS"
+	########################################################
 	# fixup the RepeaterLogic so IDs work correctly
-    ########################################################
+	########################################################
 	logic_fixup '../../../usr/share/svxlink/events.d/RepeaterLogic.tcl' 'proc repeater_down' '/usr/share/svxlink/events.d/RepeaterLogic.tcl'
 	### allow a few seconds for the file system to catch up since we are working on the same file as before
 	sleep 5
 	logic_fixup '../../../usr/share/svxlink/events.d/RepeaterLogic.tcl' 'proc repeater_up' '/usr/share/svxlink/events.d/RepeaterLogic.tcl'
-    ########################################################
+	########################################################
 	# fixup a typo in the svxlink source that breaks the gpio service
-    ########################################################
+	########################################################
 	fix_svxlink_gpio
-    ########################################################    
+	########################################################    
 	# install scripts to set device permissions (hidraw/serial)
-    ########################################################
+	########################################################
 	install_device_permission_scripts
-    ########################################################
+	########################################################
 	# Enable ALSA zerofill for svxlink
-    ########################################################
+	########################################################
 	force_async_audio_zerfill
-    ########################################################
+	########################################################
 	# install copy of repo with all the synthetic voice files
-    ########################################################
+	########################################################
 	install_svxlink_sounds
-    ########################################################
-    # cards with gpio expanders will need to have the i2c bus enabled.
-    ########################################################
-    enable_i2c
-    ########################################################
-    # Need to add some settings to the config.txt file to enable 
-    # interface card or they won't load up properly.
-    ########################################################
-    config_ics_controllers
-    ########################################################
-    # need some asound.conf tweaks to keep the channels seperated
-    ########################################################
-    set_ics_asound
-    ####################################################
-    #Enable dummy sound drive x86/amd64 (new)
-    ####################################################
-    dummysnd_setup        
-    ####################################################
-    #Enable raspi serial console uart pins
-    #(moved to its own function)
-    ####################################################
-    enable_uart
-    ########################################################
-   	### OPEN REPEATER FUCNTIONS
-    ########################################################
+	########################################################
+	# cards with gpio expanders will need to have the i2c bus enabled.
+	########################################################
+	enable_i2c
+	########################################################
+	# Need to add some settings to the config.txt file to enable 
+	# interface card or they won't load up properly.
+	########################################################
+	config_ics_controllers
+	########################################################
+	# need some asound.conf tweaks to keep the channels seperated
+	########################################################
+	set_ics_asound
+	####################################################
+	#Enable dummy sound drive x86/amd64 (new)
+	####################################################
+	dummysnd_setup        
+	####################################################
+	#Enable raspi serial console uart pins
+	#(moved to its own function)
+	####################################################
+	enable_uart
+	########################################################
+	### OPEN REPEATER INSTALL FUCNTIONS
+	 ########################################################
 	if [ "$INPUT_INSTALL_TYPE" = "ORP" ]; then
-        ####################################################
-        #install Nginx and Dependencies
-        ####################################################
- 		install_webserver
-        ####################################################
-        #install Extra Dependencies
-        ####################################################
+		####################################################
+		#install Nginx and Dependencies
+		####################################################
+		install_webserver
+		####################################################
+		# install Extra Dependencies
+		####################################################
 		install_orp_dependancies
-        ####################################################
-        # wait for network to catch up
-        ####################################################
+		####################################################
+		# wait for network to catch up
+		####################################################
 		wait_for_network
-        ####################################################
-        #Install Gui from Github
-        ####################################################
+		####################################################
+		# Install Gui from Github
+		####################################################
 		install_orp_from_github
-        ####################################################
-        #Add ORP Release version to sqlite db
-        ####################################################
+		####################################################
+		# Add ORP Release version to sqlite db
+		####################################################
 		update_versioning
-        ####################################################
-        #update www-data used to sudo
-        ####################################################
+		####################################################
+		# update www-data used to sudo
+		####################################################
 		modify_www-data
 		####################################################
-        #AutoHotSpot_Autosetup (New)
-        ####################################################
-        AutoHotSpot_Autosetup
-		####################################################
 		### ENDING FUNCTIONS ###
-        ####################################################
-        #Add orp user for ssh & sudo (depreciated)
-        ####################################################
-		#add_orp_user
-        ####################################################
-        #Disable functions on pi not needed by Repeater
-        ####################################################
-        rpi_disables      
-        ####################################################
-        #Change the motd file for ORP
-        ####################################################
-        set_motd
-        ####################################################
-    fi
+		####################################################
+		####################################################
+		#Disable functions on pi not needed by Repeater
+		####################################################
+		rpi_disables      
+		####################################################
+		#Change the motd file for ORP
+		####################################################
+		set_motd
+		####################################################
+		#AutoHotSpot_Autosetup (New)
+		####################################################
+		AutoHotSpot_Autosetup
+	fi
     ####################################################
     #Post Build Cleanup
     ####################################################
     build_cleanup
-    ########################################################
-    #grab date for build date/finish build time
-    ########################################################
+    ####################################################
+    #Post SYSTEM IP
+    ####################################################
+	post_system_ip
+	########################################################
+	#grab date for build date/finish build time
+	########################################################
     date
     #Reporting Output Log Files
 ) 2> >(tee "$log_dir"/orp_error.log) | tee "$log_dir"/orp_install.log
+
 ################################################################################
 # POST INSTALL REPORT
 ################################################################################
@@ -281,4 +341,6 @@ fi
 ################################################################################
 END_TIME=$(date +%s)
 BUILD_TIME="Build Time: $(((END_TIME-START_TIME)/60)) minutes"
+echo "---------------------------------"
 menu_end_message "$BUILD_TIME"
+echo "---------------------------------"
