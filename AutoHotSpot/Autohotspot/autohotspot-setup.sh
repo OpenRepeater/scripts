@@ -385,13 +385,22 @@ Hotspotssid()
 	fi
 	HSssid=($(cat "/etc/hostapd/hostapd.conf" | grep '^ssid='))
 	HSpass=($(cat "/etc/hostapd/hostapd.conf" | grep '^wpa_passphrase='))
-	echo "Change the Access Point's SSID and Password. press enter to keep existing settings"
-	echo "The current SSID is:" "${HSssid:5}"
-	echo "The current SSID Password is:" "${HSpass:15}"
-	echo "Enter the new Access Point SSID:"
-	read ssname
-	echo "Enter the hotspots new password. Minimum 8 characters"
-	read sspwd
+	
+	if [[ "$automated" == *"false"* ]]; then
+		echo "Change the Hotspot's SSID and Password. press enter to keep existing settings"
+		echo "The current SSID is:" "${HSssid:5}"
+		echo "The current SSID Password is:" "${HSpass:15}"
+		echo "Enter the new Hotspots SSID:"
+		read ssname
+	else
+		ssname=$automatedSSID
+	fi
+	if [[ "$automated" == *"false"* ]]; then
+		echo "Enter the hotspots new password. Minimum 8 characters"
+		read sspwd
+	else
+		sspwd=$automatedPSK
+	fi
 	if [ ! -z $ssname ] ;then
 		echo "Changing Hotspot SSID to:" "$ssname" 
 		sed -i -e "/^ssid=/c\ssid=$ssname" /etc/hostapd/hostapd.conf
@@ -404,11 +413,14 @@ Hotspotssid()
 	else
 		echo "The Access Point Password is:"  ${HSpass: 15}
 	fi
-	echo ""
-	echo "The new setup will be available next time the hotspot is started"
-	echo "Press a key to continue"
-	read
-	menu
+	
+	if [[ "$automated" == *"false"* ]]; then
+		echo ""
+		echo "The new setup will be available next time the hotspot is started"
+		echo "Press a key to continue"
+		read
+		menu
+	fi
 }
 
 setupssid()
@@ -677,9 +689,11 @@ go()
 		echo "The WiFi password is: ${HSpass: 15}"
 		display_HS_IP
 	fi
-	echo "Press any key to continue"
-	read
 	
+	if [[ "$automated" == *"false"* ]]; then
+		echo "Press any key to continue"
+		read
+	fi
 }
 
 menu()
