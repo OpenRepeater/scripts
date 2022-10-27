@@ -27,7 +27,7 @@ function config_ics_controllers {
 			#######################################
 			#Enable mcp3208 adc overlay
 			#######################################
-			dtoverlay=mcp3208:spi0-0-present,spi0-0-speed=3600000
+			dtoverlay=mcp3208:spi0-0-present,spi0-0-speed=1000000
 			DELIM
 			
 		echo "Complete"
