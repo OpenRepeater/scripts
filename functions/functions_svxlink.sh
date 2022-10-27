@@ -81,7 +81,7 @@ function install_svxlink_source () {
 	echo "USE_CONTRIBS=$2"
 	if [ "$2" = "USE_CONTRIBS" ]; then
 		echo "Entering config to enable optional contrib modules"
-		Modules_Build_Cmake_switches=' -DWITH_CONTRIB_MODULE_REMOTE_RELAY=ON -DWITH_CONTRIB_MODULE_SITE_STATUS=ON -DWITH_CONTRIB_MODULE_TCLSSTV=ON -DWITH_CONTRIB_MODULE_TXFAN=ON '
+		Modules_Build_Cmake_switches=' -DWITH_CONTRIB_MODULE_REMOTE_RELAY=ON -DWITH_CONTRIB_MODULE_SITE_STATUS=ON -DWITH_CONTRIB_MODULE_TCLSSTV=ON -DWITH_CONTRIB_MODULE_TXFAN=ON -DWITH_CONTRIB_USRP_LOGIC=ON'
 
 		echo "Completed"
 		
