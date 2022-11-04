@@ -32,7 +32,7 @@ ORP_VERSION="3.0.x (Dev)"
 # ORP Gui Install Version (New)
 # What version to pull from git
 ############################
-ORP_GUI_VERSION="3.0.x"
+ORP_GUI_VERSION="3.0.x-DEV"
 
 ############################
 # set build / install log dir (New)
