@@ -99,9 +99,28 @@ function wait_for_network {
 	# Verify network is still up for building over wifi
     #####################################################################
 	echo "Verifying network/internet is still available, please wait..."
+	DNS_RESET_COUNTER=0
 	while ! (wget -q --spider http://google.com >> /dev/null); do
 		echo "Network is down.  Waiting 5 seconds for the network to reconnect..."
 		sleep 5s
+		## attempt to reset the DNS link if this goes on too long
+		## using wlan0 as all rpi have wlan0, but not all have eth0
+		## using modulo 12 since the delay is 5 seconds, so every minute
+		## it will try to reset the link to restore functionality
+		DNS_RESET_COUNTER++
+		IP_DNS_TEST = $(($DNS_RESET_COUNTER % 12))
+		if [IP_DNS_TEST == 0]; then
+			ip link set wlan0 down && ip link set wlan0 up
+		fi
+		## eventually give up, code 124 is the failure code normally
+		## issued by the command 'timeout' when the timer expires
+		## unlikely anyone will ever need the right code, but its there
+		## just in case someone ever needs it
+		if [$DNS_RESET_COUNTER == 120]; then
+			echo "Network is down.  giving up after 10 minutes"
+			exit 124
+		fi
+		
 	done
 	echo "Network connected.  Proceeding..."
 }
