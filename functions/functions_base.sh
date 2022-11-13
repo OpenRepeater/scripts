@@ -107,9 +107,9 @@ function wait_for_network {
 		## using wlan0 as all rpi have wlan0, but not all have eth0
 		## using modulo 12 since the delay is 5 seconds, so every minute
 		## it will try to reset the link to restore functionality
-		DNS_RESET_COUNTER++
-		IP_DNS_TEST = $(($DNS_RESET_COUNTER % 12))
-		if [IP_DNS_TEST == 0]; then
+		let "DNS_RESET_COUNTER+=1" 
+		let "IP_DNS_TEST = $((DNS_RESET_COUNTER % 12))"
+		if [ $IP_DNS_TEST -eq 0 ]; then
 			ip link set wlan0 down && ip link set wlan0 up
 		fi
 		## eventually give up, code 124 is the failure code normally

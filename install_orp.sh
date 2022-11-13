@@ -344,3 +344,4 @@ BUILD_TIME="Build Time: $(((END_TIME-START_TIME)/60)) minutes"
 echo "---------------------------------"
 menu_end_message "$BUILD_TIME"
 echo "---------------------------------"
+reboot
