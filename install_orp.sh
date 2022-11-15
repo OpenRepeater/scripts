@@ -140,6 +140,7 @@ source "${BASH_SOURCE%/*}/functions/functions_rpi.sh"
 #Enable ICS Cards and sound support
 ########################################################
 source "${BASH_SOURCE%/*}/functions/functions_ics.sh"
+source "${BASH_SOURCE%/*}/functions/board_drivers_loader"
 ########################################################
 #Enable otg serial console zero/w/w2
 ########################################################
@@ -258,11 +259,6 @@ fi
 	########################################################
 	enable_i2c
 	########################################################
-	# Need to add some settings to the config.txt file to enable 
-	# interface card or they won't load up properly.
-	########################################################
-	config_ics_controllers
-	########################################################
 	# need some asound.conf tweaks to keep the channels seperated
 	########################################################
 	set_ics_asound
@@ -318,6 +314,22 @@ fi
 		#AutoHotSpot_Autosetup (New)
 		####################################################
 		AutoHotSpot_Autosetup
+	fi
+	
+	########################################################
+	# Need to add some settings to load drivers to enable 
+	# interface card or they won't load up properly.
+	########################################################
+	if INPUT_INSTALL_TYPE="ORP"; then
+		#This only works if the ORP files are in place
+		source "$WWW_PATH"/openrepeater/scripts/board_drivers_loader
+		prepare_svxlink_gpio_up
+		# load the 1x first as it supports the majority of the install
+		# base that used dedicated controller boards.  UI can
+		# overwrite this later in the wizard
+		load_drivers_pi_repeater_1x_v1
+	else
+		config_ics_controllers
 	fi
     ####################################################
     #Post Build Cleanup
