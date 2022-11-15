@@ -3,37 +3,6 @@
 # DEFINE FUNCTIONS
 ################################################################################
 
-function config_ics_controllers {
-	if [ "$system_arch" == "armhf" ] || [ "$system_arch" == "arm64" ]; then
-	
-		############################################
-		echo "-------------------------------------"
-	    echo " Enable ICS Controller intergrations "
-	    echo "-------------------------------------"
-		############################################
-		
-	    cat >> /boot/config.txt <<- DELIM
-			################################
-			#ICS Required Drivers/Overlays
-			################################
-			dtoverlay=fe-pi-audio
-			dtoverlay=i2s-mmap
-			
-			################################
-			#Enable mcp23s17 Overlay
-			#######################################
-			dtoverlay=mcp23017,addr=0x20,gpiopin=12
-			
-			#######################################
-			#Enable mcp3208 adc overlay
-			#######################################
-			dtoverlay=mcp3208:spi0-0-present,spi0-0-speed=1000000
-			DELIM
-			
-		echo "Complete"
-	fi
-}
-
 function set_ics_asound {
 	if [ "$system_arch" == "armhf" ] || [ "$system_arch" == "arm64" ]; then
 

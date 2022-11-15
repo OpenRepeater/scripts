@@ -16,7 +16,7 @@ function enable_webssh () {
 			SHELLINABOX_DAEMON_START=1
 
 			# TCP port that shellinboxd's webserver listens on
-			SHELLINABOX_PORT=4567
+			SHELLINABOX_PORT=4200
 
 			# Parameters that are managed by the system and usually should not need
 			# changing:
