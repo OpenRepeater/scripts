@@ -169,6 +169,10 @@ source "${BASH_SOURCE%/*}/functions/functions_orp.sh"
 ########################################################
 source "${BASH_SOURCE%/*}/functions/functions_web.sh"
 ########################################################
+#Install shellinabos Web SSH Client
+########################################################
+source "${BASH_SOURCE%/*}/functions/functions_webssh.sh"
+########################################################
 #Cleanup
 ########################################################
 source "${BASH_SOURCE%/*}/functions/functions_cleanup.sh"
@@ -318,6 +322,10 @@ fi
 		#AutoHotSpot_Autosetup (New)
 		####################################################
 		AutoHotSpot_Autosetup
+		####################################################
+		#Enable shellinabox ssh
+		####################################################
+		enable_webssh
 	fi
     ####################################################
     #Post Build Cleanup
