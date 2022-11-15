@@ -322,7 +322,7 @@ fi
 	########################################################
 	if INPUT_INSTALL_TYPE="ORP"; then
 		#This only works if the ORP files are in place
-		source "$WWW_PATH"/openrepeater/scripts/board_drivers_loader
+		source "$WWW_PATH"/openrepeater/install/scripts/board_drivers_loader
 		prepare_svxlink_gpio_up
 		# load the 1x first as it supports the majority of the install
 		# base that used dedicated controller boards.  UI can
