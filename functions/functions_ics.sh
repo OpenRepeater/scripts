@@ -38,15 +38,15 @@ function config_ics_controllers {
 function install_ics_drivers {
 	if [ "$system_arch" == "armhf" ] || [ "$system_arch" == "arm64" ]; then
 
-		if [ -f "$WWW_PATH"/"$GUI_NAME"/install/scripts/board_driver_loader ];then
+		if [ -f "$WWW_PATH"/"$GUI_NAME"/install/scripts/board_driver_loader.sh ];then
 			############################################
 			echo "---------------------------------------"
 		    echo " Install ICS Controller Drivers Script "
 			echo "---------------------------------------"
 			############################################
 
-			chmod +x "$WWW_PATH"/"$GUI_NAME"/install/scripts/board_driver_loader
-			exec "$WWW_PATH"/"$GUI_NAME"/install/scripts/board_driver_loader
+			chmod +x "$WWW_PATH"/"$GUI_NAME"/install/scripts/board_driver_loader.sh
+			exec "$WWW_PATH"/"$GUI_NAME"/install/scripts/board_driver_loader.sh
 		fi
 
 		echo "Complete"
