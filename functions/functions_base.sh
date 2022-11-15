@@ -116,7 +116,7 @@ function wait_for_network {
 		## issued by the command 'timeout' when the timer expires
 		## unlikely anyone will ever need the right code, but its there
 		## just in case someone ever needs it
-		if [$DNS_RESET_COUNTER == 120]; then
+		if [ $DNS_RESET_COUNTER == 120 ]; then
 			echo "Network is down.  giving up after 10 minutes"
 			exit 124
 		fi

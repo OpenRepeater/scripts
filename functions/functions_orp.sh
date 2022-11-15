@@ -14,7 +14,7 @@ function install_orp_dependancies {
         libgcrypt20 libgsm1 libopus0 libpopt0 libsigc++-2.0-0v5 libsox-fmt-mp3 libxml2 libxml2-dev \
         libxslt1-dev logrotate python3-configobj python3-cheetah python3-dev python3-pip python3-usb \
         python3-serial python3-serial resolvconf screen sox sqlite3 sudo tcl8.6 time tk8.6 usbutils uuid vim \
-        vorbis-tools watchdog wvdial shellinabox libhamlib-utils neofetch neovim
+        vorbis-tools watchdog wvdial shellinabox libhamlib-utils neofetch neovim locales
         
     echo "Completed"
 }
@@ -27,7 +27,7 @@ function install_orp_from_github {
 	#####################################################################
 	
     rm -rf "$WWW_PATH/$GUI_NAME"/*
-    git clone -b "$ORP_GUI_VERSION" --single-branch https://github.com/OpenRepeater/openrepeater.git "$WWW_PATH/$GUI_NAME"
+    git clone -b "$ORP_GUI_VERSION" --depth 1 https://github.com/OpenRepeater/openrepeater.git "$WWW_PATH/$GUI_NAME"
     
     echo "Complete"
     
