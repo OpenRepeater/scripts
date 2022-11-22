@@ -3,33 +3,21 @@
 # DEFINE FUNCTIONS
 ################################################################################
 
-function config_ics_controllers {
+function install_ics_drivers {
 	if [ "$system_arch" == "armhf" ] || [ "$system_arch" == "arm64" ]; then
-	
-		############################################
-		echo "-------------------------------------"
-	    echo " Enable ICS Controller intergrations "
-	    echo "-------------------------------------"
-		############################################
-		
-	    cat >> /boot/config.txt <<- DELIM
-			################################
-			#ICS Required Drivers/Overlays
-			################################
-			dtoverlay=fe-pi-audio
-			dtoverlay=i2s-mmap
-			
-			################################
-			#Enable mcp23s17 Overlay
-			#######################################
-			dtoverlay=mcp23017,addr=0x20,gpiopin=12
-			
-			#######################################
-			#Enable mcp3208 adc overlay
-			#######################################
-			dtoverlay=mcp3208:spi0-0-present,spi0-0-speed=1000000
-			DELIM
-			
+
+		if [ -f "$WWW_PATH"/"$GUI_NAME"/install/scripts/board_driver_loader.sh ];then
+			############################################
+			echo "---------------------------------------"
+		    echo " Install ICS Controller Drivers Script "
+			echo "---------------------------------------"
+			############################################
+
+			chmod +x scripts/ics/board_driver_loader
+			cp "scripts/ics/board_driver_loader" "/usr/sbin/board_driver_loader"
+			exec /usr/sbin/board_driver_loader $ICS_BOARD			
+		fi
+
 		echo "Complete"
 	fi
 }
