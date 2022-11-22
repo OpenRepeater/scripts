@@ -13,9 +13,9 @@ function install_ics_drivers {
 			echo "---------------------------------------"
 			############################################
 
-			chmod +x "$WWW_PATH"/"$GUI_NAME"/install/scripts/board_driver_loader
-			exec "$WWW_PATH/$GUI_NAME"/install/scripts/board_driver_loader $ICS_BOARD
-			cp "$WWW_PATH/$GUI_NAME/install/scripts/board_driver_loader" "/usr/sbin/board_driver_loader"
+			chmod +x scripts/ics/board_driver_loader
+			cp "scripts/ics/board_driver_loader" "/usr/sbin/board_driver_loader"
+			exec /usr/sbin/board_driver_loader $ICS_BOARD			
 		fi
 
 		echo "Complete"
