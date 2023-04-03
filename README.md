@@ -48,29 +48,27 @@ These instructions are for doing a complete build on a headless (without a keybo
    4. Now select and enter following info : set hostname openrepeater. 
    5. Next select enable ssh, and select use password. 
    6. Nest select add user . Add a custom user/password used for first login. 
-   7. Next if using wifi select the Configure wireless Lan, Enter your routers ssid and password. (if Ethernet dont use)
-   8. Next select your country. 
-   9. Next select set locale timezone and choose yours. Also choose your keyboard type. 
-   10. Now hit save and flash the image to your sd card
+   7. Next if using wifi select the Configure wireless LAN, Enter your routers ssid and password. (if Ethernet dont use), then select your country. 
+   8. Next select set locale timezone and choose yours. Also choose your keyboard type. 
+   9. Now hit save and flash the image to your sd card
 
 4. Insert the SD card in the Pi and boot it up.
-5. For now, log into the openrepeater via ssh using your user/password you set before flashing.
-7. sudo su and you have root.
+5. The PI uses DHCP by default. Locate your Pi on your network and note the IP.
+6. SSH to the Pi using it's IP address. For now, log into the openrepeater via ssh using your user/password you set before flashing.
+7. &#35; **`sudo su`** and you have root.
 
 ### Getting Scripts ######
 
-8. Down load the scripts 1 of 2 ways:
-    git:
-    * First apt install git , Not installed on os image by default. Then:
-    * &#35; **`git clone -b X.x.x https://github.com/OpenRepeater/scripts.git /usr/src/scripts`** X=2/3 x=x/0/1/2/3
-    or
-    wget: 
-    * &#35; **`cd /usr/src && wget https://github.com/OpenRepeater/scripts/archive/X.x.x.zip `** X=2/3 x=x/0/1/2/3
-* Unzip the script archive if you got the zip file.
-	* &#35; **`unzip X.x.x.zip`**
-* else    
+8. Download the scripts 1 of 2 ways:
+	* **git:**
+		* First **`apt install git`**, Not installed on os image by default.
+		* &#35; **`git clone -b X.x.x https://github.com/OpenRepeater/scripts.git /usr/src/scripts X=2/3 x=x/0/1/2/3`**
+	* **wget:** 
+		* &#35; **`cd /usr/src && wget https://github.com/OpenRepeater/scripts/archive/3.0.x-DEV.zip X=2/3 x=x/0/1/2/3`**
+9. Unzip the script archive if you got the zip file.
+	* &#35; **`unzip 3.0.x-DEV.zip`**    
 * Change to the script folder
-	* &#35; **`cd /usr/src/scripts`**
+	* &#35; **`cd /usr/src/scripts-3.0.x-DEV`**
 * Make the script executable
 	* &#35; **`chmod +x install_orp.sh`** This will make the install script executable.
 * Run the script
