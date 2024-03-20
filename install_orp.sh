@@ -7,8 +7,8 @@
 ############################
 # Set Debian OS Release
 ############################
-REQUIRED_OS_VER="11"
-REQUIRED_OS_NAME="Bullseye"
+REQUIRED_OS_VER="12"
+REQUIRED_OS_NAME="BookWorm"
 
 ############################
 #Sysem arch checking (New)
@@ -81,7 +81,7 @@ PHP_INI="/etc/php/7.4/fpm/php.ini"
 # SVXLINK VERSION - Must match versioning 
 # at https://github.com/sm0svx/svxlink/releases
 ############################
-SVXLINK_VER="19.09.2"
+SVXLINK_VER="24.02"
 
 SCRIPT_DIR="$(dirname $(realpath "$0"))"
 

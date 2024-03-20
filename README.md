@@ -9,7 +9,7 @@ Developer OpenRepeater Build Script Debian (11) Bullseye
 
 #### Requirements: 
 * SD card of 8GB or Larger (8GB or larger recommended)
-* You must be running Debian/Raspbian Bullseye OS (Ver 11) on your device
+* You must be running Debian/Raspbian BookWorm OS (Ver 12) on your device
 * You must run the install script as root 
 * Make sure that you device is connected to the internet as it will need to download files and packages to install.
 * ***It is suggested you should set a STATIC ip address*** for your device to prevent the IP changing during/after build. 

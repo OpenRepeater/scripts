@@ -24,7 +24,7 @@ function install_svxlink_source () {
     libgsm1-dev libpopt-dev tcl8.6-dev libgcrypt20-dev libspeex-dev libasound2-dev \
     libopus-dev librtlsdr-dev doxygen groff alsa-utils vorbis-tools curl git \
     libcurl4-openssl-dev unzip zip libpigpiod-if-dev libpigpiod-if2-1 libgpiod-dev \
-    libgpiod2 pigpiod gpiod libjsoncpp-dev libjsoncpp24 libogg-dev
+    libgpiod2 pigpiod gpiod libjsoncpp-dev libjsoncpp25 libogg-dev
 
 	################################################
     echo "----------------------------------------"
@@ -104,9 +104,9 @@ function install_svxlink_source () {
 	echo "-------------------------------------"
 	############################################
 	
-	mkdir build
+	#mkdir build
 
-	cd build
+	#cd build
 	echo "make command: cmake -DCMAKE_INSTALL_PREFIX=/usr -DSYSCONF_INSTALL_DIR=/etc -DLOCAL_STATE_DIR=/var -DWITH_SYSTEMD=ON -DUSE_QT=no $Modules_Build_Cmake_switches .."
 	cmake -DCMAKE_INSTALL_PREFIX=/usr -DSYSCONF_INSTALL_DIR=/etc -DLOCAL_STATE_DIR=/var -DWITH_SYSTEMD=ON -DUSE_QT=no $Modules_Build_Cmake_switches ..
 	
@@ -135,14 +135,15 @@ function install_svxlink_source () {
 	systemctl enable svxlink
 	systemctl disable remotetrx
 	
-		echo "Completed"
+	echo "Completed"
 
 	############################################
 	echo "-------------------------------------"	
 	echo "Clean Up Build Dir                   "
 	echo "-------------------------------------"
 	############################################
-
+	
+	cd /
 	rm -rf /usr/src/svxlink*
 
 	echo "Completed"
