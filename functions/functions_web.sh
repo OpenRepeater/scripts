@@ -8,9 +8,9 @@ function install_webserver {
     echo "--------------------------------------------------------------"
     apt-get install --assume-yes --fix-missing nginx-extras;
     apt-get install --assume-yes --fix-missing nginx memcached ssl-cert \
-        php7.4-common php7.4-fpm php7.4-curl php7.4-dev php7.4-gd php-imagick \
-        php-memcached php7.4-pspell php7.4-snmp php7.4-sqlite3 php7.4-xmlrpc \
-        php7.4-xml php-pear php-ssh2 php7.4-cli php7.4-zip sqlite3
+        php8.2-common php8.2-fpm php8.2-curl php8.2-dev php8.2-gd php-imagick \
+        php-memcached php8.2-pspell php8.2-snmp php8.2-sqlite3 php8.2-xmlrpc \
+        php8.2-xml php-pear php-ssh2 php8.2-cli php8.2-zip sqlite3
         
      echo "Completed"
         
@@ -20,9 +20,9 @@ function install_webserver {
     echo "--------------------------------------------------------------"
 	#####################################################################
     cp "/etc/nginx/nginx.conf" "/etc/nginx/nginx.conf.orig"
-    cp "/etc/php/7.4/fpm/php-fpm.conf" "/etc/php/7.4/fpm/php-fpm.conf.orig"
-    cp "/etc/php/7.4/fpm/php.ini" "/etc/php/7.4/fpm/php.ini.orig"
-    cp "/etc/php/7.4/fpm/pool.d/www.conf" "/etc/php/7.4/fpm/pool.d/www.conf.orig"
+    cp "/etc/php/8.2/fpm/php-fpm.conf" "/etc/php/8.2/fpm/php-fpm.conf.orig"
+    cp "/etc/php/8.2/fpm/php.ini" "/etc/php/8.2/fpm/php.ini.orig"
+    cp "/etc/php/8.2/fpm/pool.d/www.conf" "/etc/php/8.2/fpm/pool.d/www.conf.orig"
 
     echo "Completed"
 
@@ -112,7 +112,7 @@ function install_webserver {
 			location ~ \.php$ {
 				include snippets/fastcgi-php.conf;
 				include fastcgi_params;
-				fastcgi_pass unix:/var/run/php/php7.4-fpm.sock;
+				fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
 				fastcgi_param   SCRIPT_FILENAME /var/www/openrepeater/$fastcgi_script_name;
 				error_page  404   404.php;
 				fastcgi_intercept_errors on;        
