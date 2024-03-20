@@ -226,7 +226,7 @@ fi
 	# add serial consile to allow access where no 
 	# network avaible. Rpi zero/w/w2 (New)
 	####################################################
-	otg_console
+	#otg_console
 	########################################################
 	### SVXLINK FUNCTIONS 
 	########################################################
@@ -273,7 +273,7 @@ fi
 	enable_uart
 	########################################################
 	### OPEN REPEATER INSTALL FUCNTIONS
-	 ########################################################
+	 #######################################################
 	if [ "$INPUT_INSTALL_TYPE" = "ORP" ]; then
 		####################################################
 		#install Nginx and Dependencies
@@ -313,7 +313,7 @@ fi
 		####################################################
 		#AutoHotSpot_Autosetup (New)
 		####################################################
-		AutoHotSpot_Autosetup
+		#AutoHotSpot_Autosetup
 	fi
 	
 	########################################################
@@ -356,4 +356,4 @@ BUILD_TIME="Build Time: $(((END_TIME-START_TIME)/60)) minutes"
 echo "---------------------------------"
 menu_end_message "$BUILD_TIME"
 echo "---------------------------------"
-reboot
+#reboot
