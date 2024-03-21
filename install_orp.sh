@@ -37,7 +37,7 @@ ORP_GUI_VERSION="3.0.x-DEV"
 ############################
 # set build / install log dir (New)
 ############################
-log_dir="/home/orp"
+log_dir="~"
 
 ############################
 # set build work base dir (New)
@@ -73,7 +73,7 @@ GUI_NAME="openrepeater"
 ############################
 # PHP ini config file
 ############################
-PHP_INI="/etc/php/7.4/fpm/php.ini"
+PHP_INI="/etc/php/8.2/fpm/php.ini"
 
 ############################
 # SVXLink Settings
