@@ -37,7 +37,7 @@ ORP_GUI_VERSION="3.0.x-DEV"
 ############################
 # set build / install log dir (New)
 ############################
-log_dir="~"
+log_dir="/var/log/"
 
 ############################
 # set build work base dir (New)
@@ -322,7 +322,7 @@ fi
 	########################################################
 	if INPUT_INSTALL_TYPE="ORP"; then
 		#This only works if the ORP files are in place
-		source "/usr/sbin/board_drivers_loader
+		source "/usr/sbin/board_drivers_loader"
 		prepare_svxlink_gpio_up
 		# load the 1x first as it supports the majority of the install
 		# base that used dedicated controller boards.  UI can
