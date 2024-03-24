@@ -12,7 +12,7 @@ function config_ics_controllers {
 	    echo "-------------------------------------"
 		############################################
 		
-	    cat >> /boot/config.txt <<- DELIM
+	    cat >> $RPI_config_text_path <<- DELIM
 			################################
 			#ICS Required Drivers/Overlays
 			################################

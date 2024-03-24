@@ -28,7 +28,7 @@ function enable_i2c {
         echo "--------------------"
         ###########################
 
-        sed -i /boot/config.txt -e "s#\#dtparam=i2c_arm=on#dtparam=i2c_arm=on#"
+        sed -i $RPI_config_text_path -e "s#\#dtparam=i2c_arm=on#dtparam=i2c_arm=on#"
 
 		echo "Complete"
 

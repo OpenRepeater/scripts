@@ -13,7 +13,7 @@ function rpi_disables {
         echo "--------------------------------------------------------------"
         ######################################################################
         
-        sed -i /boot/config.txt -e"s#dtoverlay=vc4-kms-v3d#\#dtoverlay=vc4-kms-v3d#"
+        sed -i $RPI_config_text_path -e"s#dtoverlay=vc4-kms-v3d#\#dtoverlay=vc4-kms-v3d#"
 
         echo "Completed"
 
@@ -23,7 +23,7 @@ function rpi_disables {
         echo "--------------------------------------------------------------"
         ######################################################################
         
-        sed -i /boot/config.txt -e"s#dtparam=audio=on#\#dtparam=audio=on#"
+        sed -i $RPI_config_text_path -e"s#dtparam=audio=on#\#dtparam=audio=on#"
 
         echo "Completed"
 
@@ -33,7 +33,7 @@ function rpi_disables {
         echo "--------------------------------------------------------------"
         ######################################################################
         
-        sed -i /boot/config.txt -e"s#max_framebuffers=2#\#max_framebuffers=2#"
+        sed -i $RPI_config_text_path -e"s#max_framebuffers=2#\#max_framebuffers=2#"
         
         echo "Completed"
         
@@ -43,7 +43,7 @@ function rpi_disables {
         echo "--------------------------------------------------------------"        
         ######################################################################
         
-        sed -i /boot/config.txt -e"s#camera_auto_detect=1#\#camera_auto_detect=1#"
+        sed -i $RPI_config_text_path -e"s#camera_auto_detect=1#\#camera_auto_detect=1#"
         
         echo "Completed"
         
@@ -52,7 +52,7 @@ function rpi_disables {
         echo " Disable DSI display used in OpenRepeater                     "
         echo "--------------------------------------------------------------"       
         ######################################################################
-        sed -i /boot/config.txt -e"s#display_auto_detect=1#\#display_auto_detect=1#"
+        sed -i $RPI_config_text_path -e"s#display_auto_detect=1#\#display_auto_detect=1#"
         
         echo "Completed"
 
@@ -62,7 +62,7 @@ function rpi_disables {
         echo "--------------------------------------------------------------"
         ######################################################################
         
-        sed -i /boot/config.txt -e"s#disable_overscan=1#\#disable_overscan=1#"
+        sed -i $RPI_config_text_path -e"s#disable_overscan=1#\#disable_overscan=1#"
         
         echo "Completed"
 
@@ -72,7 +72,7 @@ function rpi_disables {
         echo "--------------------------------------------------------------"
         ######################################################################
         
-        cat >> /boot/config.txt <<- DELIM
+        cat >> $RPI_config_text_path <<- DELIM
 			####################################################
 			# Disable Onboard BlueTooth not used in OpenRepeater 
 			####################################################

@@ -64,7 +64,7 @@ function otg_console () {
     	echo "-----------------------------------"
     	##########################################
     	
-        sed -i /boot/config.txt -e"s#otg_mode=1#\#otg_mode=1#"
+        sed -i $RPI_config_text_path -e"s#otg_mode=1#\#otg_mode=1#"
         
         echo "Completed"
 
