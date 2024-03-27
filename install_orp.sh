@@ -19,10 +19,10 @@ system_arch="$(dpkg --print-architecture)"
 ############################
 # Set config.txt path
 ############################
-if [ $REQUIRED_OS_VER >=12]; then
-    RPI_config_text_path = '/boot/firmware/config.txt'
+if [ $REQUIRED_OS_VER >=12 ]; then
+    RPI_config_text_path="/boot/firmware/config.txt"
 else
-    RPI_config_text_path = '/boot/config.txt'
+    RPI_config_text_path="/boot/config.txt"
 fi
 ############################
 #Get rpi-board id (New)
@@ -149,7 +149,7 @@ source "${BASH_SOURCE%/*}/functions/functions_rpi.sh"
 #Enable ICS Cards and sound support
 ########################################################
 source "${BASH_SOURCE%/*}/functions/functions_ics.sh"
-source "${BASH_SOURCE%/*}/functions/board_drivers_loader"
+#source "${BASH_SOURCE%/*}/functions/board_drivers_loader"
 ########################################################
 #Enable otg serial console zero/w/w2
 ########################################################
