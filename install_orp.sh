@@ -19,7 +19,7 @@ system_arch="$(dpkg --print-architecture)"
 ############################
 # Set config.txt path
 ############################
-if $REQUIRED_OS_VER >=12; then
+if [ $REQUIRED_OS_VER >=12]; then
     RPI_config_text_path = '/boot/firmware/config.txt'
 else
     RPI_config_text_path = '/boot/config.txt'
